@@ -19,14 +19,14 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col gap-8 justify-center items-center">
-      <div className="text-6xl font-bold">
+    <main className="flex min-h-screen flex-col gap-4 lg:gap-8 justify-center items-center">
+      <div className="text-3xl lg:text-6xl sm:text-center font-bold">
         Hi, I&apos;m Lenny
       </div>
-      <div className="text-4xl">
+      <div className="text-md lg:text-4xl">
         A passionate software engineer
       </div>
-      <div className="bottom-10 fixed">
+      <div className="text-base bottom-10 absolute">
         (Still under construction...)
       </div>
     </main>
