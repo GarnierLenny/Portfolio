@@ -36,11 +36,11 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <div className="flex flex-row">
       <Header refs={itemEls} values={{selected, setSelected}} />
-      <main className="flex w-full flex-col bg-yellow-900">
+      <main className="flex w-full mx-auto flex-col bg-yellow-900">
         {sections.map((section, index) => (
-          <div className="flex self-end w-full justify-end" key={index} ref={(element) => {
+          <div className="flex grow" key={index} ref={(element) => {
             itemEls.current.push(element)
             }}>
             {section}
