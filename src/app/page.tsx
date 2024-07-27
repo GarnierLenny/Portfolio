@@ -35,7 +35,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-col md:flex-row">
       <Header refs={itemEls} values={{selected, setSelected}} />
       <main className="flex w-full mx-auto flex-col bg-yellow-900">
         {sections.map((section, index) => (
