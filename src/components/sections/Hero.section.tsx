@@ -5,7 +5,7 @@ import hat from '../../../public/hat.png';
 
 export default function Hero() {
   return (
-    <div className='mt-6 flex h-screen justify-center w-full' style={{backgroundColor: palette.blue}}>
+    <div className='pt-6 flex h-screen justify-center w-full' style={{backgroundColor: palette.blue}}>
       <div className='flex flex-col md:flex-row justify-center gap-y-5'>
         <div className='flex w-full md:w-1/2 justify-center'>
           <Image className='rounded-full justify-self-center self-center w-60 md:w-72' src={hat} alt='pp' />
