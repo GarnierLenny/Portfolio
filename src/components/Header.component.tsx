@@ -31,24 +31,20 @@ export default function Header({refs, values}) {
       name: "Contact",
       icon: <MdPhone size={25} />,
     },
-    {
-      name: "FAQ",
-      icon: <MdQuestionAnswer size={25} />,
-    },
   ];
 
   const executeScroll = (index: number) => {
     values.setSelected(index);
-    refs.current[index].scrollIntoView()
+    refs.current[index].scrollIntoView({behavior: 'smooth'})
   };
 
   return (
     <div className="hidden md:block">
-      <div className="flex top-0 sticky h-screen flex-col gap-y-4 justify-center px-10 left-0 text-black md:bg-red-300">
+      <div className="flex top-0 sticky h-screen flex-col gap-y-4 justify-center px-8 left-0 text-white" style={{backgroundColor: palette.black}}>
         {sections.map((section, index) => (
           <div onClick={() => executeScroll(index)} className="flex flex-row justify-center text-start" key={index}>
-            <div>{section.icon}</div>
-            <p className={`w-full cursor-pointer px-5 text-lg ${values.selected === index ? 'font-bold' : ''}`}>{section.name}</p>
+            <div style={{color: values.selected === index ? palette.light_red : palette.white}}>{section.icon}</div>
+            <p className={`w-full cursor-pointer px-5 text-lg`} style={{color: values.selected === index ? palette.light_red : palette.white}}>{section.name}</p>
           </div>
         ))}
       </div>

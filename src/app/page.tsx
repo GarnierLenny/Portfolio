@@ -17,7 +17,6 @@ export default function Home() {
     <Experiences />,
     <Projects />,
     <Contact />,
-    <FAQ />,
   ];
   const itemEls = useRef(new Array());
   const [selected, setSelected] = useState(0);

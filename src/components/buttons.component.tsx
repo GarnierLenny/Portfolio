@@ -9,7 +9,7 @@ type ButtonProps = {
 
 export function PrimaryButton({text, callback, outline = 1}: ButtonProps) {
   return (
-    <div onClick={callback} className='text-black text-center rounded-lg p-2 cursor-pointer' style={{backgroundColor: palette.yellow}}>
+    <div onClick={callback} className='text-black text-center rounded-lg p-2 cursor-pointer' style={{backgroundColor: palette.red}}>
       <p className="text-black">{text}</p>
     </div>
   );
@@ -17,8 +17,8 @@ export function PrimaryButton({text, callback, outline = 1}: ButtonProps) {
 
 export function SecondaryButton({text, callback, outline = 1}: ButtonProps) {
   return (
-    <div onClick={callback} className='text-black text-center rounded-lg p-2 bg-transparent cursor-pointer' style={{borderColor: palette.yellow, borderWidth: outline}}>
-      <p style={{color: palette.yellow}}>{text}</p>
+    <div onClick={callback} className='text-black text-center rounded-lg p-2 bg-transparent cursor-pointer' style={{borderColor: palette.red, borderWidth: outline}}>
+      <p style={{color: palette.red}}>{text}</p>
     </div>
   );
 };
