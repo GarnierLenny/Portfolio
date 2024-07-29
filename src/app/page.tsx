@@ -11,14 +11,14 @@ import FAQ from "@/components/sections/Projects.section copy";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
 export default function Home() {
+  const itemEls = useRef(new Array());
   const sections: ReactNode[] = [
-    <Hero />,
+    <Hero itemEls={itemEls} />,
     <Competences />,
     <Experiences />,
     <Projects />,
     <Contact />,
   ];
-  const itemEls = useRef(new Array());
   const [selected, setSelected] = useState(0);
 
   if (typeof window !== "undefined") {

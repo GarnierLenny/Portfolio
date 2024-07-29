@@ -35,7 +35,7 @@ export default function Header({refs, values}) {
 
   const executeScroll = (index: number) => {
     values.setSelected(index);
-    refs.current[index].scrollIntoView({behavior: 'smooth'})
+    refs.current[index].scrollIntoView({behavior: 'smooth'});
   };
 
   return (
