@@ -10,12 +10,14 @@ import { TbBrandSocketIo } from 'react-icons/tb';
 
 export const cardHoverScale = 'hover:scale-105 duration-100';
 
+export type TechnoType = {
+  name: string,
+  icon: ReactNode,
+};
+
 type SkillsType = {
   type: string,
-  technos: {
-    name: string,
-    icon: ReactNode,
-  }[]
+  technos: TechnoType[],
 };
 
 type LanguageType = {
@@ -241,7 +243,9 @@ function HardSkills() {
       <SectionPrimaryTitle title="Hard skills" />
         {skills.map((skill, index) => (
           <div className='border-t mb-9 border-light-back' key={index}>
-            <SectionSecondaryTitle title={skill.type} />
+            <div className='pt-2'>
+              <SectionSecondaryTitle title={skill.type} />
+            </div>
             <div className='flex mx-5 mt-3 flex-wrap flex-row gap-2 justify-center md:justify-normal'>
             {skill.technos.map((techno, index) => (
               <div className={`flex flex-col ${cardHoverScale} rounded-lg text-center bg-light-back p-5`} key={index}>

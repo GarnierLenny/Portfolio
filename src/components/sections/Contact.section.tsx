@@ -101,7 +101,7 @@ export default function Contact() {
     <div className='flex flex-col bg-slate-800 w-full pb-3 md:px-3'>
       <SectionPrimaryTitle title='Contacts' />
       <SectionSecondaryTitle title="Feel free to contact me!" />
-      <div className='flex align-middle flex-wrap gap-3 px-8 mt-8'>
+      <div className='flex align-middle flex-wrap gap-3 px-8 mt-6'>
         <div className='flex flex-col md:flex-row flex-wrap gap-2 w-full'>
           {contacts.map((contact, index) => (
             <button onClick={contact.callback} className={`${cardHoverScale} flex-1 md:flex-none`} key={index}>
@@ -110,7 +110,7 @@ export default function Contact() {
           ))}
         </div>
       </div>
-      <p className='self-center md:self-end md:mr-5 bottom-0 mt-10 text-slate-300 font-medium'>Made with ♥️ in Reunion Island</p>
+      <p className='self-center md:self-end md:mr-5 bottom-0 mt-10 text-slate-300 font-medium'>Made with ♥️ in Reunion Island 🌴</p>
     </div>
   );
 };

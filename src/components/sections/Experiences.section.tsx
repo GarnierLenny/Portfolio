@@ -2,6 +2,12 @@
 import React, { useRef } from 'react';
 
 export default function Experiences() {
+  // Epitech
+  // SolarPlexus?
+  // AER
+  // Feelbat
+  // Inha Univerity
+
   return (
     <div id='experiences' className='grow h-screen bg-blue-400'>
       Experiences

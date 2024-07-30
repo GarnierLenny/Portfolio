@@ -20,9 +20,11 @@ const config: Config = {
         'red': '#e71d36',
         'light-red': '#ed5164',
         'blue': '#2ec4b6',
-        'test': '#004F2D',
+        'glaucous': '#5C80BC',
       },
       fontSize: {
+        '4xs': '0.45rem',
+        '3xs': '0.55rem',
         'xxs': '0.65rem',
       },
     },
