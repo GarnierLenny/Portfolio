@@ -20,6 +20,7 @@ const config: Config = {
         'red': '#e71d36',
         'light-red': '#ed5164',
         'blue': '#2ec4b6',
+        'test': '#004F2D',
       },
       fontSize: {
         'xxs': '0.65rem',

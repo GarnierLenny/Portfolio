@@ -1,14 +1,14 @@
-import palette from '@/utils/palette.utils';
 import React, { ReactNode } from 'react';
 import ReactCountryFlag from 'react-country-flag';
 import { AiFillCiCircle } from 'react-icons/ai';
 import { BiLogoJavascript, BiLogoTypescript, BiLogoReact, BiLogoHtml5, BiLogoCss3, BiLogoNodejs, BiLogoCPlusPlus, BiLogoGoLang } from "react-icons/bi";
-import { BsGitlab } from 'react-icons/bs';
-import { DiAws, DiDjango, DiDocker, DiFirebase, DiHaskell, DiMongodb, DiMysql, DiPython } from 'react-icons/di';
-import { FaAws, FaGitlab } from 'react-icons/fa';
-import { RiTailwindCssFill, RiVuejsLine } from 'react-icons/ri';
-import { SiC, SiExpress, SiFirebase, SiGit, SiGithub, SiGitlab, SiJest, SiNestjs } from 'react-icons/si';
-import { TbBrandReactNative, TbBrandSocketIo } from 'react-icons/tb';
+import { DiDjango, DiDocker, DiMongodb, DiMysql, DiPython } from 'react-icons/di';
+import { FaAws } from 'react-icons/fa';
+import { RiTailwindCssFill } from 'react-icons/ri';
+import { SiC, SiExpress, SiFirebase, SiGit, SiGithub, SiGitlab, SiJest } from 'react-icons/si';
+import { TbBrandSocketIo } from 'react-icons/tb';
+
+export const cardHoverScale = 'hover:scale-105 duration-100';
 
 type SkillsType = {
   type: string,
@@ -32,15 +32,15 @@ type LanguageType = {
   description?: string,
 };
 
-function SectionPrimaryTitle({title}: {title: string}) {
+export function SectionPrimaryTitle({title}: {title: string}) {
   return (
-    <p className='text-xl font-bold mt-7 ml-3 mb-2'>{title}</p>
+    <p className='text-xl font-bold mt-5 ml-3 mb-2'>{title}</p>
   );
 };
 
-function SectionSecondaryTitle({title}: {title: string}) {
+export function SectionSecondaryTitle({title}: {title: string}) {
   return (
-    <p className='text-md text-gray-300 font-semibold mt-3 ml-3'>{title}</p>
+    <p className='text-md text-gray-300 font-semibold ml-3'>{title}</p>
   );
 };
 
@@ -74,11 +74,11 @@ function Languages() {
   ];
 
   return (
-    <div className='justify-center'>
+    <div className=''>
       <SectionPrimaryTitle title="Languages" />
-      <div className='flex flex-wrap justify-center gap-2.5 mt-5'>
+      <div className='flex mx-5 flex-wrap justify-center md:justify-normal gap-2.5 mt-5'>
         {languages.map((language, index) => (
-          <div className='bg-light-back shadow-lg shadow-black px-4 py-4 text-center rounded-lg' style={{borderWidth: 0}} key={index}>
+          <div className={`${cardHoverScale} bg-light-back shadow-lg shadow-black px-4 py-4 text-center rounded-lg`} style={{borderWidth: 0}} key={index}>
             <ReactCountryFlag className='rounded-xl' svg style={{width: '4.35em', height: '4.35em'}} countryCode={language.countryCode} />
             <div className='mt-2'>
               <p className='text-base font-semibold'>{language.name}</p>
@@ -244,7 +244,7 @@ function HardSkills() {
             <SectionSecondaryTitle title={skill.type} />
             <div className='flex mx-5 mt-3 flex-wrap flex-row gap-2 justify-center md:justify-normal'>
             {skill.technos.map((techno, index) => (
-              <div className='flex flex-col rounded-lg text-center bg-light-back p-5' key={index}>
+              <div className={`flex flex-col ${cardHoverScale} rounded-lg text-center bg-light-back p-5`} key={index}>
                 <div className='self-center'>{techno.icon}</div>
                 <p className='text-xs mt-3 font-semibold'>{techno.name}</p>
               </div>
@@ -258,7 +258,7 @@ function HardSkills() {
 
 export default function Competences() {
   return (
-    <div className='flex md:px-3 flex-col flex-grow' style={{backgroundColor: palette.black}}>
+    <div className='flex bg-slate-900 md:px-3 flex-col flex-grow gap-10 pb-5'>
       <Languages />
       <HardSkills />
     </div>

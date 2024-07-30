@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import palette from '@/utils/palette.utils';
+import { cardHoverScale } from './sections/Competences.section';
 
 type ButtonProps = {
   text: string;
@@ -10,7 +11,7 @@ type ButtonProps = {
 
 export function PrimaryButton({text, callback, borderWidth = 0, rightIcon = undefined}: ButtonProps) {
   return (
-    <button onClick={callback} className="hover:bg-red gap-x-2 grow font-semibold bg-light-red flex justify-center items-center text-xs md:text-base py-2 px-4 rounded-xl">
+    <button onClick={callback} className={`${cardHoverScale} hover:bg-red gap-x-2 grow font-semibold bg-light-red flex justify-center items-center text-xs md:text-base py-2 px-4 rounded-xl`}>
       {text}
       {rightIcon}
     </button>
@@ -19,7 +20,7 @@ export function PrimaryButton({text, callback, borderWidth = 0, rightIcon = unde
 
 export function SecondaryButton({text, callback, borderWidth = 0, rightIcon = undefined}: ButtonProps) {
   return (
-    <button onClick={callback} className="hover:bg-gray-200 grow gap-x-2 font-semibold text-black transparent flex justify-center items-center text-xxs md:text-base py-3 md:py-5 px-4 text-center bg-white rounded-xl" style={{borderColor: palette.light_red}}>
+    <button onClick={callback} className={`${cardHoverScale} hover:bg-gray-200 grow gap-x-2 font-semibold text-black transparent flex justify-center items-center text-xxs md:text-base py-3 md:py-5 px-4 text-center bg-white rounded-xl`} style={{borderColor: palette.light_red}}>
       {text}
       {rightIcon}
     </button>
