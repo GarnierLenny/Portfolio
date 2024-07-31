@@ -37,7 +37,7 @@ export default function Contact() {
         setClicked(true);
       },
       lightText: clicked ? true : false,
-      icon: clicked ? <ImCheckmark color='#fff' size={logoSize} /> : <BiLogoGmail color={palette.light_red} size={logoSize} />,
+      icon: clicked ? <ImCheckmark color='#fff' size={20} /> : <BiLogoGmail color={palette.light_red} size={logoSize} />,
     },
     {
       text: "Github",

@@ -3,7 +3,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { AiFillCiCircle } from 'react-icons/ai';
 import { BiLogoJavascript, BiLogoTypescript, BiLogoReact, BiLogoHtml5, BiLogoCss3, BiLogoNodejs, BiLogoCPlusPlus, BiLogoGoLang } from "react-icons/bi";
 import { DiDjango, DiDocker, DiMongodb, DiMysql, DiPython } from 'react-icons/di';
-import { FaAws } from 'react-icons/fa';
+import { FaAws, FaCircle } from 'react-icons/fa';
 import { RiTailwindCssFill } from 'react-icons/ri';
 import { SiC, SiExpress, SiFirebase, SiGit, SiGithub, SiGitlab, SiJest } from 'react-icons/si';
 import { TbBrandSocketIo } from 'react-icons/tb';
@@ -31,6 +31,7 @@ type LanguageType = {
     'B2' |
     'C1' |
     'C2',
+  status: 'Learning' | 'On hold' | 'Fluent',
   description?: string,
 };
 
@@ -52,28 +53,45 @@ function Languages() {
       name: 'French',
       countryCode: 'FR',
       level: 'Native',
+      status: 'Fluent',
     },
     {
       name: 'English',
       countryCode: 'US',
       level: 'C1',
+      status: 'Fluent',
     },
     {
       name: 'Spanish',
       countryCode: 'ES',
       level: 'B1',
+      status: 'On hold',
     },
     {
       name: 'Korean',
       countryCode: 'KR',
       level: 'A2',
+      status: 'Learning',
     },
     {
       name: 'Italian',
       countryCode: 'IT',
       level: 'A1',
+      status: 'On hold',
+    },
+    {
+      name: 'Chinese',
+      countryCode: 'CN',
+      level: 'A1',
+      status: 'On hold',
     },
   ];
+
+  const Progress = {
+    'Learning': '#0e76a8',
+    'On hold': '#F5820D',
+    'Fluent': '#0CAA41',
+  }
 
   return (
     <div className=''>
@@ -85,6 +103,10 @@ function Languages() {
             <div className='mt-2'>
               <p className='text-base font-semibold'>{language.name}</p>
               <p className='text-sm text-gray-400'>{language.level}</p>
+            </div>
+            <div style={{backgroundColor: Progress[language.status]}} className={`flex ${cardHoverScale} mt-3 flex cursor-pointer px-2 py-1 rounded-full bg-white rounded-xs gap-x-1.5 font-medium text-black justify-center`}>
+              <FaCircle className='self-center' color='#fff' size={7} />
+              <p className='text-4xs text-white md:text-3xs justify-self-center'>{language.status}</p>
             </div>
           </div>
         ))}

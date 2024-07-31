@@ -21,6 +21,9 @@ const config: Config = {
         'light-red': '#ed5164',
         'blue': '#2ec4b6',
         'glaucous': '#5C80BC',
+        'grayish': '#A188A6',
+        'ruddy-blue': '#136F63',
+        'ruddy-blue-darker': '#0e534a',
       },
       fontSize: {
         '4xs': '0.45rem',
