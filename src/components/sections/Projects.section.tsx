@@ -47,10 +47,10 @@ function Project({project}: {project: ProjectType}) {
   return (
     <div className='flex py-5 rounded-lg pl-5 bg-black grow mx-3'>
       <Image className='rounded-lg justify-self-center self-center size-20 md:size-32' src={project.logo} alt='ProjectLogo' />
-      <div className='flex flex-col grow mx-3 md:mx-11'>
+      <div className='flex flex-col grow mx-3 md:mx-7'>
         <p className='font-bold'>{project.title}</p>
         <p className='text-xxs text-slate-300 font-medium'>{project.shortDescription}</p>
-        <div className='flex my-3'>
+        <div className='flex my-4'>
           <div style={{backgroundColor: Progress[project.status]}} className={` ${cardHoverScale} flex cursor-pointer px-2 py-1 rounded-full bg-white rounded-xs gap-x-1.5 font-medium text-black`}>
             <FaCircle className='self-center' color='#fff' size={7} />
             <p className='text-4xs md:text-3xs text-white'>{project.status}</p>
@@ -66,7 +66,7 @@ function Project({project}: {project: ProjectType}) {
           ))}
         </div>
         <div className='grow' />
-        <div className='flex gap-x-2'>
+        <div className='flex mt-2 gap-x-2'>
           <button className={`${cardHoverScale} grow py-1 flex mt-3 justify-center bg-white rounded-md`}>
             <p className='text-xxs font-bold text-black'>{'See more ->'}</p>
           </button>
@@ -261,7 +261,7 @@ export default function Projects() {
   ];
 
   return (
-    <div className='grow bg-glaucous'>
+    <div className='grow bg-glaucous pb-6 md:px-3'>
       <SectionPrimaryTitle title='Projects' />
       <SectionSecondaryTitle title="Some of the projects I'm working on" />
       <div className='flex flex-col md:grid md:grid-cols-2 mt-5 gap-y-3 pb-6'>
