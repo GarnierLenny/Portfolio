@@ -9,7 +9,7 @@ type SectionType = {
   icon: ReactNode;
 };
 
-export default function Header({refs, values}) {
+export default function Header({refs, values}: any) {
   const sections: SectionType[] = [
     {
       name: "Hero",
