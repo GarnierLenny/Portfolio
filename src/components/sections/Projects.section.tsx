@@ -67,9 +67,9 @@ function Project({project}: {project: ProjectType}) {
         </div>
         <div className='grow' />
         <div className='flex mt-2 gap-x-2'>
-          <button className={`${cardHoverScale} grow py-1 flex mt-3 justify-center bg-white rounded-md`}>
+          {/* <button className={`${cardHoverScale} grow py-1 flex mt-3 justify-center bg-white rounded-md`}>
             <p className='text-xxs font-bold text-black'>{'See more ->'}</p>
-          </button>
+          </button> */}
           {project.url !== 'https://pharmusic.com/' ?
           <button onClick={() => window.open(project.url)} className={`${cardHoverScale} gap-x-1 py-1 grow flex mt-3 justify-center bg-light-red rounded-md`}>
             <p className='text-xxs font-bold text-white'>{'See code'}</p>

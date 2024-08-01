@@ -1,14 +1,12 @@
 /* eslint-disable react/jsx-key */
 "use client"
-import Image from "next/image";
 import Header from "@/components/Header.component";
 import Hero from "@/components/sections/Hero.section";
 import Competences from "@/components/sections/Competences.section";
 import Experiences from "@/components/sections/Experiences.section";
 import Projects from "@/components/sections/Projects.section";
 import Contact from "@/components/sections/Contact.section";
-import FAQ from "@/components/sections/Projects.section copy";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 
 export default function Home() {
   const itemEls = useRef(new Array());
@@ -36,6 +34,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col md:flex-row">
+      <title>Lenny Garnier</title>
       <Header refs={itemEls} values={{selected, setSelected}} />
       <main className="flex w-full mx-auto flex-col bg-yellow-900">
         {sections.map((section, index) => (
