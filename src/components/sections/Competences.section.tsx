@@ -37,7 +37,7 @@ type LanguageType = {
 
 export function SectionPrimaryTitle({title}: {title: string}) {
   return (
-    <p className='text-xl font-bold mt-5 ml-3 mb-2'>{title}</p>
+    <p className='text-xl font-bold mt-5 ml-3 mb-2 text-white'>{title}</p>
   );
 };
 
@@ -272,7 +272,7 @@ function HardSkills() {
             {skill.technos.map((techno, index) => (
               <div className={`flex flex-col ${cardHoverScale} rounded-lg text-center bg-light-back p-5`} key={index}>
                 <div className='self-center'>{techno.icon}</div>
-                <p className='text-xs mt-3 font-semibold'>{techno.name}</p>
+                <p className='text-xs mt-3 font-semibold text-white'>{techno.name}</p>
               </div>
             ))}
             </div>

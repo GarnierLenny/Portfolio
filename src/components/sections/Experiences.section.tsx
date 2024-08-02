@@ -25,7 +25,7 @@ function ExperiencesList({title, experiences}: {title: string, experiences: Expe
         {
           experiences.map((exp, index) => (
             <div className={`${cardHoverScale} flex flex-col rounded-lg bg-ruddy-blue-darker mx-3 p-4`} key={index}>
-              <p className='font-bold text-lg'>{exp.title}</p>
+              <p className='font-bold text-lg text-white'>{exp.title}</p>
               <div className='flex my-2.5 flex-col gap-y-1'>
                 <div className='flex flex-row gap-x-2'>
                   <ReactCountryFlag className='rounded-none self-center' svg style={{width: '1em', height: '1em'}} countryCode={exp.countryCode} />
@@ -44,9 +44,9 @@ function ExperiencesList({title, experiences}: {title: string, experiences: Expe
                 </div>
               </div>
               <div className='flex flex-row gap-x-2'>
-                <p>{exp.start}</p>
+                <p className='text-white'>{exp.start}</p>
                 <BiRightArrowAlt className='self-center' color="#fff" size={15} />
-                <p>{exp.end}</p>
+                <p className='text-white'>{exp.end}</p>
               </div>
             </div>
           ))

@@ -21,10 +21,10 @@ export default function Hero({itemEls}: any) {
           <Image className='rounded-full justify-self-center self-center size-56 md:size-96' src={hat} alt='pp' />
         </div>
         <div className='flex flex-col justify-center text-center md:text-start gap-y-2'>
-          <p className="text-3xl md:text-4xl font-bold">
+          <p className="text-3xl md:text-4xl font-bold text-white">
             Hi! I&apos;m Lenny 👋
           </p>
-          <p className="text-xl md:text-2xl">
+          <p className="text-xl md:text-2xl text-white">
             A passionate software engineer
           </p>
           <div className='flex mt-3 md:mt-5 justify-around gap-x-3'>

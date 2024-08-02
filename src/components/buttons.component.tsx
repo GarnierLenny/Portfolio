@@ -11,7 +11,7 @@ type ButtonProps = {
 
 export function PrimaryButton({text, callback, borderWidth = 0, rightIcon = undefined}: ButtonProps) {
   return (
-    <button onClick={callback} className={`${cardHoverScale} hover:bg-red gap-x-2 grow font-semibold bg-light-red flex justify-center items-center text-xs md:text-base py-2 px-4 rounded-xl`}>
+    <button onClick={callback} className={`${cardHoverScale} text-white hover:bg-red gap-x-2 grow font-semibold bg-light-red flex justify-center items-center text-xs md:text-base py-2 px-4 rounded-xl`}>
       {text}
       {rightIcon}
     </button>
