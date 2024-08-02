@@ -48,7 +48,7 @@ function Project({project}: {project: ProjectType}) {
     <div className='flex py-5 rounded-lg pl-5 bg-black grow mx-3'>
       <Image className='rounded-lg justify-self-center self-center size-20 md:size-32' src={project.logo} alt='ProjectLogo' />
       <div className='flex flex-col grow mx-3 md:mx-7'>
-        <p className='font-bold'>{project.title}</p>
+        <p className='font-bold text-white'>{project.title}</p>
         <p className='text-xxs text-slate-300 font-medium'>{project.shortDescription}</p>
         <div className='flex my-4'>
           <div style={{backgroundColor: Progress[project.status]}} className={` ${cardHoverScale} flex cursor-pointer px-2 py-1 rounded-full bg-white rounded-xs gap-x-1.5 font-medium text-black`}>
