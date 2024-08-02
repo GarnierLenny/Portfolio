@@ -101,7 +101,7 @@ function Languages() {
           <div className={`${cardHoverScale} bg-light-back shadow-lg shadow-black px-4 py-4 text-center rounded-lg`} style={{borderWidth: 0}} key={index}>
             <ReactCountryFlag className='rounded-xl' svg style={{width: '4.35em', height: '4.35em'}} countryCode={language.countryCode} />
             <div className='mt-2'>
-              <p className='text-base font-semibold'>{language.name}</p>
+              <p className='text-base font-semibold text-white'>{language.name}</p>
               <p className='text-sm text-gray-400'>{language.level}</p>
             </div>
             <div style={{backgroundColor: Progress[language.status]}} className={`flex ${cardHoverScale} mt-3 flex cursor-pointer px-2 py-1 rounded-full bg-white rounded-xs gap-x-1.5 font-medium text-black justify-center`}>

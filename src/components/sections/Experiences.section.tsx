@@ -44,9 +44,9 @@ function ExperiencesList({title, experiences}: {title: string, experiences: Expe
                 </div>
               </div>
               <div className='flex flex-row gap-x-2'>
-                <p className='text-white'>{exp.start}</p>
+                <p className='text-white font-medium'>{exp.start}</p>
                 <BiRightArrowAlt className='self-center' color="#fff" size={15} />
-                <p className='text-white'>{exp.end}</p>
+                <p className='text-white font-medium'>{exp.end}</p>
               </div>
             </div>
           ))
