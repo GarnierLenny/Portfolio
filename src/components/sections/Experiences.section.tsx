@@ -17,7 +17,6 @@ type Experience = {
 };
 
 function ExperiencesList({title, experiences}: {title: string, experiences: Experience[]}) {
-
   return (
     <div>
       <SectionSecondaryTitle title={title} />
@@ -60,11 +59,11 @@ function ExperiencesList({title, experiences}: {title: string, experiences: Expe
 export default function Experiences() {
   const professional: Experience[] = [
     {
-      title: 'Solarplexus',
-      location: "Reunion Island, Saint-Benoît",
-      start: 'August 2021',
-      end: 'December 2021',
-      position: 'Software Engineer',
+      title: 'Feelbat',
+      location: "Reunion Island, Saint-Denis",
+      start: 'April 2023',
+      end: 'August 2023',
+      position: 'Mobile/Full-stack developer',
       status: 'Internship',
       countryCode: 'FR',
     },
@@ -78,24 +77,23 @@ export default function Experiences() {
       countryCode: 'FR',
     },
     {
-      title: 'Feelbat',
-      location: "Reunion Island, Saint-Denis",
-      start: 'April 2023',
-      end: 'August 2023',
-      position: 'Mobile/Full-stack developer',
+      title: 'Solarplexus',
+      location: "Reunion Island, Saint-Benoît",
+      start: 'August 2021',
+      end: 'December 2021',
+      position: 'Software Engineer',
       status: 'Internship',
       countryCode: 'FR',
     },
   ];
-  const academic: Experience[] = [
+  const academic: Experience[] = [,
     {
-      title: 'Louis Payen Highschool',
-      location: "Reunion Island, Saint-Paul",
-      start: 'August 2017',
-      end: 'June 2020',
-      position: 'Student',
-      countryCode: 'FR',
-      status: undefined,
+      title: 'Inha University',
+      location: 'South Korea, Incheon',
+      start: 'September 2023',
+      end: 'June 2024',
+      position: 'International student',
+      countryCode: 'KR',
     },
     {
       title: 'Epitech',
@@ -104,17 +102,15 @@ export default function Experiences() {
       end: 'June 2025',
       position: 'Student',
       countryCode: 'FR',
-      status: undefined,
     },
     {
-      title: 'Inha University',
-      location: 'South Korea, Incheon',
-      start: 'September 2023',
-      end: 'June 2024',
-      position: 'International student',
-      countryCode: 'KR',
-      status: undefined,
-    },
+      title: 'Louis Payen Highschool',
+      location: "Reunion Island, Saint-Paul",
+      start: 'August 2017',
+      end: 'June 2020',
+      position: 'Student',
+      countryCode: 'FR',
+    }
   ];
 
   return (
