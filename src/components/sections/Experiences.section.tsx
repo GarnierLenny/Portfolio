@@ -86,7 +86,7 @@ export default function Experiences() {
       countryCode: 'FR',
     },
   ];
-  const academic: Experience[] = [,
+  const academic: Experience[] = [
     {
       title: 'Epitech',
       location: "Reunion Island, Saint-André",
