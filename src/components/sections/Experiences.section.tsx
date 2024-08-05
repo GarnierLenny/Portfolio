@@ -88,20 +88,20 @@ export default function Experiences() {
   ];
   const academic: Experience[] = [,
     {
-      title: 'Inha University',
-      location: 'South Korea, Incheon',
-      start: 'September 2023',
-      end: 'June 2024',
-      position: 'International student',
-      countryCode: 'KR',
-    },
-    {
       title: 'Epitech',
       location: "Reunion Island, Saint-André",
       start: 'September 2020',
       end: 'June 2025',
       position: 'Student',
       countryCode: 'FR',
+    },
+    {
+      title: 'Inha University',
+      location: 'South Korea, Incheon',
+      start: 'September 2023',
+      end: 'June 2024',
+      position: 'International student',
+      countryCode: 'KR',
     },
     {
       title: 'Louis Payen Highschool',
@@ -116,8 +116,8 @@ export default function Experiences() {
   return (
     <div id='experiences' className='grow bg-ruddy-blue md:px-3 pb-6'>
       <SectionPrimaryTitle title='Experience' />
-      <ExperiencesList title='Academic' experiences={academic} />
       <ExperiencesList title='Professional' experiences={professional} />
+      <ExperiencesList title='Academic' experiences={academic} />
     </div>
   );
 };
