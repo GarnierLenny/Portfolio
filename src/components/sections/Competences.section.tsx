@@ -4,7 +4,7 @@ import { AiFillCiCircle } from 'react-icons/ai';
 import { BiLogoJavascript, BiLogoTypescript, BiLogoReact, BiLogoHtml5, BiLogoCss3, BiLogoNodejs, BiLogoCPlusPlus, BiLogoGoLang } from "react-icons/bi";
 import { DiDjango, DiDocker, DiMongodb, DiMysql, DiPython } from 'react-icons/di';
 import { FaAws, FaCircle } from 'react-icons/fa';
-import { RiTailwindCssFill } from 'react-icons/ri';
+import { RiSupabaseFill, RiTailwindCssFill } from 'react-icons/ri';
 import { SiC, SiExpress, SiFirebase, SiGit, SiGithub, SiGitlab, SiJest } from 'react-icons/si';
 import { TbBrandSocketIo } from 'react-icons/tb';
 
@@ -189,7 +189,7 @@ function HardSkills() {
         },
         {
           name: 'Socket.io',
-          icon: <TbBrandSocketIo className='justify-self-center' color="#41b883" size={logoSize} />,
+          icon: <TbBrandSocketIo className='justify-self-center' color="#4db33d" size={logoSize} />,
         },
         {
           name: 'Django',
@@ -203,6 +203,10 @@ function HardSkills() {
         {
           name: 'Firebase',
           icon: <SiFirebase className='justify-self-center' color="#F5820D" size={logoSize} />,
+        },
+        {
+          name: 'Supabase',
+          icon: <RiSupabaseFill className='justify-self-center' color="#41f883" size={logoSize} />,
         },
         {
           name: 'MongoDB',
