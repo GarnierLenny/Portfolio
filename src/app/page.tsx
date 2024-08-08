@@ -24,7 +24,7 @@ export default function Home() {
       const scrollY = window.scrollY;
       console.log('Scroll position:', scrollY);
       for (let i = 0; i < sections.length; i++) {
-        if (scrollY < itemEls.current[i].offsetTop + (window.innerHeight / 2)) {
+        if (scrollY < itemEls.current[i].offsetTop + (window.innerHeight / 3)) {
           setSelected(i);
           break;
         }
