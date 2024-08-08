@@ -1,3 +1,4 @@
+import { transform } from "next/dist/build/swc";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -29,6 +30,21 @@ const config: Config = {
         '4xs': '0.45rem',
         '3xs': '0.55rem',
         'xxs': '0.65rem',
+      },
+      animation: {
+        'spin-slow': 'spin 3s linear infinite',
+        'from-top': 'from 1s ease-in-out infinite',
+        'test': 'test 1s ease-in-out infinite',
+      },
+      keyframes: {
+        from: {
+          '0%': { transform: 'translate(0px, -30px)' },
+          '100%': { transform: 'translate(0px, 0px)' },
+        },
+        test: {
+          '0%': { transform: 'opacity(0)' },
+          '100%': { transform: 'opacity(0)' },
+        },
       },
     },
   },

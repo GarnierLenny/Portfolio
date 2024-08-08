@@ -16,9 +16,9 @@ export default function Hero({itemEls}: any) {
 
   return (
     <div className='pt-6 md:pt-0 flex h-screen justify-center w-full' style={{backgroundColor: palette.blue}}>
-      <div className='flex gap-x-16 flex-col md:flex-row justify-center gap-y-5'>
-        <div className='flex justify-center'>
-          <Image className='rounded-full justify-self-center self-center size-56 md:size-96' src={hat} alt='pp' />
+      <div className='flex gap-x-16 flex-col md:flex-row justify-center gap-y-12'>
+        <div className=' flex justify-center'>
+          <Image className='rounded-full justify-self-center self-center size-72 md:size-96' src={hat} alt='pp' />
         </div>
         <div className='flex flex-col justify-center text-center md:text-start gap-y-2'>
           <p className="text-3xl md:text-4xl font-bold text-white">
@@ -27,7 +27,7 @@ export default function Hero({itemEls}: any) {
           <p className="text-xl md:text-2xl text-white">
             A passionate software engineer
           </p>
-          <div className='flex mt-3 md:mt-5 justify-around gap-x-3'>
+          <div className='grid grid-cols-2 mt-3 md:mt-5 gap-x-3'>
             <PrimaryButton rightIcon={<BiDownArrowAlt size={getIconSize(20, 26)} />} text="Let's connect!" callback={() => {itemEls.current[4].scrollIntoView({behavior: 'smooth'})}} />
             <SecondaryButton rightIcon={<FiExternalLink size={getIconSize(17, 25)} />} text="See this page's code" callback={() => {window.open('https://github.com/GarnierLenny/Portfolio')}} />
           </div>

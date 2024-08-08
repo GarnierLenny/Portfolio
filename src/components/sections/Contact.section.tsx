@@ -7,6 +7,7 @@ import { cardHoverScale, SectionPrimaryTitle, SectionSecondaryTitle } from './Co
 import palette from '@/utils/palette.utils';
 import { BiLogoGmail } from 'react-icons/bi';
 import { ImCheckmark } from 'react-icons/im';
+import { Analytics } from "@vercel/analytics/react"
 
 type ContactType = {
   text: string,
@@ -111,6 +112,7 @@ export default function Contact() {
         </div>
       </div>
       <p className='self-center text-xs md:self-end md:mr-5 bottom-0 mt-10 text-slate-300 font-medium'>Made with ♥️ in Reunion Island 🌴</p>
+      <Analytics />
     </div>
   );
 };
