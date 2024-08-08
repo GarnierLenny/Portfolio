@@ -28,8 +28,8 @@ export default function Hero({itemEls}: any) {
             A passionate software engineer
           </p>
           <div className='grid grid-rows-2 gap-y-2 md:grid-cols-2 mx-5 mt-3 md:mt-5 gap-x-3'>
-            <PrimaryButton rightIcon={<BiDownArrowAlt size={getIconSize(20, 26)} />} text="Let's connect!" callback={() => {itemEls.current[4].scrollIntoView({behavior: 'smooth'})}} />
-            <SecondaryButton rightIcon={<FiExternalLink size={getIconSize(17, 25)} />} text="See this page's code" callback={() => {window.open('https://github.com/GarnierLenny/Portfolio')}} />
+            <PrimaryButton rightIcon={<BiDownArrowAlt size={getIconSize(23, 26)} />} text="Let's connect!" callback={() => {itemEls.current[4].scrollIntoView({behavior: 'smooth'})}} />
+            <SecondaryButton rightIcon={<FiExternalLink size={getIconSize(20, 25)} />} text="See this page's code" callback={() => {window.open('https://github.com/GarnierLenny/Portfolio')}} />
           </div>
         </div>
       </div>
