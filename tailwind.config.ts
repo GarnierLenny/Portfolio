@@ -18,6 +18,7 @@ const config: Config = {
         'white': '#fdfffc',
         'black': '#011627',
         'light-back': '#022847',
+        'lighter-black': '#033965',
         'red': '#e71d36',
         'light-red': '#ed5164',
         'blue': '#2ec4b6',
@@ -25,6 +26,7 @@ const config: Config = {
         'grayish': '#A188A6',
         'ruddy-blue': '#136F63',
         'ruddy-blue-darker': '#0e534a',
+        'ruddy-blue-darker-darker': '#0c4941',
       },
       fontSize: {
         '4xs': '0.45rem',
