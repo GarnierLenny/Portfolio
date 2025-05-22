@@ -79,6 +79,15 @@ function ExperiencesList({
 export default function Experiences() {
   const professional: Experience[] = [
     {
+      title: "Polyconseil",
+      location: "Paris, France",
+      start: "May 2025",
+      end: "November 2025",
+      position: "Full-stack developer",
+      status: "Full-time",
+      countryCode: "FR",
+    },
+    {
       title: "Racemappr",
       location: "Germany, Berlin",
       start: "September 2024",
