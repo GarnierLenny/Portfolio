@@ -84,7 +84,7 @@ export default function Experiences() {
       start: "May 2025",
       end: "November 2025",
       position: "Full-stack developer",
-      status: "Full-time",
+      status: "Full-time internship",
       countryCode: "FR",
     },
     {
@@ -93,7 +93,7 @@ export default function Experiences() {
       start: "September 2024",
       end: "February 2025",
       position: "Mobile/Full-stack developer",
-      status: "Part-time",
+      status: "Part-time internship",
       countryCode: "DE",
     },
     {
@@ -102,7 +102,7 @@ export default function Experiences() {
       start: "April 2023",
       end: "August 2023",
       position: "Mobile/Full-stack developer",
-      status: "Internship",
+      status: "Full-time internship",
       countryCode: "FR",
     },
     {
@@ -120,7 +120,7 @@ export default function Experiences() {
       start: "August 2021",
       end: "December 2021",
       position: "Software Engineer",
-      status: "Internship",
+      status: "Full-time internship",
       countryCode: "FR",
     },
   ];
