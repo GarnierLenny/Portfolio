@@ -1,50 +1,32 @@
-/* eslint-disable react/jsx-key */
-"use client"
-import Header from "@/components/Header.component";
-import Hero from "@/components/sections/Hero.section";
-import Competences from "@/components/sections/Competences.section";
-import Experiences from "@/components/sections/Experiences.section";
-import Projects from "@/components/sections/Projects.section";
-import Contact from "@/components/sections/Contact.section";
-import { ReactNode, useRef, useState } from "react";
+"use client";
+
+import About from "@/components/about";
+import Contacts from "@/components/contacts";
+import Hero from "@/components/hero";
+import Navbar from "@/components/navbar";
+import Projects from "@/components/projects";
+import SocialMedias from "@/components/social-medias";
+import { VStack } from "@chakra-ui/react";
+import { useState } from "react";
+import "../i18n/config";
 
 export default function Home() {
-  const itemEls = useRef(new Array());
-  const sections: ReactNode[] = [
-    <Hero itemEls={itemEls} />,
-    <Competences />,
-    <Experiences />,
-    <Projects />,
-    <Contact />,
-  ];
-  const [selected, setSelected] = useState(0);
-
-  if (typeof window !== "undefined") {
-    window!.addEventListener('scrollend', () => {
-      const scrollY = window.scrollY;
-      console.log('Scroll position:', scrollY);
-      for (let i = 0; i < sections.length; i++) {
-        if (scrollY < itemEls.current[i].offsetTop + (window.innerHeight / 3)) {
-          setSelected(i);
-          break;
-        }
-      }
-    });
-  }
+  const [bgColor, setColor] = useState("white");
 
   return (
-    <div className="flex flex-col md:flex-row">
-      <title>Lenny Garnier</title>
-      <Header refs={itemEls} values={{selected, setSelected}} />
-      <main className="flex w-full mx-auto flex-col bg-yellow-900">
-        {sections.map((section, index) => (
-          <div className="flex grow" key={index} ref={(element) => {
-            itemEls.current.push(element)
-            }}>
-            {section}
-          </div>
-        ))}
-      </main>
-    </div>
+    <VStack
+      transition="background-color 0.8s ease-in-out"
+      bgColor={bgColor}
+      width="full"
+      alignItems="stretch"
+      zIndex={1}
+    >
+      <Navbar />
+      <SocialMedias />
+      <Hero />
+      <About />
+      <Projects />
+      <Contacts />
+    </VStack>
   );
 }
