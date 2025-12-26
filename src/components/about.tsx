@@ -61,20 +61,12 @@ export default function About() {
       </Flex>
       <Flex
         paddingX="20px"
-        paddingY="40px"
+        paddingY="20px"
         direction="column"
         rounded="md"
         bgColor="#058743"
-        overflow="scroll"
-        overflowX="hidden"
         flex={2}
-        gapY={10}
-        css={{
-          "&::-webkit-scrollbar": {
-            display: "none",
-          },
-          scrollbarWidth: "none",
-        }}
+        gap={5}
       >
         <Flex
           transition="all ease-in-out 2.1s"
@@ -117,26 +109,39 @@ export default function About() {
             );
           })}
         </Flex>
-        {lyrics.map((lyric, index) => (
-          <Text
-            fontSize={35}
-            // ref={el => ref.current[index] = el}
-            transition="all ease-in-out 0.1s"
-            fontWeight="semibold"
-            letterSpacing="-0.03em"
-            color={
-              index === selectedLyric ? "white" : "rgba(255, 255, 255, 0.5)"
-            }
-            cursor="pointer"
-            key={index}
-            _hover={{
-              color: "white",
-              textDecoration: "underline",
-            }}
-          >
-            {t(lyric.text)}
-          </Text>
-        ))}
+        <Flex
+          overflow="scroll"
+          overflowX="hidden"
+          css={{
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+            scrollbarWidth: "none",
+          }}
+          gapY={10}
+          direction="column"
+        >
+          {lyrics.map((lyric, index) => (
+            <Text
+              fontSize={35}
+              // ref={el => ref.current[index] = el}
+              transition="all ease-in-out 0.1s"
+              fontWeight="semibold"
+              letterSpacing="-0.03em"
+              color={
+                index === selectedLyric ? "white" : "rgba(255, 255, 255, 0.5)"
+              }
+              cursor="pointer"
+              key={index}
+              _hover={{
+                color: "white",
+                textDecoration: "underline",
+              }}
+            >
+              {t(lyric.text)}
+            </Text>
+          ))}
+        </Flex>
       </Flex>
     </Flex>
   );
