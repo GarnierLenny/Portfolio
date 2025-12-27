@@ -7,24 +7,24 @@ import Navbar from "@/components/navbar";
 import Projects from "@/components/projects";
 import SocialMedias from "@/components/social-medias";
 import { VStack } from "@chakra-ui/react";
-import { useState } from "react";
 import "../i18n/config";
+import Experience from "@/components/experience";
 
 export default function Home() {
-  const [bgColor, setColor] = useState("white");
-
   return (
     <VStack
       transition="background-color 0.8s ease-in-out"
-      bgColor={bgColor}
+      bgColor="white"
       width="full"
       alignItems="stretch"
       zIndex={1}
+      gap={0}
     >
       <Navbar />
       <SocialMedias />
       <Hero />
       <About />
+      <Experience />
       <Projects />
       <Contacts />
     </VStack>

@@ -33,7 +33,7 @@ type MenuLink = {
 
 const links: MenuLink[] = [
   { name: "About", href: "#about" },
-  { name: "Skills", href: "#skills" },
+  { name: "Experience", href: "#experience" },
   { name: "Projects", href: "#projects" },
   { name: "Contacts", href: "#contacts" },
 ];

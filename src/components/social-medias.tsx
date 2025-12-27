@@ -49,7 +49,6 @@ export default function SocialMedias() {
   return (
     <Flex
       position="fixed"
-      id="about"
       direction="column"
       zIndex={2}
       height="100vh"

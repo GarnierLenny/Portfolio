@@ -1,4 +1,4 @@
-import { Text, Flex, Box, Button } from "@chakra-ui/react";
+import { Text, Flex, Box, Button, Link } from "@chakra-ui/react";
 import { ArrowDown, Play } from "lucide-react";
 
 export default function Hero() {
@@ -12,7 +12,7 @@ export default function Hero() {
       alignItems="center"
       // bg="linear-gradient(to bottom, {colors.gray.100}, {colors.gray.300})"
     >
-      <Flex maxW="70ch" gap={10} direction="column">
+      <Flex maxW="70ch" gap={12} direction="column">
         <Flex direction="column" alignItems="center" textAlign="center" px={6}>
           <Text
             fontWeight="bold"
@@ -55,48 +55,52 @@ export default function Hero() {
         <Flex
           width="85%"
           alignSelf="center"
-          gap={12}
+          gap={8}
           justifyContent="center"
           color="black"
         >
-          <Button
-            paddingY={6}
-            color="black"
-            fontSize={18}
-            flex={1}
-            variant="outline"
-            transition="all ease-in .2s"
-            justifyContent="center"
-            alignItems="center"
-            gap={4}
-            borderWidth="2px"
-            borderColor="#058743"
-            _hover={{
-              backgroundColor: "gray.100",
-              color: "#058743",
-              transform: "translateY(-1px)",
-            }}
-          >
-            <Text>Explore Projects</Text>
-            <ArrowDown strokeWidth={3} color="#058743" />
-          </Button>
-          <Button
-            paddingY={6}
-            fontSize={18}
-            variant="solid"
-            bgColor="#058743"
-            color="white"
-            flex={1}
-            gap={4}
-            _hover={{
-              backgroundColor: "#047634",
-              color: "#white",
-              transform: "translateY(-1px)",
-            }}
-          >
-            <Text>Watch Intro Video</Text>
-            <Play strokeWidth={3} width={120} color="white" />
-          </Button>
+          <Link href="#projects" flex={1}>
+            <Button
+              paddingY={6}
+              color="black"
+              fontSize={18}
+              flex={1}
+              variant="outline"
+              transition="all ease-in .2s"
+              justifyContent="center"
+              alignItems="center"
+              gap={4}
+              borderWidth="2px"
+              borderColor="#058743"
+              _hover={{
+                backgroundColor: "gray.100",
+                color: "#058743",
+                transform: "translateY(-1px)",
+              }}
+            >
+              <Text>Explore Projects</Text>
+              <ArrowDown strokeWidth={3} color="#058743" />
+            </Button>
+          </Link>
+          <Link href="#about" flex={1}>
+            <Button
+              paddingY={6}
+              fontSize={18}
+              variant="solid"
+              bgColor="#058743"
+              color="white"
+              flex={1}
+              gap={4}
+              _hover={{
+                backgroundColor: "#047634",
+                color: "#white",
+                transform: "translateY(-1px)",
+              }}
+            >
+              <Text>Watch Intro Video</Text>
+              <Play strokeWidth={3} width={120} color="white" />
+            </Button>
+          </Link>
         </Flex>
       </Flex>
     </Flex>

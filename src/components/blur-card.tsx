@@ -12,9 +12,9 @@ export default function BlurCard({ children, ...rest }: BlurCardProps) {
       borderRadius="2xl"
       width="full"
       height="full"
-      bgColor="rgba(0, 0, 0, 0.05)"
+      bgColor="rgba(0, 0, 0, 0.02)"
       backdropFilter="blur(20px) saturate(180%)"
-      boxShadow="0 8px 50px 0px oklch(70.5% 0.213 47.604 / 0.25)"
+      boxShadow="0 8px 20px -5px oklch(0.5464 0.1433 151.69 / 0.25)"
       textAlign="center"
       zIndex={1}
       {...rest}

@@ -131,31 +131,37 @@ export default function Projects() {
         <Flex textAlign="left" flex={1} gap={8} direction="column">
           <Flex
             fontSize={30}
-            fontWeight="medium"
+            fontWeight="normal"
             direction="column"
             flex={7}
             gapY={8}
           >
             <Flex direction="column">
-              <Text fontSize={30} fontWeight="bold">
+              <Text fontSize={30} fontWeight="semibold">
                 Mon MonAmiChef
               </Text>
-              <Text fontSize={20} fontWeight="medium" opacity={0.5}>
+              <Text fontSize={20} fontWeight="normal" opacity={0.5}>
                 AI Meal Planning App Chef
               </Text>
             </Flex>
             <Flex gap={4} direction="column">
-              <Text fontSize={20} fontWeight="500" color="black">
+              <Text fontSize={18}>
                 An early-stage AI meal planning application built from concept
                 to initial launch.
               </Text>
-              <Text fontSize={20} fontWeight="500" color="black">
-                I shaped the product idea, planned delivery timelines, and
-                worked closely with a developer through iterative cycles,
-                testing each version, providing feedback, and adjusting
-                direction as the product evolved. I also defined the website and
-                product look and supported early marketing efforts around
-                launch.
+              <Text fontSize={18}>
+                MonAmiChef is a project where I acted as both a lead developer
+                and product architect, turning a vision into a scalable web
+                platform. I designed the entire technical architecture and
+                worked hand-in-hand with another developer, ensuring
+                high-quality code through constant peer reviews and iterative
+                testing. I was responsible for bridging the gap between the
+                product roadmap and the actual implementation, making sure every
+                sprint delivered real value. Beyond the code, I took care of the
+                UI/UX design and the platform&apos;s visual identity to ensure a
+                smooth and modern user experience. I also managed the deployment
+                and launch phases, staying agile to adjust the technical
+                direction based on early user feedback.
               </Text>
             </Flex>
           </Flex>
@@ -184,24 +190,28 @@ export default function Projects() {
               </Button>
             </Link>
 
-            <Button
-              alignItems="center"
-              justifyContent="center"
-              flex={1}
-              height="full"
-              variant="surface"
-              rounded="2xl"
-              disabled
-              fontWeight="600"
-              _hover={{
-                backgroundColor: "rgb(50, 50, 50)",
-                transform: "translateY(-5px)",
-                shadow: "sm",
-              }}
-              fontSize={15}
-            >
-              <Text>Case study in progress...</Text>
-            </Button>
+            <Link target="_blank" flex={1} href="https://github.com/MonAmiChef">
+              <Button
+                alignItems="center"
+                justifyContent="center"
+                flex={1}
+                height="full"
+                variant="solid"
+                rounded="2xl"
+                fontWeight="600"
+                _hover={{
+                  backgroundColor: "rgb(50, 50, 50)",
+                  transform: "translateY(-5px)",
+                  shadow: "sm",
+                }}
+                color="white"
+                bgColor="black"
+                fontSize={15}
+              >
+                <Text>Code base</Text>
+                <ExternalLink color="white" />
+              </Button>
+            </Link>
           </Flex>
         </Flex>
       </BlurCard>

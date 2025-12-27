@@ -1,20 +1,6 @@
-import React from "react";
 import { useForm, ValidationError } from "@formspree/react";
-import {
-  Box,
-  Button,
-  Input,
-  Textarea,
-  VStack,
-  Heading,
-  Text,
-  SimpleGrid,
-  Container,
-  Flex,
-  Separator,
-} from "@chakra-ui/react";
+import { Button, Input, Textarea, Heading, Text, Flex } from "@chakra-ui/react";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
-import { SocialIcon } from "react-social-icons";
 
 function ContactForm() {
   const [state, handleSubmit] = useForm("meejnkdb");
@@ -47,10 +33,13 @@ function ContactForm() {
       flex={1}
       zIndex={1}
       maxW="container.md"
+      color="black"
     >
       <Flex
         as="form"
         padding="50px"
+        bg="gray.100"
+        rounded="xl"
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onSubmit={handleSubmit as any}
         direction="column"
@@ -66,22 +55,14 @@ function ContactForm() {
             <FormLabel fontWeight="500" htmlFor="firstName">
               First name
             </FormLabel>
-            <Input
-              id="firstName"
-              name="firstName"
-              bgColor="rgba(255, 255, 255, 0.2)"
-            />
+            <Input id="firstName" name="firstName" bgColor="white" />
           </FormControl>
 
           <FormControl isRequired flex={1}>
             <FormLabel fontWeight="500" htmlFor="lastName">
               Last name
             </FormLabel>
-            <Input
-              id="lastName"
-              name="lastName"
-              bgColor="rgba(255, 255, 255, 0.2)"
-            />
+            <Input id="lastName" name="lastName" bgColor="white" />
           </FormControl>
         </Flex>
         {/* Email */}
@@ -94,7 +75,7 @@ function ContactForm() {
             type="email"
             name="email"
             placeholder="your@email.com"
-            bgColor="rgba(255, 255, 255, 0.2)"
+            bgColor="white"
           />
           <ValidationError
             prefix="Email"
@@ -108,12 +89,7 @@ function ContactForm() {
           <FormLabel fontWeight="500" htmlFor="message">
             Message
           </FormLabel>
-          <Textarea
-            id="message"
-            name="message"
-            rows={5}
-            bgColor="rgba(255, 255, 255, 0.2)"
-          />
+          <Textarea id="message" name="message" rows={5} bgColor="white" />
           <ValidationError
             prefix="Message"
             field="message"
@@ -144,21 +120,6 @@ function ContactForm() {
         >
           Send message
         </Button>
-        <Flex paddingY={2} justifyContent="center" gap={5}>
-          <SocialIcon
-            url="https://www.linkedin.com/in/arshiyaa-rai-56aa342b5/"
-            borderRadius="10%"
-          />
-          <SocialIcon
-            bgColor="rgba(30, 30, 30, 1)"
-            url="https://x.com/ArshiyaaRai"
-            borderRadius="10%"
-          />
-          <SocialIcon
-            url="https://www.instagram.com/arshiiiyyaaaaaaaa/"
-            borderRadius="10%"
-          />
-        </Flex>
       </Flex>
     </Flex>
   );
