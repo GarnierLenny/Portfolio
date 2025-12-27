@@ -51,7 +51,7 @@ export default function About() {
       gap={10}
     >
       <Flex
-        rounded="md"
+        rounded="xl"
         alignItems="center"
         justifyContent="center"
         bgColor="red"
@@ -63,7 +63,7 @@ export default function About() {
         paddingX="20px"
         paddingY="20px"
         direction="column"
-        rounded="md"
+        rounded="xl"
         bgColor="#058743"
         flex={2}
         gap={5}

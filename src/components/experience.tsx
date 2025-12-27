@@ -10,6 +10,7 @@ import {
 import BlurCard from "./blur-card";
 import { stackIcons, Technology } from "@/utils/stack-icons";
 import { formatDistance } from "date-fns";
+import { useState, useRef, useEffect } from "react";
 
 type Experience = {
   occupation: string;
@@ -127,6 +128,45 @@ const experiences: Experience[] = [
 ];
 
 export default function Experience() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToExperience = (index: number) => {
+    cardRefs.current[index]?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  };
+
+  useEffect(() => {
+    const observerOptions = {
+      root: scrollContainerRef.current,
+      threshold: 0.6, // La carte est considérée active quand elle occupe 60% de l'espace
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = cardRefs.current.findIndex(
+            (ref) => ref === entry.target
+          );
+          if (index !== -1) setActiveIndex(index);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions
+    );
+    cardRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Flex
       id="experience"
@@ -160,10 +200,21 @@ export default function Experience() {
           >
             {experiences.map((exp, index) => {
               return (
-                <Timeline.Item key={index}>
+                <Timeline.Item
+                  key={index}
+                  cursor="pointer"
+                  onClick={() => scrollToExperience(index)}
+                  color={activeIndex === index ? "green.500" : "inherit"}
+                  transition="all 0.3s"
+                >
                   <Timeline.Connector>
                     <Timeline.Separator />
-                    <Timeline.Indicator />
+                    <Timeline.Indicator
+                      bg={activeIndex === index ? "green.500" : "gray.200"}
+                      transform={
+                        activeIndex === index ? "scale(1.2)" : "scale(1)"
+                      }
+                    />
                   </Timeline.Connector>
                   <Timeline.Content>
                     <Timeline.Title fontSize="md">{exp.title}</Timeline.Title>
@@ -181,10 +232,9 @@ export default function Experience() {
         <Flex
           overflowY="scroll"
           css={{
-            "&::-webkit-scrollbar": {
-              display: "none",
-            },
+            "&::-webkit-scrollbar": { display: "none" },
             scrollbarWidth: "none",
+            scrollSnapType: "y mandatory",
           }}
           padding="50px"
           paddingTop="150px"
@@ -195,6 +245,9 @@ export default function Experience() {
           {experiences.map((exp, index) => {
             return (
               <BlurCard
+                ref={(el) => {
+                  cardRefs.current[index] = el;
+                }}
                 display="flex"
                 textAlign="left"
                 direction="column"
@@ -203,6 +256,7 @@ export default function Experience() {
                 key={index}
                 rounded="xl"
                 gapY={8}
+                style={{ scrollSnapAlign: "center" }}
                 gapX={16}
               >
                 <Flex flex={9} gapY={8} direction="column">
