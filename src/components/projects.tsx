@@ -190,7 +190,11 @@ export default function Projects() {
               </Button>
             </Link>
 
-            <Link target="_blank" flex={1} href="https://github.com/MonAmiChef">
+            <Link
+              target="_blank"
+              flex={1}
+              href="https://github.com/orgs/MonAmiChef/repositories"
+            >
               <Button
                 alignItems="center"
                 justifyContent="center"

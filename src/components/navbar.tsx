@@ -85,7 +85,10 @@ function Navbar() {
           }}
           transition="all 0.2s ease"
         >
-          <Link href="#contacts">
+          <Link
+            target="_blank"
+            href="/Lenny_Garnier_Resume_Fullstack_Developer.pdf"
+          >
             <Text fontWeight="bold">Curriculum Vitae | CV</Text>
           </Link>
         </Button>
