@@ -141,7 +141,7 @@ export default function Projects() {
       title: "MonAmiChef",
       logo: MonAmiChef,
       status: "In progress",
-      shortDescription: "Generates playlist based on Mood with AI",
+      shortDescription: "AI powered chef assistant",
       description: "",
       url: "https://github.com/MonAmiChef",
       website: "https://monamichef.com/",
@@ -191,7 +191,8 @@ export default function Projects() {
       title: "PHAR",
       logo: Phar,
       status: "Completed",
-      shortDescription: "Generates playlist based on Mood with AI",
+      shortDescription:
+        "School project - Generates playlist based on Mood with AI",
       description: "",
       url: undefined,
       showCode: false,
