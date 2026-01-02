@@ -10,7 +10,7 @@ import { IoMdPerson } from "react-icons/io";
 import { IoLayers } from "react-icons/io5";
 
 export const cardHoverScale =
-  "hover:scale-105 duration-100 hover:bg-ruddy-blue-darker-darker";
+  "hover:scale-105 duration-200 hover:bg-ruddy-blue-darker-darker";
 
 type Experience = {
   title: string;
@@ -79,12 +79,21 @@ function ExperiencesList({
 export default function Experiences() {
   const professional: Experience[] = [
     {
-      title: "Polyconseil",
+      title: "Polycea",
       location: "Paris, France",
-      start: "May 2025",
+      start: "November 2025",
+      end: "-",
+      position: "Full-stack developer",
+      status: "CDI",
+      countryCode: "FR",
+    },
+    {
+      title: "Polycea",
+      location: "Paris, France",
+      start: "August 2025",
       end: "November 2025",
       position: "Full-stack developer",
-      status: "Full-time internship",
+      status: "Internship",
       countryCode: "FR",
     },
     {
@@ -93,7 +102,7 @@ export default function Experiences() {
       start: "September 2024",
       end: "February 2025",
       position: "Mobile/Full-stack developer",
-      status: "Part-time internship",
+      status: "Freelance developer",
       countryCode: "DE",
     },
     {
@@ -102,7 +111,7 @@ export default function Experiences() {
       start: "April 2023",
       end: "August 2023",
       position: "Mobile/Full-stack developer",
-      status: "Full-time internship",
+      status: "Internship",
       countryCode: "FR",
     },
     {
@@ -120,7 +129,7 @@ export default function Experiences() {
       start: "August 2021",
       end: "December 2021",
       position: "Software Engineer",
-      status: "Full-time internship",
+      status: "internship",
       countryCode: "FR",
     },
   ];

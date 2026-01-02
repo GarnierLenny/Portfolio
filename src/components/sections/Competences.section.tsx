@@ -10,15 +10,19 @@ import {
   BiLogoNodejs,
   BiLogoCPlusPlus,
   BiLogoGoLang,
+  BiLogoGoogleCloud,
 } from "react-icons/bi";
 import {
   DiDjango,
   DiDocker,
+  DiGoogleCloudPlatform,
   DiMongodb,
   DiMysql,
+  DiPostgresql,
   DiPython,
 } from "react-icons/di";
 import { FaAws, FaCircle } from "react-icons/fa";
+import { FiFigma } from "react-icons/fi";
 import {
   RiNextjsFill,
   RiNextjsLine,
@@ -33,11 +37,12 @@ import {
   SiGithub,
   SiGitlab,
   SiJest,
+  SiNestjs,
 } from "react-icons/si";
 import { TbBrandSocketIo } from "react-icons/tb";
 
 export const cardHoverScale =
-  "hover:scale-105 duration-100 hover:bg-lighter-black";
+  "hover:scale-105 duration-200 hover:bg-lighter-black hover:text-white";
 
 export type TechnoType = {
   name: string;
@@ -75,32 +80,20 @@ function Languages() {
     },
     {
       name: "English",
-      countryCode: "US",
+      countryCode: "GB",
       level: "C1",
       status: "Fluent",
     },
     {
-      name: "Spanish",
-      countryCode: "ES",
-      level: "B1",
-      status: "On hold",
+      name: "Hindi",
+      countryCode: "IN",
+      level: "A1",
+      status: "Learning",
     },
     {
       name: "Korean",
       countryCode: "KR",
       level: "A2",
-      status: "Learning",
-    },
-    {
-      name: "Italian",
-      countryCode: "IT",
-      level: "A1",
-      status: "On hold",
-    },
-    {
-      name: "Chinese",
-      countryCode: "CN",
-      level: "A1",
       status: "On hold",
     },
   ];
@@ -195,16 +188,6 @@ function HardSkills() {
             />
           ),
         },
-        {
-          name: "Python",
-          icon: (
-            <DiPython
-              className="justify-self-center"
-              color="#FFD43B"
-              size={logoSize}
-            />
-          ),
-        },
       ],
     },
     {
@@ -256,6 +239,16 @@ function HardSkills() {
             />
           ),
         },
+        {
+          name: "Figma",
+          icon: (
+            <FiFigma
+              className="justify-self-center"
+              color="#ff46a2"
+              size={logoSize}
+            />
+          ),
+        },
       ],
     },
     {
@@ -272,41 +265,21 @@ function HardSkills() {
           ),
         },
         {
+          name: "NestJs",
+          icon: (
+            <SiNestjs
+              className="justify-self-center"
+              color="#e34c26"
+              size={logoSize}
+            />
+          ),
+        },
+        {
           name: "ExpressJs",
           icon: (
             <SiExpress
               className="justify-self-center"
               color="#61dbfb"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Golang",
-          icon: (
-            <BiLogoGoLang
-              className="justify-self-center"
-              color="#29BEB0"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Socket.io",
-          icon: (
-            <TbBrandSocketIo
-              className="justify-self-center"
-              color="#4db33d"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Django",
-          icon: (
-            <DiDjango
-              className="justify-self-center"
-              color="#e34c26"
               size={logoSize}
             />
           ),
@@ -347,9 +320,13 @@ function HardSkills() {
           ),
         },
         {
-          name: "MySQL",
+          name: "PostgreSQL",
           icon: (
-            <DiMysql color="#00758f" className="rounded-full" size={logoSize} />
+            <DiPostgresql
+              color="#00758f"
+              className="rounded-full"
+              size={logoSize}
+            />
           ),
         },
       ],
@@ -408,11 +385,11 @@ function HardSkills() {
       type: "Cloud",
       technos: [
         {
-          name: "AWS",
+          name: "Google cloud",
           icon: (
-            <FaAws
+            <BiLogoGoogleCloud
               className="justify-self-center"
-              color="#ff9900"
+              color="#61dbfb"
               size={logoSize}
             />
           ),
