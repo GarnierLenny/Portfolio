@@ -1,7 +1,6 @@
-import palette from "@/utils/palette.utils";
 import React from "react";
 import Image from "next/image";
-import hat from "../../../public/hat.png";
+import sea from "../../../public/sea.jpeg";
 import { PrimaryButton, SecondaryButton } from "../buttons.component";
 import { FiExternalLink } from "react-icons/fi";
 import { BiDownArrowAlt } from "react-icons/bi";
@@ -16,14 +15,13 @@ export default function Hero({ itemEls }: any) {
 
   return (
     <div
-      className="pt-6 md:pt-0 flex h-screen justify-center w-full"
-      style={{ backgroundColor: palette.blue }}
+      className="pt-6 md:pt-0 flex h-screen justify-center w-full bg-cyan-500"
     >
       <div className="flex gap-x-16 flex-col md:flex-row justify-center gap-y-7">
         <div className=" flex justify-center">
           <Image
             className="rounded-full justify-self-center self-center size-60 md:size-96"
-            src={hat}
+            src={sea}
             alt="pp"
           />
         </div>
@@ -33,11 +31,11 @@ export default function Hero({ itemEls }: any) {
             <p className="animate-wave-hand">👋</p>
           </div>
           <p className="animate-scale-up text-xl md:text-2xl text-white">
-            A passionate software engineer
+            An efficient fullstack developer
           </p>
           <div className="grid grid-rows-2 gap-y-2 md:grid-cols-2 mx-5 md:mx-0 mt-3 md:mt-5 gap-x-3">
             <div className="flex grow animate-slide-left">
-              <PrimaryButton
+              <SecondaryButton
                 rightIcon={<BiDownArrowAlt size={getIconSize(23, 26)} />}
                 text="Let's connect!"
                 callback={() => {
@@ -46,11 +44,11 @@ export default function Hero({ itemEls }: any) {
               />
             </div>
             <div className="flex grow animate-slide-right">
-              <SecondaryButton
-                rightIcon={<FiExternalLink size={getIconSize(20, 25)} />}
-                text="See this page's code"
+              <PrimaryButton
+                rightIcon={<FiExternalLink size={20} />}
+                text="Let's work together!"
                 callback={() => {
-                  window.open("https://github.com/GarnierLenny/Portfolio");
+                  window.open("https://www.malt.fr/profile/lennygarnier");
                 }}
               />
             </div>

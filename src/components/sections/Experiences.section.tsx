@@ -10,7 +10,7 @@ import { IoMdPerson } from "react-icons/io";
 import { IoLayers } from "react-icons/io5";
 
 export const cardHoverScale =
-  "hover:scale-105 duration-200 hover:bg-ruddy-blue-darker-darker";
+  "hover:scale-105 duration-200 hover:bg-cyan-950";
 
 type Experience = {
   title: string;
@@ -35,7 +35,7 @@ function ExperiencesList({
       <div className="md:grid md:grid-cols-3 flex flex-col md:flex-row flex-grow flex-wrap gap-y-3 my-5">
         {experiences.map((exp, index) => (
           <div
-            className={`${cardHoverScale} flex flex-col rounded-lg bg-ruddy-blue-darker mx-3 p-4`}
+            className={`${cardHoverScale} flex flex-col rounded-lg bg-cyan-900 mx-3 p-4`}
             key={index}
           >
             <p className="font-bold text-lg text-white">{exp.title}</p>
@@ -81,19 +81,10 @@ export default function Experiences() {
     {
       title: "Polycea",
       location: "Paris, France",
-      start: "November 2025",
-      end: "-",
+      start: "May 2025",
+      end: "January 2026",
       position: "Full-stack developer",
       status: "CDI",
-      countryCode: "FR",
-    },
-    {
-      title: "Polycea",
-      location: "Paris, France",
-      start: "August 2025",
-      end: "November 2025",
-      position: "Full-stack developer",
-      status: "Internship",
       countryCode: "FR",
     },
     {
@@ -161,7 +152,7 @@ export default function Experiences() {
   ];
 
   return (
-    <div id="experiences" className="grow bg-ruddy-blue md:px-3 pb-6">
+    <div id="experiences" className="grow md:px-3 pb-6 bg-cyan-800">
       <SectionPrimaryTitle title="Experience" />
       <ExperiencesList title="Professional" experiences={professional} />
       <ExperiencesList title="Academic" experiences={academic} />

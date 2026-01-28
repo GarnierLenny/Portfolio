@@ -7,10 +7,10 @@ import {
   SectionPrimaryTitle,
   SectionSecondaryTitle,
 } from "./Competences.section";
-import palette from "@/utils/palette.utils";
 import { BiLogoGmail } from "react-icons/bi";
 import { ImCheckmark } from "react-icons/im";
 import { Analytics } from "@vercel/analytics/react";
+import { SiMalt } from "react-icons/si";
 
 export const cardHoverScale = "hover:scale-105 duration-100";
 
@@ -52,7 +52,7 @@ export default function Contact() {
       icon: clicked ? (
         <ImCheckmark color="#fff" size={20} />
       ) : (
-        <BiLogoGmail color={palette.light_red} size={logoSize} />
+        <BiLogoGmail color="#ef4444" size={logoSize} />
       ),
     },
     {
@@ -61,6 +61,13 @@ export default function Contact() {
       callback: () => window.open("https://github.com/GarnierLenny"),
       lightText: true,
       icon: <FaGithub color="#fff" size={logoSize} />,
+    },
+    {
+      text: "Malt",
+      color: "#fc5757",
+      callback: () => window.open("https://www.malt.fr/profile/lennygarnier"),
+      lightText: true,
+      icon: <SiMalt color="#fff" size={logoSize} />,
     },
     {
       text: "LinkedIn",
@@ -84,41 +91,11 @@ export default function Contact() {
       lightText: true,
       icon: <FaXTwitter color="#fff" size={logoSize} />,
     },
-    // {
-    //   text: "Glassdoor",
-    //   color: '#fff',
-    //   callback: 'to',
-    //   lightText: false,
-    //   icon: <SiGlassdoor color='#0CAA41' size={logoSize} />,
-    // },
-    // {
-    //   text: "Fiverr",
-    //   color: '#00b22d',
-    //   callback: 'to',
-    //   lightText: true,
-    //   icon: <TbBrandFiverr color='#fff' size={logoSize} />,
-    // },
-    // {
-    //   text: "Malt",
-    //   color: palette.light_red,
-    //   callback: window.open('https://www.malt.fr/profile/lennygarnier'),
-    //   lightText: true,
-    //   icon: <SiMalt color="#fff" size={logoSize} />,
-    // },
-    {
-      text: "Stack Overflow",
-      color: "#fff",
-      callback: () =>
-        window.open("https://stackoverflow.com/users/24929945/lenny-garnier"),
-      lightText: false,
-      icon: <BsStackOverflow color="#F47F24" size={logoSize} />,
-    },
   ];
 
   return (
     <div className="flex flex-col bg-slate-800 w-full pb-3 md:px-3">
       <SectionPrimaryTitle title="Contacts" />
-      <SectionSecondaryTitle title="Feel free to contact me!" />
       <div className="flex align-middle flex-wrap gap-3 px-8 mt-6">
         <div className="flex flex-col md:flex-row flex-wrap gap-2 w-full">
           {contacts.map((contact, index) => (

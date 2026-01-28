@@ -39,6 +39,7 @@ type ProjectType = {
   url: string | undefined;
   showCode: boolean;
   website?: string | undefined;
+  rapidapi?: string | undefined;
 };
 
 function Project({
@@ -50,6 +51,7 @@ function Project({
   status,
   url,
   website = undefined,
+  rapidapi = undefined,
   showCode,
 }: ProjectType) {
   const technosColor: { [name: string]: string } = {
@@ -69,7 +71,7 @@ function Project({
   };
 
   return (
-    <div className="flex py-5 rounded-lg pl-5 bg-black grow mx-3">
+    <div className="flex py-5 rounded-lg pl-5 bg-purple-900 grow mx-3">
       <Image
         className="rounded-lg justify-self-center self-center size-20 md:size-32"
         src={logo}
@@ -106,28 +108,39 @@ function Project({
           ))}
         </div>
         <div className="grow" />
-        <div className="flex mt-2 gap-x-2">
+        <div className="flex flex-col mt-2 gap-x-2">
           {/* <button className={`${cardHoverScale} grow py-1 flex mt-3 justify-center bg-white rounded-md`}>
             <p className='text-xxs font-bold text-black'>{'See more ->'}</p>
           </button> */}
           {showCode && (
             <button
               onClick={() => window.open(url)}
-              className={`${cardHoverScale} gap-x-1 py-1 grow flex mt-3 justify-center bg-light-red rounded-md`}
+              className={`${cardHoverScale} gap-x-1 py-1 grow flex mt-3 justify-center bg-white rounded-md`}
             >
-              <p className="text-xxs font-bold text-white">See code</p>
-              <FiExternalLink className="self-center" size={13} color="#fff" />
+              <p className="text-xxs font-bold text-black">See code</p>
+              <FiExternalLink className="self-center" size={13} color="#000" />
             </button>
           )}
-          {website && (
-            <button
-              onClick={() => window.open(website)}
-              className={`${cardHoverScale} gap-x-1 py-1 grow flex mt-3 bg-orange-500 justify-center rounded-md`}
-            >
-              <p className="text-xxs font-bold text-white">Go to website</p>
-              <FiExternalLink className="self-center" size={13} color="#fff" />
-            </button>
-          )}
+          <div className="flex gap-2.5">
+            {website && (
+              <button
+                onClick={() => window.open(website)}
+                className={`${cardHoverScale} flex-1 gap-x-1 py-1 grow flex mt-3 bg-orange-500 justify-center rounded-md`}
+              >
+                <p className="text-xxs font-bold text-white">Go to website</p>
+                <FiExternalLink className="self-center" size={13} color="#fff" />
+              </button>
+            )}
+            {rapidapi && (
+              <button
+                onClick={() => window.open(rapidapi)}
+                className={`${cardHoverScale} flex-1 gap-x-1 py-1 grow flex mt-3 bg-blue-700 justify-center rounded-md`}
+              >
+                <p className="text-xxs font-bold text-white">See API on RapidAPI</p>
+                <FiExternalLink className="self-center" size={13} color="#fff" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -143,7 +156,8 @@ export default function Projects() {
       status: "In progress",
       shortDescription: "AI powered chef assistant",
       description: "",
-      url: "https://github.com/MonAmiChef",
+      url: "https://github.com/MonAmiChef/MonAmiChef",
+      rapidapi: "https://rapidapi.com/GarnierLenny/api/monamichef",
       website: "https://monamichef.com/",
       showCode: true,
       technologies: [
@@ -357,9 +371,8 @@ export default function Projects() {
   ];
 
   return (
-    <div className="grow bg-glaucous pb-6 md:px-3">
+    <div className="grow bg-purple-700 pb-6 md:px-3">
       <SectionPrimaryTitle title="Projects" />
-      <SectionSecondaryTitle title="Some of the projects I'm working on" />
       <div className="flex flex-col md:grid md:grid-cols-2 mt-5 gap-y-3 pb-6">
         {projects.map(
           (
@@ -373,6 +386,7 @@ export default function Projects() {
               url,
               showCode,
               website,
+              rapidapi,
             },
             index
           ) => (
@@ -387,6 +401,7 @@ export default function Projects() {
                 url={url}
                 showCode={showCode}
                 website={website}
+                rapidapi={rapidapi}
               />
             </div>
           )

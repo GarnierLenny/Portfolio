@@ -5,44 +5,28 @@ import {
   BiLogoJavascript,
   BiLogoTypescript,
   BiLogoReact,
-  BiLogoHtml5,
-  BiLogoCss3,
   BiLogoNodejs,
-  BiLogoCPlusPlus,
-  BiLogoGoLang,
-  BiLogoGoogleCloud,
 } from "react-icons/bi";
 import {
-  DiDjango,
   DiDocker,
-  DiGoogleCloudPlatform,
-  DiMongodb,
-  DiMysql,
   DiPostgresql,
-  DiPython,
 } from "react-icons/di";
-import { FaAws, FaCircle } from "react-icons/fa";
+import { FaCircle } from "react-icons/fa";
 import { FiFigma } from "react-icons/fi";
 import {
-  RiNextjsFill,
-  RiNextjsLine,
   RiSupabaseFill,
   RiTailwindCssFill,
 } from "react-icons/ri";
 import {
-  SiC,
-  SiExpress,
-  SiFirebase,
   SiGit,
   SiGithub,
   SiGitlab,
   SiJest,
   SiNestjs,
 } from "react-icons/si";
-import { TbBrandSocketIo } from "react-icons/tb";
 
 export const cardHoverScale =
-  "hover:scale-105 duration-200 hover:bg-lighter-black hover:text-white";
+  "hover:scale-105 duration-200";
 
 export type TechnoType = {
   name: string;
@@ -110,7 +94,7 @@ function Languages() {
       <div className="flex mx-5 flex-wrap justify-center md:justify-normal gap-2.5 mt-5">
         {languages.map((language, index) => (
           <div
-            className={`bg-light-back ${cardHoverScale} shadow-lg shadow-black px-4 py-4 text-center rounded-lg`}
+            className={`bg-indigo-950 ${cardHoverScale} px-6 py-4 text-center rounded-lg`}
             style={{ borderWidth: 0 }}
             key={index}
           >
@@ -168,51 +152,11 @@ function HardSkills() {
             />
           ),
         },
-        {
-          name: "C",
-          icon: (
-            <SiC
-              className="justify-self-center"
-              color="#007acc"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "C++",
-          icon: (
-            <BiLogoCPlusPlus
-              className="justify-self-center"
-              color="#007acc"
-              size={logoSize}
-            />
-          ),
-        },
       ],
     },
     {
       type: "Front-end",
       technos: [
-        {
-          name: "HTML",
-          icon: (
-            <BiLogoHtml5
-              color="#e34c26"
-              className="rounded-full"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "CSS",
-          icon: (
-            <BiLogoCss3
-              color="#264de4"
-              className="rounded-full"
-              size={logoSize}
-            />
-          ),
-        },
         {
           name: "React",
           icon: <BiLogoReact color="#61dbfb" size={logoSize} />,
@@ -220,10 +164,6 @@ function HardSkills() {
         {
           name: "React Native",
           icon: <BiLogoReact color="#61dbfb" size={logoSize} />,
-        },
-        {
-          name: "NextJS",
-          icon: <RiNextjsLine color="#111" size={logoSize} />,
         },
         {
           name: "Tailwind",
@@ -274,47 +214,17 @@ function HardSkills() {
             />
           ),
         },
-        {
-          name: "ExpressJs",
-          icon: (
-            <SiExpress
-              className="justify-self-center"
-              color="#61dbfb"
-              size={logoSize}
-            />
-          ),
-        },
       ],
     },
     {
       type: "Databases",
       technos: [
         {
-          name: "Firebase",
-          icon: (
-            <SiFirebase
-              className="justify-self-center"
-              color="#F5820D"
-              size={logoSize}
-            />
-          ),
-        },
-        {
           name: "Supabase",
           icon: (
             <RiSupabaseFill
               className="justify-self-center"
               color="#41f883"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "MongoDB",
-          icon: (
-            <DiMongodb
-              className="justify-self-center"
-              color="#4db33d"
               size={logoSize}
             />
           ),
@@ -382,21 +292,6 @@ function HardSkills() {
       ],
     },
     {
-      type: "Cloud",
-      technos: [
-        {
-          name: "Google cloud",
-          icon: (
-            <BiLogoGoogleCloud
-              className="justify-self-center"
-              color="#61dbfb"
-              size={logoSize}
-            />
-          ),
-        },
-      ],
-    },
-    {
       type: "Version control systems",
       technos: [
         {
@@ -417,14 +312,14 @@ function HardSkills() {
     <div className="flex flex-col">
       <SectionPrimaryTitle title="Hard skills" />
       {skills.map((skill, index) => (
-        <div className="border-t mb-9 border-light-back" key={index}>
+        <div className="mb-9" key={index}>
           <div className="pt-2">
             <SectionSecondaryTitle title={skill.type} />
           </div>
           <div className="flex mx-5 mt-3 flex-wrap flex-row gap-2 justify-center md:justify-normal">
             {skill.technos.map((techno, index) => (
               <div
-                className={`flex flex-col ${cardHoverScale} rounded-lg text-center bg-light-back p-5`}
+                className={`flex flex-col ${cardHoverScale} rounded-lg text-center bg-indigo-950 p-5`}
                 key={index}
               >
                 <div className="self-center">{techno.icon}</div>
