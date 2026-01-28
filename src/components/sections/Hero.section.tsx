@@ -31,12 +31,12 @@ export default function Hero({ itemEls }: any) {
             <p className="animate-wave-hand">👋</p>
           </div>
           <p className="animate-scale-up text-xl md:text-2xl text-white">
-            An efficient fullstack developer
+            I turn ideas into real life products
           </p>
           <div className="grid grid-rows-2 gap-y-2 md:grid-cols-2 mx-5 md:mx-0 mt-3 md:mt-5 gap-x-3">
             <div className="flex grow animate-slide-left">
               <SecondaryButton
-                rightIcon={<BiDownArrowAlt size={getIconSize(23, 26)} />}
+                rightIcon={<BiDownArrowAlt size={20} />}
                 text="Let's connect!"
                 callback={() => {
                   itemEls.current[4].scrollIntoView({ behavior: "smooth" });
