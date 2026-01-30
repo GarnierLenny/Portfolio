@@ -48,7 +48,7 @@ export default function Hero({ itemEls }: any) {
                 rightIcon={<FiExternalLink size={20} />}
                 text="Let's work together!"
                 callback={() => {
-                  window.open("https://www.malt.fr/profile/lennygarnier");
+                  window.open("https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1");
                 }}
               />
             </div>

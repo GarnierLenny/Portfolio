@@ -10,7 +10,7 @@ type ButtonProps = {
 
 export function PrimaryButton({text, callback, borderWidth = 0, rightIcon = undefined}: ButtonProps) {
   return (
-    <button onClick={callback} className={`${cardHoverScale} text-white bg-red-500 hover:bg-red-600 gap-x-2 grow font-semibold bg-light-red flex justify-center items-center text-sm md:text-base py-2 px-4 rounded-xl`}>
+    <button onClick={callback} className={`${cardHoverScale} text-white bg-green-600 hover:bg-green-700 gap-x-2 grow font-semibold flex justify-center items-center text-sm md:text-base py-2 px-4 rounded-xl`}>
       <p className='ml-4 md:ml-2'>{text}</p>
       <p>{rightIcon}</p>
     </button>

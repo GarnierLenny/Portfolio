@@ -1,7 +1,7 @@
 import React, { ReactNode, useState } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { SiLeetcode } from "react-icons/si";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaUpwork, FaXTwitter } from "react-icons/fa6";
 import { BsStackOverflow } from "react-icons/bs";
 import {
   SectionPrimaryTitle,
@@ -61,6 +61,13 @@ export default function Contact() {
       callback: () => window.open("https://github.com/GarnierLenny"),
       lightText: true,
       icon: <FaGithub color="#fff" size={logoSize} />,
+    },
+    {
+      text: "Upwork",
+      color: "#14A800",
+      callback: () => window.open("https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1"),
+      lightText: true,
+      icon: <FaUpwork color="#fff" size={logoSize} />,
     },
     {
       text: "Malt",
