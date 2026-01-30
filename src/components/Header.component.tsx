@@ -1,5 +1,10 @@
 import React, { ReactNode } from "react";
-import { MdAccountCircle, MdStar, MdPhone, MdQuestionAnswer } from "react-icons/md";
+import {
+  MdAccountCircle,
+  MdStar,
+  MdPhone,
+  MdQuestionAnswer,
+} from "react-icons/md";
 import { FaToolbox } from "react-icons/fa";
 import { IoMdJournal } from "react-icons/io";
 
@@ -8,7 +13,7 @@ type SectionType = {
   icon: ReactNode;
 };
 
-export default function Header({refs, values}: any) {
+export default function Header({ refs, values }: any) {
   const sections: SectionType[] = [
     {
       name: "Hero",
@@ -34,19 +39,37 @@ export default function Header({refs, values}: any) {
 
   const executeScroll = (index: number) => {
     values.setSelected(index);
-    refs.current[index].scrollIntoView({behavior: 'smooth'});
+    refs.current[index].scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <div className="flex z-10 justify-center">
       <div className="flex mt-1 md:mt-0 rounded-full md:rounded-none top-0 w-4/5 md:w-full fixed md:sticky py-2 md:py-5 flex-row md:gap-y-4 justify-center px-8 md:flex-col md:h-screen text-white bg-slate-900">
         {sections.map((section, index) => (
-          <div onClick={() => executeScroll(index)} className={`hover:${values.selected === index ? '' : 'underline'} hover:stroke-red-500 flex gap-y-1 flex-col m-2 md:flex-row w-full text-center md:text-start md:justify-center`} key={index}>
-            <div style={{color: values.selected === index ? '#ef4444' : '#ffffff', alignSelf: 'center'}}>{section.icon}</div>
-            <p className={`w-full cursor-pointer md:px-5 text-sm md:text-lg hidden md:block`} style={{color: values.selected === index ? '#ef4444' : '#ffffff'}}>{section.name}</p>
+          <div
+            onClick={() => executeScroll(index)}
+            className={`hover:${values.selected === index ? "" : "underline"} hover:stroke-red-500 flex gap-y-1 flex-col m-2 md:flex-row w-full text-center md:text-start md:justify-center`}
+            key={index}
+          >
+            <div
+              style={{
+                color: values.selected === index ? "#ef4444" : "#ffffff",
+                alignSelf: "center",
+              }}
+            >
+              {section.icon}
+            </div>
+            <p
+              className={`w-full cursor-pointer md:px-5 text-sm md:text-lg hidden md:block`}
+              style={{
+                color: values.selected === index ? "#ef4444" : "#ffffff",
+              }}
+            >
+              {section.name}
+            </p>
           </div>
         ))}
       </div>
     </div>
   );
-};
+}

@@ -65,7 +65,10 @@ export default function Contact() {
     {
       text: "Upwork",
       color: "#14A800",
-      callback: () => window.open("https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1"),
+      callback: () =>
+        window.open(
+          "https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1",
+        ),
       lightText: true,
       icon: <FaUpwork color="#fff" size={logoSize} />,
     },

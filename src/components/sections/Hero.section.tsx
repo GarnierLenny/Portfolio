@@ -4,19 +4,17 @@ import sea from "../../../public/sea.jpeg";
 import { PrimaryButton, SecondaryButton } from "../buttons.component";
 import { FiExternalLink } from "react-icons/fi";
 import { BiDownArrowAlt } from "react-icons/bi";
+import Waves from "../../../public/stacked-waves-haikei.svg";
 
 export default function Hero({ itemEls }: any) {
-  const getIconSize = (small: number, large: number): number => {
-    if (typeof window !== "undefined") {
-      return window?.innerWidth > 768 ? large : small;
-    }
-    return 0;
-  };
-
   return (
-    <div
-      className="pt-6 md:pt-0 flex h-screen justify-center w-full bg-cyan-500"
-    >
+    <div className="pt-6 md:pt-0 flex h-screen justify-center w-full">
+      <Image
+        src={Waves}
+        alt="Waves background"
+        className="absolute object-cover w-full h-full overflow-hidden left-[0px] z-[-1]"
+      />
+
       <div className="flex gap-x-16 flex-col md:flex-row justify-center gap-y-7">
         <div className=" flex justify-center">
           <Image
@@ -48,7 +46,9 @@ export default function Hero({ itemEls }: any) {
                 rightIcon={<FiExternalLink size={20} />}
                 text="Let's work together!"
                 callback={() => {
-                  window.open("https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1");
+                  window.open(
+                    "https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1",
+                  );
                 }}
               />
             </div>

@@ -9,8 +9,7 @@ import ReactCountryFlag from "react-country-flag";
 import { IoMdPerson } from "react-icons/io";
 import { IoLayers } from "react-icons/io5";
 
-export const cardHoverScale =
-  "hover:scale-105 duration-200 hover:bg-cyan-950";
+export const cardHoverScale = "hover:scale-105 duration-200 hover:bg-cyan-950";
 
 type Experience = {
   title: string;

@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-key */
-"use client"
+"use client";
 import Header from "@/components/Header.component";
 import Hero from "@/components/sections/Hero.section";
 import Competences from "@/components/sections/Competences.section";
@@ -32,7 +32,10 @@ export default function Home() {
         const elementHeight = element.offsetHeight;
 
         // Considère la section comme active si on est dans ses limites
-        if (scrollY >= elementTop - 100 && scrollY < elementTop + elementHeight - 100) {
+        if (
+          scrollY >= elementTop - 100 &&
+          scrollY < elementTop + elementHeight - 100
+        ) {
           currentSection = i;
           break;
         }
@@ -41,21 +44,25 @@ export default function Home() {
       setSelected(currentSection);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
     <div className="flex flex-col md:flex-row">
       <title>Lenny Garnier</title>
-      <Header refs={itemEls} values={{selected, setSelected}} />
-      <main className="flex w-full mx-auto flex-col bg-yellow-900">
+      <Header refs={itemEls} values={{ selected, setSelected }} />
+      <main className="flex w-full mx-auto flex-col">
         {sections.map((section, index) => (
-          <div className="flex grow" key={index} ref={(element) => {
-            itemEls.current[index] = element;
-            }}>
+          <div
+            className="flex grow"
+            key={index}
+            ref={(element) => {
+              itemEls.current[index] = element;
+            }}
+          >
             {section}
           </div>
         ))}

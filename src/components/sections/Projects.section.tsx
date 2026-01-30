@@ -128,7 +128,11 @@ function Project({
                 className={`${cardHoverScale} flex-1 gap-x-1 py-1 grow flex mt-3 bg-orange-500 justify-center rounded-md`}
               >
                 <p className="text-xxs font-bold text-white">Go to website</p>
-                <FiExternalLink className="self-center" size={13} color="#fff" />
+                <FiExternalLink
+                  className="self-center"
+                  size={13}
+                  color="#fff"
+                />
               </button>
             )}
             {rapidapi && (
@@ -136,8 +140,14 @@ function Project({
                 onClick={() => window.open(rapidapi)}
                 className={`${cardHoverScale} flex-1 gap-x-1 py-1 grow flex mt-3 bg-blue-700 justify-center rounded-md`}
               >
-                <p className="text-xxs font-bold text-white">See API on RapidAPI</p>
-                <FiExternalLink className="self-center" size={13} color="#fff" />
+                <p className="text-xxs font-bold text-white">
+                  See API on RapidAPI
+                </p>
+                <FiExternalLink
+                  className="self-center"
+                  size={13}
+                  color="#fff"
+                />
               </button>
             )}
           </div>
@@ -388,7 +398,7 @@ export default function Projects() {
               website,
               rapidapi,
             },
-            index
+            index,
           ) => (
             <div className="flex" key={index}>
               <Project
@@ -404,7 +414,7 @@ export default function Projects() {
                 rapidapi={rapidapi}
               />
             </div>
-          )
+          ),
         )}
       </div>
     </div>

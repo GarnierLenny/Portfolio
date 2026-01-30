@@ -7,26 +7,13 @@ import {
   BiLogoReact,
   BiLogoNodejs,
 } from "react-icons/bi";
-import {
-  DiDocker,
-  DiPostgresql,
-} from "react-icons/di";
+import { DiDocker, DiPostgresql } from "react-icons/di";
 import { FaCircle } from "react-icons/fa";
 import { FiFigma } from "react-icons/fi";
-import {
-  RiSupabaseFill,
-  RiTailwindCssFill,
-} from "react-icons/ri";
-import {
-  SiGit,
-  SiGithub,
-  SiGitlab,
-  SiJest,
-  SiNestjs,
-} from "react-icons/si";
+import { RiSupabaseFill, RiTailwindCssFill } from "react-icons/ri";
+import { SiGit, SiGithub, SiGitlab, SiJest, SiNestjs } from "react-icons/si";
 
-export const cardHoverScale =
-  "hover:scale-105 duration-200";
+export const cardHoverScale = "hover:scale-105 duration-200";
 
 export type TechnoType = {
   name: string;

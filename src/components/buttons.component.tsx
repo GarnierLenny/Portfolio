@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import { cardHoverScale } from './sections/Competences.section';
+import React, { ReactNode } from "react";
+import { cardHoverScale } from "./sections/Competences.section";
 
 type ButtonProps = {
   text: string;
@@ -8,36 +8,68 @@ type ButtonProps = {
   rightIcon?: ReactNode;
 };
 
-export function PrimaryButton({text, callback, borderWidth = 0, rightIcon = undefined}: ButtonProps) {
+export function PrimaryButton({
+  text,
+  callback,
+  borderWidth = 0,
+  rightIcon = undefined,
+}: ButtonProps) {
   return (
-    <button onClick={callback} className={`${cardHoverScale} text-white bg-green-600 hover:bg-green-700 gap-x-2 grow font-semibold flex justify-center items-center text-sm md:text-base py-2 px-4 rounded-xl`}>
-      <p className='ml-4 md:ml-2'>{text}</p>
+    <button
+      onClick={callback}
+      className={`${cardHoverScale} text-white bg-green-600 hover:bg-green-700 gap-x-2 grow font-semibold flex justify-center items-center text-sm md:text-base py-2 px-4 rounded-xl`}
+    >
+      <p className="ml-4 md:ml-2">{text}</p>
       <p>{rightIcon}</p>
     </button>
   );
-};
+}
 
-export function SecondaryButton({text, callback, borderWidth = 0, rightIcon = undefined}: ButtonProps) {
+export function SecondaryButton({
+  text,
+  callback,
+  borderWidth = 0,
+  rightIcon = undefined,
+}: ButtonProps) {
   return (
-    <button onClick={callback} className={`${cardHoverScale} hover:bg-gray-100 grow gap-x-2 font-semibold text-black transparent flex justify-center items-center text-sm md:text-base py-3 md:py-5 px-4 text-center bg-white rounded-xl border-red-500`}>
-      <p className='ml-4 md:ml-2'>{text}</p>
+    <button
+      onClick={callback}
+      className={`${cardHoverScale} hover:bg-gray-100 grow gap-x-2 font-semibold text-black transparent flex justify-center items-center text-sm md:text-base py-3 md:py-5 px-4 text-center bg-white rounded-xl border-red-500`}
+    >
+      <p className="ml-4 md:ml-2">{text}</p>
       <p>{rightIcon}</p>
     </button>
   );
-};
+}
 
-export function TertiaryButton({text, callback, borderWidth = 0, rightIcon = undefined}: ButtonProps) {
+export function TertiaryButton({
+  text,
+  callback,
+  borderWidth = 0,
+  rightIcon = undefined,
+}: ButtonProps) {
   return (
-    <div onClick={callback} className='text-xxs text-black rounded-xl cursor-pointer'>
+    <div
+      onClick={callback}
+      className="text-xxs text-black rounded-xl cursor-pointer"
+    >
       <p>{text}</p>
     </div>
   );
-};
+}
 
-export function UnderLineButton({text, callback, borderWidth = 0, rightIcon = undefined}: ButtonProps) {
+export function UnderLineButton({
+  text,
+  callback,
+  borderWidth = 0,
+  rightIcon = undefined,
+}: ButtonProps) {
   return (
-    <div onClick={callback} className='text-white text-center rounded-xl p-2 bg-transparent cursor-pointer'>
+    <div
+      onClick={callback}
+      className="text-white text-center rounded-xl p-2 bg-transparent cursor-pointer"
+    >
       <p className="underline">{text}</p>
     </div>
   );
-};
+}
