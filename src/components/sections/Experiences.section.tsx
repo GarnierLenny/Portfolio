@@ -9,7 +9,8 @@ import ReactCountryFlag from "react-country-flag";
 import { IoMdPerson } from "react-icons/io";
 import { IoLayers } from "react-icons/io5";
 
-export const cardHoverScale = "hover:scale-105 duration-200 hover:bg-cyan-950";
+export const cardHoverScale =
+  "hover:scale-105 duration-200 hover:bg-indigo-950";
 
 type Experience = {
   title: string;
@@ -34,7 +35,7 @@ function ExperiencesList({
       <div className="md:grid md:grid-cols-3 flex flex-col md:flex-row flex-grow flex-wrap gap-y-3 my-5">
         {experiences.map((exp, index) => (
           <div
-            className={`${cardHoverScale} flex flex-col rounded-lg bg-cyan-900 mx-3 p-4`}
+            className={`${cardHoverScale} flex flex-col rounded-lg bg-indigo-900 mx-3 p-4`}
             key={index}
           >
             <p className="font-bold text-lg text-white">{exp.title}</p>
@@ -151,7 +152,7 @@ export default function Experiences() {
   ];
 
   return (
-    <div id="experiences" className="grow md:px-3 pb-6 bg-cyan-800">
+    <div id="experiences" className="grow md:px-3 pb-6 bg-indigo-700">
       <SectionPrimaryTitle title="Experience" />
       <ExperiencesList title="Professional" experiences={professional} />
       <ExperiencesList title="Academic" experiences={academic} />

@@ -106,7 +106,7 @@ export default function Hero({ itemEls }: any) {
               <span
                 className="
                   absolute -inset-1 rounded-2xl
-                  bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600
+                  bg-gradient-to-r from-blue-600 via-purple-500 to-violet-600
                   blur-lg opacity-70
                   animate-glow
                 "
