@@ -80,40 +80,62 @@ export default function Hero({ itemEls }: any) {
             <button
               onClick={() => setShowVideo(true)}
               className="
-                relative w-full md:flex-1
-                px-7 py-3.5
-                rounded-2xl
-                text-white font-bold
-                shadow-lg
-                transition-transform duration-300
-                hover:scale-[1.04]
-                active:scale-[0.98]
-                focus:outline-none
-              "
+    relative w-full md:flex-1
+    px-7 py-3.5
+    rounded-2xl
+    text-white font-bold
+    shadow-[0_18px_45px_-18px_rgba(0,0,0,0.8)]
+    transition-all duration-300
+    hover:scale-[1.05]
+    active:scale-[0.98]
+    focus:outline-none
+    focus-visible:ring-4 focus-visible:ring-cyan-300/40
+  "
             >
-              {/* Gradient Background */}
+              {/* Gradient Background (plus punchy) */}
               <span
                 className="
-                  absolute inset-0 rounded-2xl
-                  bg-gradient-to-r from-blue-800 via-cyan-800 to-indigo-800
-                  bg-[length:300%_300%]
-                  animate-gradient
-                  opacity-95
-                "
+      absolute inset-0 rounded-2xl
+      bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400
+      bg-[length:300%_300%]
+      animate-gradient
+      opacity-100
+      saturate-150
+    "
               />
 
-              {/* Glow */}
+              {/* Border / ring permanent (sépare du fond) */}
               <span
                 className="
-                  absolute -inset-1 rounded-2xl
-                  bg-gradient-to-r from-blue-600 via-purple-500 to-violet-600
-                  blur-lg opacity-70
-                  animate-glow
-                "
+      absolute inset-0 rounded-2xl
+      ring-1 ring-white/20
+      pointer-events-none
+    "
+              />
+
+              {/* Glow (moins flou, plus visible) */}
+              <span
+                className="
+      absolute -inset-2 rounded-2xl
+      bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-300
+      blur-md opacity-40
+      transition-opacity duration-300
+      group-hover:opacity-80
+    "
+              />
+
+              {/* Shine (reflet au hover) */}
+              <span
+                className="
+      absolute inset-0 rounded-2xl
+      bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.15)_45%,transparent_70%)]
+      opacity-0 transition-opacity duration-300
+      hover:opacity-100
+    "
               />
 
               {/* Content */}
-              <span className="relative inline-flex items-center gap-3">
+              <span className="relative inline-flex items-center gap-3 drop-shadow">
                 <FaPlay />
                 <span>Watch Intro</span>
                 <span className="text-white/90 text-sm hidden md:inline">
