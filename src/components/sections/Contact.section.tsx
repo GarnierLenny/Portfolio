@@ -32,9 +32,10 @@ export default function Contact() {
     {
       label: "Professional",
       text: "LinkedIn",
-      callback: () => window.open("https://www.linkedin.com/in/lenny-garnier-2ab689199/"),
+      callback: () =>
+        window.open("https://www.linkedin.com/in/lenny-garnier-2ab689199/"),
       icon: <FaLinkedin size={20} />,
-      highlight: true
+      highlight: true,
     },
     {
       label: "Freelance",
@@ -45,7 +46,10 @@ export default function Contact() {
     {
       label: "Freelance",
       text: "Upwork",
-      callback: () => window.open("https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1"),
+      callback: () =>
+        window.open(
+          "https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1",
+        ),
       icon: <FaUpwork size={20} />,
     },
     {
@@ -72,20 +76,23 @@ export default function Contact() {
     <section id="contact" className="bg-slate-900 w-full pb-20 px-6">
       <SectionPrimaryTitle title="Let's build something great together" />
       <div className="max-w-4xl mx-auto">
-        
         {/* Main Email CTA */}
         <div className="mt-10 mb-16 p-8 rounded-3xl bg-gradient-to-br from-indigo-600/20 to-purple-600/10 border border-indigo-500/30 backdrop-blur-md flex flex-col items-center text-center">
           <div className="p-4 bg-indigo-500/20 rounded-full mb-6">
             <Mail className="text-indigo-400" size={32} />
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Ready for your next project?</h3>
+          <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+            Ready for your next project?
+          </h3>
           <p className="text-slate-400 mb-8 max-w-md">
-            Whether you need a Fullstack dev for a SaaS or a Mobile expert for an AI app, I'm just an email away.
+            Whether you need a Fullstack dev for a SaaS or a Mobile expert for
+            an AI app, I&apos;m just an email away.
           </p>
-          
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
             <button
-              onClick={() => window.location.href = "mailto:lenny.garnier00@gmail.com"}
+              onClick={() =>
+                (window.location.href = "mailto:lenny.garnier00@gmail.com")
+              }
               className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-indigo-50 transition-all flex items-center justify-center gap-2"
             >
               Send me an email
@@ -97,7 +104,11 @@ export default function Contact() {
               }}
               className="px-8 py-4 bg-white/5 text-white font-bold rounded-xl border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center gap-2"
             >
-              {copied ? <ImCheckmark className="text-green-500" /> : <BiLogoGmail className="text-red-500" />}
+              {copied ? (
+                <ImCheckmark className="text-green-500" />
+              ) : (
+                <BiLogoGmail className="text-red-500" />
+              )}
               {copied ? "Email copied!" : "Copy email"}
             </button>
           </div>
@@ -116,11 +127,16 @@ export default function Contact() {
                   {contact.icon}
                 </div>
                 <div className="text-left">
-                  <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{contact.label}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">
+                    {contact.label}
+                  </p>
                   <p className="text-sm font-bold text-white">{contact.text}</p>
                 </div>
               </div>
-              <ArrowUpRight size={16} className="text-slate-600 group-hover:text-white transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              <ArrowUpRight
+                size={16}
+                className="text-slate-600 group-hover:text-white transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
             </button>
           ))}
         </div>
@@ -128,7 +144,8 @@ export default function Contact() {
         <footer className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
           <p>© 2026 Lenny Garnier. Built with Next.js & Tailwind.</p>
           <p className="flex items-center gap-2 italic">
-            Made with 🤍 in Reunion Island <span className="not-italic">🌴</span>
+            Made with 🤍 in Reunion Island{" "}
+            <span className="not-italic">🌴</span>
           </p>
         </footer>
       </div>
