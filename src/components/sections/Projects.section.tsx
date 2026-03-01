@@ -1,156 +1,115 @@
+"use client";
 import React from "react";
 import {
   cardHoverScale,
   SectionPrimaryTitle,
-  SectionSecondaryTitle,
-  TechnoType,
 } from "./Competences.section";
-import {
-  BiLogoCss3,
-  BiLogoHtml5,
-  BiLogoJavascript,
-  BiLogoReact,
-  BiLogoTypescript,
-} from "react-icons/bi";
-import { SiC, SiJest, SiNestjs } from "react-icons/si";
+import { BiLogoReact, BiLogoTypescript } from "react-icons/bi";
+import { SiJest, SiNestjs, SiOpenai } from "react-icons/si";
 import Image, { StaticImageData } from "next/image";
+import { DiPython } from "react-icons/di";
+import { RiTailwindCssFill } from "react-icons/ri";
+import { FiExternalLink, FiGithub, FiGlobe } from "react-icons/fi";
+
+// Importations des images (inchangées)
 import Phar from "@/../public/icon_full.png";
-import MonAmiChef from "@/../public/monamichef_square.png";
+import MonAmiChefLogo from "@/../public/monamichef_square.png";
 import TS from "@/../public/ts-logo.png";
 import MCT from "@/../public/mvt.png";
 import Iconless from "@/../public/iconless.png";
-import { DiPython } from "react-icons/di";
-import { FaCircle } from "react-icons/fa";
-import { RiTailwindCssFill } from "react-icons/ri";
-import { FiExternalLink } from "react-icons/fi";
-
-const Progress = {
-  "In progress": "#F5820D",
-  Completed: "#0CAA41",
-};
 
 type ProjectType = {
   title: string;
   logo: StaticImageData;
   shortDescription: string;
-  description: string;
-  technologies: TechnoType[];
+  technologies: string[]; // Simplifié : juste les noms
   status: "In progress" | "Completed";
-  url: string | undefined;
+  url?: string;
+  website?: string;
+  rapidapi?: string;
   showCode: boolean;
-  website?: string | undefined;
-  rapidapi?: string | undefined;
 };
 
-function Project({
-  title,
-  logo,
-  shortDescription,
-  description,
-  technologies,
-  status,
-  url,
-  website = undefined,
-  rapidapi = undefined,
-  showCode,
-}: ProjectType) {
-  const technosColor: { [name: string]: string } = {
-    Javascript: "#f0db4f",
-    Typescript: "#007acc",
-    C: "#007acc",
-    "C++": "#007acc",
-    Python: "#FFD43B",
-    HTML: "#e34c26",
-    CSS: "#264de4",
-    React: "#61dbfb",
-    "React Native": "#61dbfb",
-    Tailwind: "#06b6d4",
-    Jest: "#e34c26",
-    NodeJs: "#41b883",
-    ExpressJs: "#61dbfb",
-  };
+// Couleurs des technos centralisées
+const TECH_COLORS: { [key: string]: string } = {
+  "React Native": "#61dbfb",
+  Typescript: "#007acc",
+  Nestjs: "#e31b5f",
+  Jest: "#c21325",
+  Tailwind: "#06b6d4",
+  Python: "#FFD43B",
+  React: "#61dbfb",
+  "AI / OpenAI": "#74aa9c"
+};
+
+function ProjectCard({ project }: { project: ProjectType }) {
+  const { title, logo, shortDescription, technologies, status, url, website, rapidapi, showCode } = project;
 
   return (
-    <div className="flex py-5 rounded-lg pl-5 bg-purple-900 grow mx-3">
-      <Image
-        className="rounded-lg justify-self-center self-center size-20 md:size-32"
-        src={logo}
-        alt="ProjectLogo"
-      />
-      <div className="flex flex-col grow mx-3 md:mx-7">
-        <p className="font-bold text-white">{title}</p>
-        <p className="text-xxs text-slate-300 font-medium">
-          {shortDescription}
-        </p>
-        <div className="flex my-4">
-          <div
-            style={{ backgroundColor: Progress[status] }}
-            className={` ${cardHoverScale} flex cursor-pointer px-2 py-1 rounded-full bg-white rounded-xs gap-x-1.5 font-medium text-black`}
-          >
-            <FaCircle className="self-center" color="#fff" size={7} />
-            <p className="text-4xs md:text-3xs text-white">{status}</p>
+    <div className={`group flex flex-col md:flex-row gap-6 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm transition-all duration-300`}>
+      {/* Logo Section */}
+      <div className="flex-shrink-0 flex items-center justify-center">
+        <Image
+          className="rounded-2xl size-20 md:size-28 object-cover shadow-2xl group-hover:scale-105 transition-transform duration-500"
+          src={logo}
+          alt={`${title} logo`}
+        />
+      </div>
+
+      {/* Content Section */}
+      <div className="flex flex-col flex-grow">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">
+              {title}
+            </h3>
+            <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+              {shortDescription}
+            </p>
           </div>
-          <div className="grow transparent" />
+          <span className={`text-[10px] px-2 py-1 rounded-full border ${
+            status === "Completed" ? "border-green-500/50 text-green-400 bg-green-500/5" : "border-orange-500/50 text-orange-400 bg-orange-500/5"
+          }`}>
+            {status}
+          </span>
         </div>
-        <div className="flex gap-1.5 flex-wrap">
-          {technologies.map((techno, index) => (
-            <div
-              className={` ${cardHoverScale} flex cursor-pointer px-2 py-1 rounded-full bg-white rounded-xs gap-x-1.5 font-medium text-black`}
-              key={index}
-            >
-              <FaCircle
-                className="self-center"
-                color={technosColor[techno.name]}
-                size={7}
-              />
-              <p className="text-4xs md:text-3xs">{techno.name}</p>
-            </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mt-4">
+          {technologies.map((tech) => (
+            <span key={tech} className="flex items-center gap-1.5 text-[10px] font-bold text-slate-300 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">
+              <div className="size-1.5 rounded-full" style={{ backgroundColor: TECH_COLORS[tech] || "#fff" }} />
+              {tech}
+            </span>
           ))}
         </div>
-        <div className="grow" />
-        <div className="flex flex-col mt-2 gap-x-2">
-          {/* <button className={`${cardHoverScale} grow py-1 flex mt-3 justify-center bg-white rounded-md`}>
-            <p className='text-xxs font-bold text-black'>{'See more ->'}</p>
-          </button> */}
-          {showCode && (
+
+        {/* Actions */}
+        <div className="flex flex-wrap gap-3 mt-6">
+          {website && (
             <button
-              onClick={() => window.open(url)}
-              className={`${cardHoverScale} gap-x-1 py-1 grow flex mt-3 justify-center bg-white rounded-md`}
+              onClick={() => window.open(website)}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-indigo-500/20"
             >
-              <p className="text-xxs font-bold text-black">See code</p>
-              <FiExternalLink className="self-center" size={13} color="#000" />
+              <FiGlobe size={14} /> Live Demo
             </button>
           )}
-          <div className="flex gap-2.5">
-            {website && (
-              <button
-                onClick={() => window.open(website)}
-                className={`${cardHoverScale} flex-1 gap-x-1 py-1 grow flex mt-3 bg-orange-500 justify-center rounded-md`}
-              >
-                <p className="text-xxs font-bold text-white">Go to website</p>
-                <FiExternalLink
-                  className="self-center"
-                  size={13}
-                  color="#fff"
-                />
-              </button>
-            )}
-            {rapidapi && (
-              <button
-                onClick={() => window.open(rapidapi)}
-                className={`${cardHoverScale} flex-1 gap-x-1 py-1 grow flex mt-3 bg-blue-700 justify-center rounded-md`}
-              >
-                <p className="text-xxs font-bold text-white">
-                  See API on RapidAPI
-                </p>
-                <FiExternalLink
-                  className="self-center"
-                  size={13}
-                  color="#fff"
-                />
-              </button>
-            )}
-          </div>
+          {showCode && url && (
+            <button
+              onClick={() => window.open(url)}
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-bold transition-all border border-white/10"
+            >
+              <FiGithub size={14} /> Code
+            </button>
+          )}
+          {rapidapi && (
+            <button
+              onClick={() => window.open(rapidapi)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 rounded-lg text-xs font-bold transition-all border border-blue-500/30"
+            >
+              RapidAPI
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -158,139 +117,25 @@ function Project({
 }
 
 export default function Projects() {
-  const logoSize = 50;
   const projects: ProjectType[] = [
     {
       title: "MonAmiChef",
-      logo: MonAmiChef,
+      logo: MonAmiChefLogo,
       status: "In progress",
-      shortDescription: "AI powered chef assistant",
-      description: "",
+      shortDescription: "AI-powered chef assistant specialized in personalized nutrition and recipe generation.",
       url: "https://github.com/MonAmiChef/MonAmiChef",
       rapidapi: "https://rapidapi.com/GarnierLenny/api/monamichef",
       website: "https://monamichef.com/",
       showCode: true,
-      technologies: [
-        {
-          name: "React Native",
-          icon: <BiLogoReact color="#61dbfb" size={logoSize} />,
-        },
-        {
-          name: "Typescript",
-          icon: (
-            <BiLogoTypescript
-              className="justify-self-center"
-              color="#007acc"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Nestjs",
-          icon: (
-            <SiNestjs
-              className="justify-self-center"
-              color="#e34c26"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Jest",
-          icon: (
-            <SiJest
-              className="justify-self-center"
-              color="#e34c26"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Tailwind",
-          icon: <RiTailwindCssFill color="#06b6d4" size={logoSize} />,
-        },
-      ],
+      technologies: ["React Native", "Typescript", "Nestjs", "AI / OpenAI", "Tailwind"],
     },
     {
       title: "PHAR",
       logo: Phar,
       status: "Completed",
-      shortDescription:
-        "School project - Generates playlist based on Mood with AI",
-      description: "",
-      url: undefined,
+      shortDescription: "A smart playlist generator that analyzes your current mood to curate the perfect music experience.",
       showCode: false,
-      technologies: [
-        {
-          name: "React Native",
-          icon: <BiLogoReact color="#61dbfb" size={logoSize} />,
-        },
-        {
-          name: "Typescript",
-          icon: (
-            <BiLogoTypescript
-              className="justify-self-center"
-              color="#007acc"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Nestjs",
-          icon: (
-            <SiNestjs
-              className="justify-self-center"
-              color="#e34c26"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Jest",
-          icon: (
-            <SiJest
-              className="justify-self-center"
-              color="#e34c26"
-              size={logoSize}
-            />
-          ),
-        },
-      ],
-    },
-    {
-      title: "Timer sequence",
-      logo: TS,
-      showCode: true,
-      status: "Completed",
-      shortDescription: "Creates custom sequences of timers",
-      description: "",
-      url: "https://github.com/GarnierLenny/timer-sequence",
-      technologies: [
-        {
-          name: "React Native",
-          icon: <BiLogoReact color="#61dbfb" size={logoSize} />,
-        },
-        {
-          name: "Typescript",
-          icon: (
-            <BiLogoTypescript
-              className="justify-self-center"
-              color="#007acc"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Jest",
-          icon: (
-            <SiJest
-              className="justify-self-center"
-              color="#e34c26"
-              size={logoSize}
-            />
-          ),
-        },
-      ],
+      technologies: ["React Native", "Typescript", "Nestjs", "Jest"],
     },
     {
       title: "Minimalist Calorie Tracker",
@@ -298,125 +143,35 @@ export default function Projects() {
       status: "Completed",
       showCode: true,
       url: "https://github.com/GarnierLenny/minimalist-calorie-tracker",
-      shortDescription: "Track calorie, water and protein intake",
-      description: "",
-      technologies: [
-        {
-          name: "React Native",
-          icon: <BiLogoReact color="#61dbfb" size={logoSize} />,
-        },
-        {
-          name: "Typescript",
-          icon: (
-            <BiLogoTypescript
-              className="justify-self-center"
-              color="#007acc"
-              size={logoSize}
-            />
-          ),
-        },
-      ],
+      shortDescription: "Focus on your macros. A clean tool to track calories, water, and protein intake without the fluff.",
+      technologies: ["React Native", "Typescript", "Jest"],
     },
     {
-      title: "Portfolio",
-      logo: Iconless,
-      showCode: true,
-      url: "https://github.com/GarnierLenny/Portfolio",
-      status: "Completed",
-      shortDescription: "A page about me (This page)",
-      description: "",
-      technologies: [
-        {
-          name: "React",
-          icon: <BiLogoReact color="#61dbfb" size={logoSize} />,
-        },
-        {
-          name: "Typescript",
-          icon: (
-            <BiLogoTypescript
-              className="justify-self-center"
-              color="#007acc"
-              size={logoSize}
-            />
-          ),
-        },
-        {
-          name: "Tailwind",
-          icon: <RiTailwindCssFill color="#06b6d4" size={logoSize} />,
-        },
-        {
-          name: "Jest",
-          icon: (
-            <SiJest
-              className="justify-self-center"
-              color="#e34c26"
-              size={logoSize}
-            />
-          ),
-        },
-      ],
-    },
-    {
-      title: "PyDoku",
-      logo: Iconless,
-      showCode: true,
-      status: "Completed",
-      url: "https://github.com/GarnierLenny/Pydoku",
-      shortDescription:
-        "Sudoku game along with solver, made with Python and PyGame",
-      description: "",
-      technologies: [
-        {
-          name: "Python",
-          icon: (
-            <DiPython
-              className="justify-self-center"
-              color="#FFD43B"
-              size={logoSize}
-            />
-          ),
-        },
-      ],
+        title: "PyDoku",
+        logo: Iconless,
+        showCode: true,
+        status: "Completed",
+        url: "https://github.com/GarnierLenny/Pydoku",
+        shortDescription: "Advanced Sudoku engine featuring a backtracking solver and an interactive UI built with PyGame.",
+        technologies: ["Python"],
     },
   ];
 
   return (
-    <div className="grow bg-purple-700 pb-6 md:px-3">
-      <SectionPrimaryTitle title="Projects" />
-      <div className="flex flex-col md:grid md:grid-cols-2 mt-5 gap-y-3 pb-6">
-        {projects.map(
-          (
-            {
-              title,
-              logo,
-              shortDescription,
-              description,
-              technologies,
-              status,
-              url,
-              showCode,
-              website,
-              rapidapi,
-            },
-            index,
-          ) => (
-            <div className="flex" key={index}>
-              <Project
-                title={title}
-                logo={logo}
-                shortDescription={shortDescription}
-                description={description}
-                technologies={technologies}
-                status={status}
-                url={url}
-                showCode={showCode}
-                website={website}
-                rapidapi={rapidapi}
-              />
-            </div>
-          ),
-        )}
+    <section id="projects" className="bg-slate-900 pb-8 w-full">
+      <SectionPrimaryTitle title="Featured Projects" />
+        <div className="mb-12">
+          <p className="text-slate-400 ml-3 mt-2 max-w-2xl">
+            A selection of my recent work, focusing on AI integrations, mobile development, and clean architecture.
+          </p>
+        </div>
+      <div className="px-2.5 md:pr-40">
+        <div className="grid grid-cols-1 gap-6">
+          {projects.map((project, index) => (
+            <ProjectCard key={index} project={project} />
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

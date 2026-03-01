@@ -1,128 +1,138 @@
-import React, { ReactNode, useState } from "react";
+"use client";
+import React, { ReactNode, useState, useEffect } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { SiLeetcode } from "react-icons/si";
+import { SiLeetcode, SiMalt } from "react-icons/si";
 import { FaUpwork, FaXTwitter } from "react-icons/fa6";
-import { BsStackOverflow } from "react-icons/bs";
-import {
-  SectionPrimaryTitle,
-  SectionSecondaryTitle,
-} from "./Competences.section";
+import { SectionPrimaryTitle } from "./Competences.section";
 import { BiLogoGmail } from "react-icons/bi";
 import { ImCheckmark } from "react-icons/im";
 import { Analytics } from "@vercel/analytics/react";
-import { SiMalt } from "react-icons/si";
-
-export const cardHoverScale = "hover:scale-105 duration-100";
+import { Mail, ArrowUpRight } from "lucide-react";
 
 type ContactType = {
   text: string;
-  color: string;
+  label: string;
   callback: () => void;
   icon: ReactNode;
-  lightText?: boolean;
+  highlight?: boolean;
 };
 
-function ContactButton({ contact }: { contact: ContactType }) {
-  return (
-    <div
-      className="flex flex-1 justify-center items-center gap-3 px-6 py-3 rounded-full font-medium"
-      style={{
-        backgroundColor: contact.color,
-        color: contact.lightText ? "#fff" : "#000",
-      }}
-    >
-      {contact.icon}
-      <p>{contact.text}</p>
-    </div>
-  );
-}
-
 export default function Contact() {
-  const logoSize = 30;
-  const [clicked, setClicked] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
+
+  // Reset le message "Copied" après 3 secondes
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => setCopied(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [copied]);
+
   const contacts: ContactType[] = [
     {
-      text: clicked ? "Copied to clipboard!" : "Copy my email",
-      color: clicked ? "#0CAA41" : "#fff",
-      callback: () => {
-        navigator.clipboard.writeText("lenny.garnier00@gmail.com");
-        setClicked(true);
-      },
-      lightText: clicked ? true : false,
-      icon: clicked ? (
-        <ImCheckmark color="#fff" size={20} />
-      ) : (
-        <BiLogoGmail color="#ef4444" size={logoSize} />
-      ),
-    },
-    {
-      text: "Github",
-      color: "#000",
-      callback: () => window.open("https://github.com/GarnierLenny"),
-      lightText: true,
-      icon: <FaGithub color="#fff" size={logoSize} />,
-    },
-    {
-      text: "Upwork",
-      color: "#14A800",
-      callback: () =>
-        window.open(
-          "https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1",
-        ),
-      lightText: true,
-      icon: <FaUpwork color="#fff" size={logoSize} />,
-    },
-    {
-      text: "Malt",
-      color: "#fc5757",
-      callback: () => window.open("https://www.malt.fr/profile/lennygarnier"),
-      lightText: true,
-      icon: <SiMalt color="#fff" size={logoSize} />,
-    },
-    {
+      label: "Professional",
       text: "LinkedIn",
-      color: "#0e76a8",
-      callback: () =>
-        window.open("https://www.linkedin.com/in/lenny-garnier-2ab689199/"),
-      lightText: true,
-      icon: <FaLinkedin color="#fff" size={logoSize} />,
+      callback: () => window.open("https://www.linkedin.com/in/lenny-garnier-2ab689199/"),
+      icon: <FaLinkedin size={20} />,
+      highlight: true
     },
     {
+      label: "Freelance",
+      text: "Malt",
+      callback: () => window.open("https://www.malt.fr/profile/lennygarnier"),
+      icon: <SiMalt size={20} />,
+    },
+    {
+      label: "Freelance",
+      text: "Upwork",
+      callback: () => window.open("https://www.upwork.com/freelancers/~0150a09f0bed821520?viewMode=1"),
+      icon: <FaUpwork size={20} />,
+    },
+    {
+      label: "Code",
+      text: "Github",
+      callback: () => window.open("https://github.com/GarnierLenny"),
+      icon: <FaGithub size={20} />,
+    },
+    {
+      label: "Challenge",
       text: "LeetCode",
-      color: "#F47F24",
       callback: () => window.open("https://leetcode.com/u/Lenny00/"),
-      lightText: true,
-      icon: <SiLeetcode color="#fff" size={logoSize} />,
+      icon: <SiLeetcode size={20} />,
     },
     {
+      label: "Social",
       text: "X",
-      color: "#000",
       callback: () => window.open("https://x.com/lennygrnr"),
-      lightText: true,
-      icon: <FaXTwitter color="#fff" size={logoSize} />,
+      icon: <FaXTwitter size={20} />,
     },
   ];
 
   return (
-    <div className="flex flex-col bg-slate-800 w-full pb-3 md:px-3">
-      <SectionPrimaryTitle title="Contacts" />
-      <div className="flex align-middle flex-wrap gap-3 px-8 mt-6">
-        <div className="flex flex-col md:flex-row flex-wrap gap-2 w-full">
+    <section id="contact" className="bg-slate-900 w-full pb-20 px-6">
+      <SectionPrimaryTitle title="Let's build something great together" />
+      <div className="max-w-4xl mx-auto">
+        
+        {/* Main Email CTA */}
+        <div className="mt-10 mb-16 p-8 rounded-3xl bg-gradient-to-br from-indigo-600/20 to-purple-600/10 border border-indigo-500/30 backdrop-blur-md flex flex-col items-center text-center">
+          <div className="p-4 bg-indigo-500/20 rounded-full mb-6">
+            <Mail className="text-indigo-400" size={32} />
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Ready for your next project?</h3>
+          <p className="text-slate-400 mb-8 max-w-md">
+            Whether you need a Fullstack dev for a SaaS or a Mobile expert for an AI app, I'm just an email away.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+            <button
+              onClick={() => window.location.href = "mailto:lenny.garnier00@gmail.com"}
+              className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-indigo-50 transition-all flex items-center justify-center gap-2"
+            >
+              Send me an email
+            </button>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText("lenny.garnier00@gmail.com");
+                setCopied(true);
+              }}
+              className="px-8 py-4 bg-white/5 text-white font-bold rounded-xl border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+            >
+              {copied ? <ImCheckmark className="text-green-500" /> : <BiLogoGmail className="text-red-500" />}
+              {copied ? "Email copied!" : "Copy email"}
+            </button>
+          </div>
+        </div>
+
+        {/* Social Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {contacts.map((contact, index) => (
             <button
-              onClick={contact.callback}
-              className={`${cardHoverScale} flex-1 md:flex-none`}
               key={index}
+              onClick={contact.callback}
+              className="group flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 transition-all"
             >
-              <ContactButton contact={contact} />
+              <div className="flex items-center gap-3">
+                <div className="text-slate-400 group-hover:text-indigo-400 transition-colors">
+                  {contact.icon}
+                </div>
+                <div className="text-left">
+                  <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{contact.label}</p>
+                  <p className="text-sm font-bold text-white">{contact.text}</p>
+                </div>
+              </div>
+              <ArrowUpRight size={16} className="text-slate-600 group-hover:text-white transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
           ))}
         </div>
+
+        <footer className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
+          <p>© 2026 Lenny Garnier. Built with Next.js & Tailwind.</p>
+          <p className="flex items-center gap-2 italic">
+            Made with 🤍 in Reunion Island <span className="not-italic">🌴</span>
+          </p>
+        </footer>
       </div>
-      <p className="self-center text-xs md:self-end md:mr-5 bottom-0 mt-10 text-slate-300 font-medium">
-        Made with ♥️ in Reunion Island 🌴
-      </p>
       <Analytics />
-    </div>
+    </section>
   );
 }

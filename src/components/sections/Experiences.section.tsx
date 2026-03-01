@@ -7,10 +7,14 @@ import {
 import { BiRightArrowAlt } from "react-icons/bi";
 import ReactCountryFlag from "react-country-flag";
 import { IoMdPerson } from "react-icons/io";
-import { IoLayers } from "react-icons/io5";
+import { Briefcase, GraduationCap, Calendar } from "lucide-react";
 
-export const cardHoverScale =
-  "hover:scale-105 duration-200 hover:bg-indigo-950";
+// On garde la cohérence avec ton nouveau style Glassmorphism
+const cardStyle = `
+  group relative flex flex-col rounded-2xl bg-white/5 border border-white/10 
+  p-5 transition-all duration-300 hover:bg-white/10 
+  hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(79,70,229,0.1)]
+`;
 
 type Experience = {
   title: string;
@@ -18,56 +22,81 @@ type Experience = {
   countryCode: string;
   start: string;
   end: string;
-  position?: string;
+  position: string;
   status?: string;
+  tech?: string[]; // Ajout des technos pour la crédibilité
 };
 
 function ExperiencesList({
   title,
   experiences,
+  icon,
 }: {
   title: string;
   experiences: Experience[];
+  icon: React.ReactNode;
 }) {
   return (
-    <div>
-      <SectionSecondaryTitle title={title} />
-      <div className="md:grid md:grid-cols-3 flex flex-col md:flex-row flex-grow flex-wrap gap-y-3 my-5">
+    <div className="mb-12">
+      <div className="flex items-center gap-3 mb-6 mx-4 text-center">
+        <div className="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
+          {icon}
+        </div>
+        <SectionSecondaryTitle title={title} />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 px-3">
         {experiences.map((exp, index) => (
-          <div
-            className={`${cardHoverScale} flex flex-col rounded-lg bg-indigo-900 mx-3 p-4`}
-            key={index}
-          >
-            <p className="font-bold text-lg text-white">{exp.title}</p>
-            <div className="flex my-2.5 flex-col gap-y-1">
-              <div className="flex flex-row gap-x-2">
-                <ReactCountryFlag
-                  className="rounded-none self-center"
-                  svg
-                  style={{ width: "1em", height: "1em" }}
-                  countryCode={exp.countryCode}
-                />
-                <p className="text-xs text-slate-300">{exp.location}</p>
-              </div>
-              {exp.status !== undefined && (
-                <div className="flex flex-row gap-x-2 mt-1">
-                  <IoLayers className="self-center" color="#fff" size={15} />
-                  <p className="font-medium text-xs text-slate-300">
+          <div className={cardStyle} key={index}>
+            {/* Header: Title & Flag */}
+            <div className="flex justify-between items-start mb-4">
+              <h4 className="font-bold text-xl text-white group-hover:text-indigo-400 transition-colors">
+                {exp.title}
+              </h4>
+              <ReactCountryFlag
+                svg
+                style={{ width: "1.5em", height: "1.2em" }}
+                countryCode={exp.countryCode}
+                className="rounded-sm opacity-80"
+              />
+            </div>
+
+            {/* Content */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-slate-400 text-sm">
+                <IoMdPerson size={14} className="text-indigo-500" />
+                <span className="font-medium text-slate-200">
+                  {exp.position}
+                </span>
+                {exp.status && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/5 uppercase">
                     {exp.status}
-                  </p>
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 text-slate-400 text-xs">
+                <Calendar size={14} />
+                <span className="flex items-center gap-1">
+                  {exp.start} <BiRightArrowAlt /> {exp.end}
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-500 italic">{exp.location}</p>
+
+              {/* Optionnel: Si tu ajoutes des technos plus tard */}
+              {exp.tech && (
+                <div className="flex flex-wrap gap-1.5 mt-4">
+                  {exp.tech.map((t, i) => (
+                    <span
+                      key={i}
+                      className="text-[9px] bg-indigo-500/10 text-indigo-300 px-2 py-0.5 rounded border border-indigo-500/20"
+                    >
+                      {t}
+                    </span>
+                  ))}
                 </div>
               )}
-              <div className="flex flex-row gap-x-2">
-                <IoMdPerson color="#fff" size={15} />
-                <p className="font-medium text-xs text-slate-300">
-                  {exp.position}
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-row gap-x-2">
-              <p className="text-white font-medium">{exp.start}</p>
-              <BiRightArrowAlt className="self-center" color="#fff" size={15} />
-              <p className="text-white font-medium">{exp.end}</p>
             </div>
           </div>
         ))}
@@ -82,80 +111,93 @@ export default function Experiences() {
       title: "Polycea",
       location: "Paris, France",
       start: "May 2025",
-      end: "January 2026",
+      end: "Jan 2026",
       position: "Full-stack developer",
       status: "CDI",
       countryCode: "FR",
+      tech: ["React", "NestJS", "PostgreSQL"],
     },
     {
       title: "Racemappr",
-      location: "Germany, Berlin",
-      start: "September 2024",
-      end: "February 2025",
-      position: "Mobile/Full-stack developer",
-      status: "Freelance developer",
+      location: "Berlin, Germany",
+      start: "Sept 2024",
+      end: "Feb 2025",
+      position: "Mobile & Full-stack",
+      status: "Freelance",
       countryCode: "DE",
+      tech: ["React Native", "Node.js"],
     },
     {
       title: "Feelbat",
-      location: "Reunion Island, Saint-Denis",
-      start: "April 2023",
-      end: "August 2023",
-      position: "Mobile/Full-stack developer",
+      location: "Reunion Island",
+      start: "Apr 2023",
+      end: "Aug 2023",
+      position: "Full-stack intern",
       status: "Internship",
       countryCode: "FR",
     },
     {
       title: "Epitech",
-      location: "Reunion Island, Saint-André",
-      start: "September 2022",
-      end: "March 2023",
+      location: "Reunion Island",
+      start: "Sept 2022",
+      end: "Mar 2023",
       position: "Pedagogical Assistant",
       status: "Part-time",
       countryCode: "FR",
     },
     {
       title: "Solarplexus",
-      location: "Reunion Island, Saint-Benoît",
-      start: "August 2021",
-      end: "December 2021",
+      location: "Reunion Island",
+      start: "Aug 2021",
+      end: "Dec 2021",
       position: "Software Engineer",
-      status: "internship",
+      status: "Internship",
       countryCode: "FR",
     },
   ];
+
   const academic: Experience[] = [
     {
       title: "Epitech",
-      location: "Reunion Island, Saint-André",
-      start: "September 2020",
-      end: "June 2025",
-      position: "Student",
+      location: "Reunion Island",
+      start: "2020",
+      end: "2025",
+      position: "Master in Software Architect",
       countryCode: "FR",
     },
     {
       title: "Inha University",
-      location: "South Korea, Incheon",
-      start: "September 2023",
-      end: "June 2024",
-      position: "International student",
+      location: "South Korea",
+      start: "2023",
+      end: "2024",
+      position: "Exchange Student",
       countryCode: "KR",
     },
     {
-      title: "Louis Payen Highschool",
-      location: "Reunion Island, Saint-Paul",
-      start: "August 2017",
-      end: "June 2020",
-      position: "Student",
+      title: "Louis Payen",
+      location: "Reunion Island",
+      start: "2017",
+      end: "2020",
+      position: "Highschool Student",
       countryCode: "FR",
     },
   ];
 
   return (
-    <div id="experiences" className="grow md:px-3 pb-6 bg-indigo-700">
-      <SectionPrimaryTitle title="Experience" />
-      <ExperiencesList title="Professional" experiences={professional} />
-      <ExperiencesList title="Academic" experiences={academic} />
-    </div>
+    <section id="experiences" className="bg-slate-900 pb-8 w-full">
+      <div>
+        <SectionPrimaryTitle title="Career Path" />
+        <ExperiencesList
+          title="Professional Journey"
+          experiences={professional}
+          icon={<Briefcase size={20} />}
+        />
+        <ExperiencesList
+          title="Academic Background"
+          experiences={academic}
+          icon={<GraduationCap size={20} />}
+        />
+      </div>
+    </section>
   );
 }

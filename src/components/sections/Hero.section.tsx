@@ -12,6 +12,7 @@ import ReactPlayer from "react-player";
 import Modal from "react-modal";
 import { CalendarPlus } from "lucide-react";
 import Link from "next/link";
+import RecommendationMarquee from "../RecommendationMarquee";
 
 export default function Hero({ itemEls }: any) {
   const [showVideo, setShowVideo] = useState(false);
@@ -58,7 +59,7 @@ export default function Hero({ itemEls }: any) {
           className="
             relative inline-flex items-center gap-3 px-4 py-2 rounded-full
             text-emerald-600
-            bg-white/70 border border-current/30
+            bg-white/90 border border-current/30
             backdrop-blur-md shadow-lg overflow-hidden
           "
         >
@@ -213,6 +214,8 @@ export default function Hero({ itemEls }: any) {
           />
         </div>
       </Modal>
+
+      <RecommendationMarquee />
     </div>
   );
 }
