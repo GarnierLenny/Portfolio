@@ -10,6 +10,8 @@ import Waves from "../../../public/stacked-waves-haikei.svg";
 import { FaPlay } from "react-icons/fa";
 import ReactPlayer from "react-player";
 import Modal from "react-modal";
+import { CalendarPlus } from "lucide-react";
+import Link from "next/link";
 
 export default function Hero({ itemEls }: any) {
   const [showVideo, setShowVideo] = useState(false);
@@ -23,8 +25,23 @@ export default function Hero({ itemEls }: any) {
         className="absolute object-cover w-full h-full left-0 z-[-1]"
       />
 
+      {/* Book 15 min call */}
+      <a
+        className="fixed bg-[#ffda3d] flex gap-4 bottom-6 right-6 items-center justify-center p-4 px-5 overflow-hidden font-medium text-black hover:text-black/80 hover:scale-105 transition-all ease-in-out 3s rounded-full shadow-2xl group"
+        target="_blank"
+        href="https://calendar.app.google/3K7mEK8LzgER3CJQA"
+      >
+        <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-[#fff75e] rounded-full blur-md ease shadow-yellow-600 shadow-2xl"></span>
+        <span className="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease">
+          <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-[#fdb833] rounded-full blur-md"></span>
+          <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-[#fdc43f] rounded-full blur-md"></span>
+        </span>
+        <CalendarPlus size={20} color="#000" className="z-10" />
+        <span className="relative">Book 30 minutes call</span>
+      </a>
+
       {/* Radar Chip */}
-      <div className="fixed top-6 right-6 z-50 hidden md:block">
+      <div className="absolute top-6 right-6 z-50 hidden md:block">
         <div
           className="
             relative inline-flex items-center gap-3 px-4 py-2 rounded-full
