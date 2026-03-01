@@ -37,7 +37,7 @@ export default function Hero({ itemEls }: any) {
           <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-[#fdc43f] rounded-full blur-md"></span>
         </span>
         <CalendarPlus size={20} color="#000" className="z-10" />
-        <span className="relative">Book 30 minutes call</span>
+        <span className="relative">Book a Free 30-min Call</span>
       </a>
 
       {/* Radar Chip */}
