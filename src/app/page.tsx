@@ -43,7 +43,9 @@ export default function Home() {
 
   return (
     <div className="flex flex-col md:flex-row bg-slate-900 min-h-screen text-white">
-      <Header refs={itemEls} values={{ selected, setSelected }} />
+      <div className="hidden md:block">
+        <Header refs={itemEls} values={{ selected, setSelected }} />
+      </div>
 
       <main className="flex-1 w-full md:ml-64 transition-all duration-300">
         <div className="flex flex-col gap-0">

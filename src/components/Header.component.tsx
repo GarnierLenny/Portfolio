@@ -39,7 +39,7 @@ export default function Header({ refs, values }: HeaderProps) {
 
   return (
     // Conteneur fixe pour mobile (en bas ou haut) et sticky pour desktop
-    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:translate-x-0 md:left-0 md:top-0 md:bottom-0 md:h-screen md:w-64 flex items-center justify-center pointer-events-none">
+    <nav className="fixed flex bottom-6 left-1/2 -translate-x-1/2 z-50 md:translate-x-0 md:left-0 md:top-0 md:bottom-0 md:h-screen md:w-64 items-center justify-center pointer-events-none">
       <div className="flex flex-row md:flex-col gap-2 p-2 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-none md:border-r md:border-l-0 md:border-y-0 md:bg-slate-950/50 w-fit md:w-full pointer-events-auto shadow-2xl md:shadow-none transition-all duration-300">
         {sections.map((section, index) => {
           const isActive = values.selected === index;
