@@ -95,7 +95,7 @@ export default function Hero({ itemEls }: any) {
         {/* Text Content */}
         <div className="flex flex-col justify-center text-center md:text-start gap-y-4">
           <div className="animate-scale-up flex text-3xl md:text-4xl font-bold text-white justify-center md:justify-start gap-x-3">
-            <p>Hi! I&apos;m Lenny</p>
+            <h1>Hi! I&apos;m Lenny</h1>
             <p className="animate-wave-hand">👋</p>
           </div>
 
@@ -205,7 +205,7 @@ export default function Hero({ itemEls }: any) {
 
         <div className="w-[90vw] max-w-5xl aspect-video">
           <ReactPlayer
-            src="/Intro_v1.mov"
+            src="/Intro_v1.mp4"
             playing
             controls
             width="100%"
