@@ -26,19 +26,31 @@ export default function Hero({ itemEls }: any) {
       />
 
       {/* Book 15 min call */}
-      <a
-        className="fixed bg-[#ffda3d] flex gap-4 bottom-6 right-6 items-center justify-center p-4 px-5 overflow-hidden font-medium text-black hover:text-black/80 hover:scale-105 transition-all ease-in-out 3s rounded-full shadow-2xl group"
-        target="_blank"
-        href="https://calendar.app.google/3K7mEK8LzgER3CJQA"
-      >
-        <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-[#fff75e] rounded-full blur-md ease shadow-yellow-600 shadow-2xl"></span>
-        <span className="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease">
-          <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-[#fdb833] rounded-full blur-md"></span>
-          <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-[#fdc43f] rounded-full blur-md"></span>
-        </span>
-        <CalendarPlus size={20} color="#000" className="z-10" />
-        <span className="relative">Book a Free 30-min Call</span>
-      </a>
+      <div className="fixed bottom-6 right-6 z-50 group shadow-2xl rounded-full transition-all hover:scale-105 duration-300">
+        <a
+          className="relative bg-[#ffda3d] flex gap-3 items-center justify-center p-4 px-6 overflow-hidden font-medium text-black rounded-full"
+          target="_blank"
+          href="https://calendar.app.google/3K7mEK8LzgER3CJQA"
+        >
+          {/* Effets de cercles internes */}
+          <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-[#fff75e] rounded-full blur-md opacity-80 group-hover:rotate-90"></span>
+
+          <span className="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease">
+            <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-[#fdb833] rounded-full blur-md opacity-60"></span>
+            <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-[#fdc43f] rounded-full blur-md opacity-60"></span>
+          </span>
+
+          <CalendarPlus
+            strokeWidth={2.5}
+            size={20}
+            color="#000"
+            className="z-10"
+          />
+          <span className="relative z-10 font-bold">
+            Book a Free 30-min Call
+          </span>
+        </a>
+      </div>
 
       {/* Radar Chip */}
       <div className="absolute top-6 right-6 z-50 hidden md:block">
@@ -88,11 +100,11 @@ export default function Hero({ itemEls }: any) {
           </div>
 
           <p className="animate-scale-up text-xl md:text-2xl text-white">
-            I turn ideas into real life products
+            I build AI-powered SaaS and fullstack MVPs that scale.
           </p>
 
           {/* Buttons Row */}
-          <div className="flex flex-col md:flex-row gap-3 mt-4 w-full">
+          <div className="flex flex-col px-4 md:px-0 md:flex-row gap-3 mt-4 w-full">
             {/* Watch Intro */}
             <button
               onClick={() => setShowVideo(true)}
