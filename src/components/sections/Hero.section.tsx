@@ -101,7 +101,7 @@ export default function Hero({ itemEls }: any) {
           </div>
 
           <p className="animate-scale-up text-xl md:text-2xl text-white">
-            I build AI-powered SaaS and fullstack MVPs that scale.
+            I help startups build AI-powered SaaS and scalable MVPs.
           </p>
 
           {/* Buttons Row */}
@@ -180,7 +180,7 @@ export default function Hero({ itemEls }: any) {
                 rightIcon={<BiDownArrowAlt size={20} />}
                 text="Let's connect!"
                 callback={() => {
-                  itemEls.current[4].scrollIntoView({
+                  itemEls.current[5].scrollIntoView({
                     behavior: "smooth",
                   });
                 }}

@@ -6,6 +6,7 @@ import {
   BriefcaseBusiness,
   FolderGit2,
   Mail,
+  Layers,
 } from "lucide-react";
 
 type SectionType = {
@@ -24,6 +25,7 @@ interface HeaderProps {
 export default function Header({ refs, values }: HeaderProps) {
   const sections: SectionType[] = [
     { name: "About", icon: <User size={20} /> },
+    { name: "What I build", icon: <Layers size={20} /> },
     { name: "Skills", icon: <Wrench size={20} /> },
     { name: "Experience", icon: <BriefcaseBusiness size={20} /> },
     { name: "Projects", icon: <FolderGit2 size={20} /> },

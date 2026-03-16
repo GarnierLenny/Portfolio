@@ -1,6 +1,7 @@
 "use client";
 import Header from "@/components/Header.component";
 import Hero from "@/components/sections/Hero.section";
+import WhatIBuild from "@/components/sections/WhatIBuild.section";
 import Competences from "@/components/sections/Competences.section";
 import Experiences from "@/components/sections/Experiences.section";
 import Projects from "@/components/sections/Projects.section";
@@ -61,9 +62,8 @@ export default function Home() {
             ref={(el) => {
               itemEls.current[1] = el;
             }}
-            className="min-h-screen"
           >
-            <Competences />
+            <WhatIBuild />
           </section>
           <section
             ref={(el) => {
@@ -71,7 +71,7 @@ export default function Home() {
             }}
             className="min-h-screen"
           >
-            <Experiences />
+            <Competences />
           </section>
           <section
             ref={(el) => {
@@ -79,11 +79,19 @@ export default function Home() {
             }}
             className="min-h-screen"
           >
-            <Projects />
+            <Experiences />
           </section>
           <section
             ref={(el) => {
               itemEls.current[4] = el;
+            }}
+            className="min-h-screen"
+          >
+            <Projects />
+          </section>
+          <section
+            ref={(el) => {
+              itemEls.current[5] = el;
             }}
             className="min-h-screen"
           >
