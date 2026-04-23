@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { FiGithub, FiGlobe } from "react-icons/fi";
 import MonAmiChefLogo from "@/../public/monamichef_square.png";
-import sc1 from "@/../public/monamichef/IMG_4444.PNG";
-import sc2 from "@/../public/monamichef/IMG_4446.PNG";
-import sc3 from "@/../public/monamichef/IMG_4448.PNG";
-import sc4 from "@/../public/monamichef/IMG_4450.PNG";
+import sc1 from "@/../public/monamichef/IMG_4444.png";
+import sc2 from "@/../public/monamichef/IMG_4446.png";
+import sc3 from "@/../public/monamichef/IMG_4448.png";
+import sc4 from "@/../public/monamichef/IMG_4450.png";
 import diagram from "@/../public/monamichef/monamichef-mermaid-diagram.png";
 
 const stack = [
@@ -129,7 +129,7 @@ export default function MonAmiChefPage() {
         <section className="flex flex-col gap-4">
           <h2 className="text-2xl font-bold">The Problem</h2>
           <p className="text-slate-400 leading-relaxed">
-            Generic recipe apps don't know who you are. Whether you're trying to
+            Generic recipe apps don&apos;t know who you are. Whether you&apos;re trying to
             build muscle, eat low-carb, or cook something quick on a weeknight —
             every session starts from scratch. No preferences, no memory, no
             context. And when AI is involved, hallucinated ingredients or
