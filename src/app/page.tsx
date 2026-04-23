@@ -56,7 +56,7 @@ export default function Home() {
             }}
             className="min-h-screen"
           >
-            <Hero />
+            <Hero itemEls={itemEls} />
           </section>
           <section
             ref={(el) => {

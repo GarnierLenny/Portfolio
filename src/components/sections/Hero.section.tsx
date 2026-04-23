@@ -27,13 +27,12 @@ export default function Hero({ itemEls }: any) {
       />
 
       {/* Book 15 min call */}
-      <div className="fixed bottom-6 right-6 z-50 group shadow-2xl rounded-full transition-all hover:scale-105 duration-300">
+      {/* <div className="fixed bottom-6 right-6 z-50 group shadow-2xl rounded-full transition-all hover:scale-105 duration-300">
         <a
           className="relative bg-[#ffda3d] flex gap-3 items-center justify-center p-4 px-6 overflow-hidden font-medium text-black rounded-full"
           target="_blank"
           href="https://calendar.app.google/3K7mEK8LzgER3CJQA"
         >
-          {/* Effets de cercles internes */}
           <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-[#fff75e] rounded-full blur-md opacity-80 group-hover:rotate-90"></span>
 
           <span className="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease">
@@ -51,10 +50,10 @@ export default function Hero({ itemEls }: any) {
             Book a Free 30-min Call
           </span>
         </a>
-      </div>
+      </div> */}
 
       {/* Radar Chip */}
-      <div className="absolute top-20 md:top-6 md:right-6">
+      {/* <div className="absolute top-20 md:top-6 md:right-6">
         <div
           className="
             relative inline-flex items-center gap-3 px-4 py-2 rounded-full
@@ -64,23 +63,20 @@ export default function Hero({ itemEls }: any) {
           "
         >
           <span className="relative flex h-3 w-3">
-            {/* Radar wave 1 */}
             <span
               className="absolute inset-0 rounded-full animate-radar
               bg-[radial-gradient(circle,transparent_60%,currentColor_63%,transparent_66%)]"
             />
-            {/* Radar wave 2 */}
             <span
               className="absolute inset-0 rounded-full animate-radar delay-[1.5s]
               bg-[radial-gradient(circle,transparent_60%,currentColor_63%,transparent_66%)]"
             />
-            {/* Center dot */}
             <span className="relative inline-flex h-3 w-3 rounded-full bg-current shadow-[0_0_18px_currentColor]" />
           </span>
 
           <span className="text-sm font-semibold">Open to opportunities</span>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="flex gap-x-16 flex-col md:flex-row justify-center gap-y-7 items-center">
