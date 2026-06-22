@@ -17,6 +17,7 @@ import TS from "@/../public/ts-logo.png";
 import MCT from "@/../public/mvt.png";
 import Iconless from "@/../public/iconless.png";
 import RejectCheck from "@/../public/rejectcheck.png";
+import StandoffDuel from "@/../public/standoffduel.svg";
 
 type ProjectType = {
   title: string;
@@ -184,6 +185,17 @@ export default function Projects() {
       website: "https://rejectcheck.com",
       showCode: false,
       technologies: ["React", "Typescript", "Nestjs", "AI / OpenAI", "Tailwind"],
+    },
+    {
+      title: "StandoffDuel",
+      logo: StandoffDuel,
+      status: "Completed",
+      shortDescription:
+        "Real-time 1v1 western duel over webcam. MediaPipe hand/face tracking and peer-to-peer WebRTC detect the fastest draw, with a server-authoritative clock stamping reaction times for fairness.",
+      website: "https://standoffduel-web.vercel.app/",
+      url: "https://github.com/GarnierLenny/Standoffduel",
+      showCode: true,
+      technologies: ["React", "Typescript", "Nestjs", "WebRTC", "Tailwind"],
     },
     {
       title: "MonAmiChef",
