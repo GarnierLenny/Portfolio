@@ -8,6 +8,7 @@ import { DiPython } from "react-icons/di";
 import { RiTailwindCssFill } from "react-icons/ri";
 import { FiExternalLink, FiGithub, FiGlobe } from "react-icons/fi";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // Importations des images (inchangées)
 import Phar from "@/../public/icon_full.png";
@@ -43,6 +44,7 @@ const TECH_COLORS: { [key: string]: string } = {
 };
 
 function ProjectCard({ project }: { project: ProjectType }) {
+  const router = useRouter();
   const {
     title,
     logo,
@@ -56,8 +58,31 @@ function ProjectCard({ project }: { project: ProjectType }) {
     detailPage,
   } = project;
 
-  const card = (
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
+
+  // Title doubles as a crawlable dofollow link: internal detail page when one
+  // exists, otherwise the live site so each project keeps a descriptive anchor.
+  const titleNode = detailPage ? (
+    <Link href={detailPage} onClick={stop} className="hover:underline">
+      {title}
+    </Link>
+  ) : website ? (
+    <a
+      href={website}
+      target="_blank"
+      rel="noopener"
+      onClick={stop}
+      className="hover:underline"
+    >
+      {title}
+    </a>
+  ) : (
+    title
+  );
+
+  return (
     <div
+      onClick={detailPage ? () => router.push(detailPage) : undefined}
       className={`group flex flex-col md:flex-row gap-6 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm transition-all duration-300 ${detailPage ? "cursor-pointer hover:border-indigo-500/50 hover:bg-white/8" : ""}`}
     >
       {/* Logo Section */}
@@ -74,7 +99,7 @@ function ProjectCard({ project }: { project: ProjectType }) {
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">
-              {title}
+              {titleNode}
             </h3>
             <p className="text-sm text-slate-400 mt-1 leading-relaxed">
               {shortDescription}
@@ -110,38 +135,42 @@ function ProjectCard({ project }: { project: ProjectType }) {
         {/* Actions */}
         <div className="flex flex-wrap gap-3 mt-6">
           {website && (
-            <button
-              onClick={() => window.open(website)}
+            <a
+              href={website}
+              target="_blank"
+              rel="noopener"
+              onClick={stop}
               className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-indigo-500/20"
             >
               <FiGlobe size={14} /> Live Demo
-            </button>
+            </a>
           )}
           {showCode && url && (
-            <button
-              onClick={() => window.open(url)}
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener"
+              onClick={stop}
               className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-bold transition-all border border-white/10"
             >
               <FiGithub size={14} /> Code
-            </button>
+            </a>
           )}
           {rapidapi && (
-            <button
-              onClick={() => window.open(rapidapi)}
+            <a
+              href={rapidapi}
+              target="_blank"
+              rel="noopener"
+              onClick={stop}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 rounded-lg text-xs font-bold transition-all border border-blue-500/30"
             >
               RapidAPI
-            </button>
+            </a>
           )}
         </div>
       </div>
     </div>
   );
-
-  if (detailPage) {
-    return <Link href={detailPage}>{card}</Link>;
-  }
-  return card;
 }
 
 export default function Projects() {
