@@ -18,6 +18,7 @@ import MCT from "@/../public/mvt.png";
 import Iconless from "@/../public/iconless.png";
 import RejectCheck from "@/../public/rejectcheck.png";
 import StandoffDuel from "@/../public/standoffduel.svg";
+import SurfLogo from "@/../public/surf-icon.png";
 
 type ProjectType = {
   title: string;
@@ -42,6 +43,8 @@ const TECH_COLORS: { [key: string]: string } = {
   Python: "#FFD43B",
   React: "#61dbfb",
   "AI / OpenAI": "#74aa9c",
+  Skia: "#5ad1e6",
+  RevenueCat: "#f2545b",
 };
 
 function ProjectCard({ project }: { project: ProjectType }) {
@@ -176,6 +179,16 @@ function ProjectCard({ project }: { project: ProjectType }) {
 
 export default function Projects() {
   const projects: ProjectType[] = [
+    {
+      title: "Surf",
+      logo: SurfLogo,
+      status: "In progress",
+      shortDescription:
+        "Urge surfing as a 90-second dive: when a craving hits, you ride it like a wave through a living, hand-built ocean (React Native Skia shaders, spatial audio, breath-driven descent). Free forever, no account, nothing leaves your phone.",
+      showCode: false,
+      detailPage: "/apps/surf",
+      technologies: ["React Native", "Typescript", "Skia", "RevenueCat"],
+    },
     {
       title: "RejectCheck",
       logo: RejectCheck,
