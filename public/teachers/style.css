@@ -1,0 +1,292 @@
+/* latin-ext */
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/yperlegible-v12-9Bt23C1KxNDXMspQ1lPyU89-1h6ONRlW45G07JIoWQeCbGWn.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/nhyperlegible-v12-9Bt23C1KxNDXMspQ1lPyU89-1h6ONRlW45G04pIoWQeCbA.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/legible-v12-9Bt73C1KxNDXMspQ1lPyU89-1h6ONRlW45G8Wbc9eiWPRl-uFV24.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/erlegible-v12-9Bt73C1KxNDXMspQ1lPyU89-1h6ONRlW45G8Wbc9dCWPRl-uFQ.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/rlowcondensed-v13-HTxwL3I-JCGChYJ8VI-L6OO-au7B4-Lwz3jWuYMBYrp0xg.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/barlowcondensed-v13-HTxwL3I-JCGChYJ8VI-L6OO-au7B4-Lwz3bWuYMBYro.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/rlowcondensed-v13-HTxwL3I-JCGChYJ8VI-L6OO-au7B4873z3jWuYMBYrp0xg.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/barlowcondensed-v13-HTxwL3I-JCGChYJ8VI-L6OO-au7B4873z3bWuYMBYro.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/rlowcondensed-v13-HTxwL3I-JCGChYJ8VI-L6OO-au7B46r2z3jWuYMBYrp0xg.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/barlowcondensed-v13-HTxwL3I-JCGChYJ8VI-L6OO-au7B46r2z3bWuYMBYro.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Red Hat Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/redhatmono-v16-jVyN7nDnA2uf2zVvFAhhzEsUVuxS3A-geSXx.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Red Hat Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/redhatmono-v16-jVyN7nDnA2uf2zVvFAhhzEsUWOxS3A-geQ.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Red Hat Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/redhatmono-v16-jVyN7nDnA2uf2zVvFAhhzEsUVuxS3A-geSXx.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Red Hat Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/redhatmono-v16-jVyN7nDnA2uf2zVvFAhhzEsUWOxS3A-geQ.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Red Hat Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/redhatmono-v16-jVyN7nDnA2uf2zVvFAhhzEsUVuxS3A-geSXx.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Red Hat Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/redhatmono-v16-jVyN7nDnA2uf2zVvFAhhzEsUWOxS3A-geQ.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root{
+  --cloth:#2f5d46;--stamp:#eef1ec;--paper:#ffffff;--rule:#9cb7d8;--rule-faint:#d3deee;--rule-strong:#7a9bc7;
+  --ink:#1b2437;--ink-soft:#3d4a66;--ink-wash:#eef2f7;--pen:#c6352c;
+  --text:"Atkinson Hyperlegible","Trebuchet MS",sans-serif;
+  --grid:"Barlow Condensed","Arial Narrow",sans-serif;
+  --num:"Red Hat Mono",Menlo,monospace;
+  --gutter:16px;
+  color-scheme:light;
+}
+@property --sweep{syntax:"<angle>";inherits:false;initial-value:360deg}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--paper);color:var(--ink);-webkit-text-size-adjust:100%;text-size-adjust:100%;scrollbar-color:var(--rule-strong) var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1.0625rem/1.5 var(--text);font-variant-numeric:tabular-nums;font-kerning:normal}
+::selection{background:var(--rule-faint);color:var(--ink)}
+input{caret-color:var(--ink)}
+a{color:var(--ink);text-decoration-color:var(--rule-strong);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-color:var(--ink)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0}
+.wrap{width:100%;max-width:1280px;margin-inline:auto;padding-inline:var(--gutter)}
+@media (min-width:720px){:root{--gutter:32px}}
+.label{font:600 .8125rem/1.2 var(--grid);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* The cloth band: the book's cover label panel, carrying the question. */
+.cover{background:var(--cloth);color:var(--stamp);padding-block:20px 26px}
+.plate{margin:6px;border:2px solid var(--stamp);outline:1px solid rgb(238 241 236 / .35);outline-offset:5px;
+  padding-top:22px;padding-right:20px;padding-bottom:20px;padding-left:20px}
+@media (min-width:720px){.plate{padding-top:34px;padding-right:40px;padding-bottom:28px;padding-left:40px}}
+.plate h1{font:700 clamp(2.25rem,1.3rem + 4.2vw,5rem)/.98 var(--grid);letter-spacing:.02em;text-transform:uppercase;max-width:22ch}
+.plate p{margin-top:clamp(14px,2vw,22px);padding-top:12px;border-top:1px solid var(--stamp);font-size:1.125rem;line-height:1.45;max-width:56ch}
+
+/* The sheet: picker, slip + PDF, roster. */
+.sheet{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"picker" "aside" "roster";gap:28px;padding-block:28px 48px}
+@media (min-width:1000px){
+  .sheet{grid-template-columns:minmax(0,1fr) 30rem;grid-template-areas:"picker aside" "roster aside";column-gap:clamp(32px,4vw,56px);row-gap:26px}
+  .aside{align-self:start}
+}
+@media (min-width:1000px) and (min-height:860px){.aside{position:sticky;top:20px}}
+.picker{grid-area:picker;display:grid;gap:8px;justify-items:start}
+.select{position:relative;width:min(100%,26rem)}
+.select select{appearance:none;-webkit-appearance:none;width:100%;height:56px;margin:0;padding:0 52px 0 16px;border:1.5px solid var(--ink);border-radius:0;
+  background:var(--paper);color:var(--ink);font:700 1.25rem/1 var(--text);cursor:pointer}
+.select select:hover{background:var(--ink-wash)}
+.select::after{content:"";position:absolute;right:20px;top:50%;width:10px;height:10px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);
+  transform:translateY(-70%) rotate(45deg);pointer-events:none}
+
+.aside{grid-area:aside;display:grid;gap:18px;align-content:start;min-width:0}
+
+/* The graded slip: a grade card, lines in pay order. */
+.slip{container-type:inline-size;border:1.5px solid var(--ink);padding:16px 20px 18px;background:var(--paper)}
+.slip-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-bottom:10px;border-bottom:1.5px solid var(--rule)}
+.slip-head h2{font:700 1.75rem/1.1 var(--text);letter-spacing:-.01em}
+.slip-head .label{white-space:nowrap}
+.lines{margin:0}
+.line{display:grid;grid-template-columns:7.25rem minmax(0,1fr);column-gap:16px;padding:11px 0}
+.line+.line{border-top:1px solid var(--rule-faint)}
+.line:last-child{padding-bottom:0}
+.line dt{font-weight:700;font-size:.9375rem;line-height:1.4;padding-top:2px}
+.line dd{margin:0;font-size:1rem;line-height:1.45}
+@container (max-width:390px){.line{grid-template-columns:minmax(0,1fr);row-gap:3px}}
+.verdict{position:relative;display:inline-block;margin-right:14px;padding:2px 2px 0;font:700 1.875rem/1 var(--grid);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);vertical-align:-2px}
+.verdict.graded{color:var(--pen)}
+.verdict .pen-ring{left:-10px;top:-7px;width:calc(100% + 20px);height:calc(100% + 13px)}
+.mini{width:100%;border-collapse:collapse;margin-top:8px}
+.mini th,.mini td{padding:5px 0;border-bottom:1px solid var(--rule-faint);text-align:left;font-weight:400}
+.mini thead th{padding-top:0;font:600 .75rem/1.2 var(--grid);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);border-bottom:1.5px solid var(--rule);vertical-align:bottom}
+.mini tbody th{font-size:.9375rem}
+.mini .n{text-align:right;padding-left:10px}
+.mini td.n{font:400 .9375rem/1.3 var(--num);white-space:nowrap}
+.mini tbody tr:last-child>*{border-bottom:0}
+
+/* The pen. One drawn ellipse (the workbook's #pen-circle); it draws itself round, like a hand. */
+.pen-ring{position:absolute;overflow:visible;pointer-events:none;color:var(--pen);
+  -webkit-mask-image:conic-gradient(from 100deg,#000 var(--sweep),transparent 0);mask-image:conic-gradient(from 100deg,#000 var(--sweep),transparent 0)}
+.row-ring{display:none;z-index:1}
+.row-ring.on{display:block}
+@keyframes pen{from{--sweep:0deg}to{--sweep:360deg}}
+@keyframes write{from{clip-path:inset(-40px 100% -40px -40px)}to{clip-path:inset(-40px -40px -40px -40px)}}
+@media (prefers-reduced-motion:no-preference){
+  .pen-ring.drawing{animation:pen .75s cubic-bezier(.55,.1,.25,1) both}
+  .slip.writing .line{animation:write .55s cubic-bezier(.16,1,.3,1) backwards;animation-delay:calc(var(--i) * 190ms)}
+  .slip.writing .verdict .pen-ring{animation-delay:.2s}
+}
+
+/* The one primary action at a time: the PDF form, then The Ultimate Teacher Escape Plan. */
+.get-pdf,.sent{container-type:inline-size;display:grid;gap:10px;border:2px solid var(--ink);padding:18px 20px 20px;background:var(--paper)}
+.get-pdf h2,.sent h2{font:700 1.25rem/1.25 var(--text)}
+.sent h2:focus{outline:none}
+.get-pdf .label{margin-top:4px}
+.field-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+@container (max-width:360px){.field-row{grid-template-columns:minmax(0,1fr)}}
+input[type=email]{min-width:0;height:48px;margin:0;padding:0 12px;border:1.5px solid var(--rule-strong);border-radius:0;background:var(--paper);color:var(--ink);font:400 1.0625rem/1 var(--text)}
+input[type=email]:hover{border-color:var(--ink-soft)}
+input[type=email]:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-color:var(--ink)}
+input[aria-invalid=true]{border:2px solid var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border:1.5px solid var(--ink);border-radius:0;
+  background:var(--ink);color:var(--paper);font:700 1.0625rem/1.2 var(--text);text-decoration:none;white-space:nowrap;cursor:pointer;
+  transition:background-color .15s ease-out,transform .1s ease-out}
+.btn:hover{background:var(--ink-soft);border-color:var(--ink-soft);color:var(--paper)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{background:var(--ink-soft);border-color:var(--ink-soft);cursor:progress}
+.sent .btn{justify-self:start;margin-top:4px}
+.err{font-weight:700;font-size:.9375rem}
+.note,.price{font-size:.875rem;line-height:1.45;color:var(--ink-soft)}
+.price{margin-top:-4px}
+
+/* The roster: the gradebook page. Ledger heads, blue rules, mono figures, verdict words. */
+.roster{grid-area:roster;container-type:inline-size;min-width:0}
+.roster h2{font:700 1.375rem/1.25 var(--text)}
+.roster-sub{margin:4px 0 14px;color:var(--ink-soft);font-size:.9375rem}
+.ledger-wrap{position:relative}
+.roster-table{width:100%;border-collapse:collapse}
+.roster-table th,.roster-table td{padding:6px 8px;border-bottom:1px solid var(--rule-faint);text-align:left;font-weight:400;vertical-align:baseline}
+.roster-table thead th{padding-top:0;font:600 .8125rem/1.2 var(--grid);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);border-bottom:1.5px solid var(--rule);vertical-align:bottom}
+.roster-table .n{text-align:right}
+.roster-table td.n{white-space:nowrap}
+.roster-table td.n{font:400 .9375rem/1.3 var(--num)}
+.roster-table tbody th a{text-decoration:none}
+.roster-table tbody th a:hover{text-decoration:underline}
+.roster-table tbody tr:not(.band):hover>*{background:var(--ink-wash);cursor:pointer}
+.roster-table tr.band th{padding:11px 8px 7px;background:var(--ink-wash);border-bottom:1.5px solid var(--rule)}
+.band-word{margin-right:8px;font:700 1.125rem/1 var(--grid);letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.band-count{margin-right:8px;font-weight:700;font-size:.9375rem}
+.band-rule{font-size:.875rem;color:var(--ink-soft)}
+.vword{font:600 .875rem/1.2 var(--grid);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+/* Your row lifts off the ledger: taller, on the stamp ground (the cover's lettering tone, not the sheet's white or
+   the bands' ink-wash), between 2px ink rules (2px so it wins the collapsed border over a band row's 1.5px rule). No shadow. */
+.roster-table tbody tr.yours>*,.roster-table tbody tr.yours:hover>*{padding-block:12px;background:var(--stamp);
+  border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.roster-table tbody tr.yours th{font-weight:700}
+tr.yours .vword{color:var(--pen)}
+.roster-table tfoot th,.roster-table tfoot td{padding-top:10px;border-top:1.5px solid var(--rule);border-bottom:0;font-weight:700}
+.mnote{position:absolute;left:0;display:none;width:46px;font:600 1rem/1.1 var(--grid);letter-spacing:.02em;color:var(--pen)}
+@container (max-width:599px){.col-entry,.col-verdict{display:none}}
+@container (min-width:600px){
+  .ledger-wrap{padding-left:64px}
+  .ledger-wrap::before{content:"";position:absolute;left:52px;top:0;bottom:0;border-left:1px solid var(--rule)}
+  .mnote.on{display:block}
+}
+
+.foot{display:grid;gap:8px;padding-block:18px 44px;border-top:1px solid var(--rule);font-size:.875rem;line-height:1.5;color:var(--ink-soft)}
+.foot p{max-width:88ch}
+.foot.wrap{border-top:0;position:relative}
+.foot.wrap::before{content:"";position:absolute;top:0;left:var(--gutter);right:var(--gutter);border-top:1px solid var(--rule)}
