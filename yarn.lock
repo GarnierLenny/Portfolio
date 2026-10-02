@@ -708,6 +708,11 @@ cloudflare-video-element@^1.3.4:
   resolved "https://registry.npmjs.org/cloudflare-video-element/-/cloudflare-video-element-1.3.5.tgz"
   integrity sha512-zj9gjJa6xW8MNrfc4oKuwgGS0njRLpOlQjdifbuNxvy8k4Y3pKCyKCMG2XIsjd2iQGhgjS57b1P5VWdJlxcXBw==
 
+cobe@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/cobe/-/cobe-2.0.1.tgz"
+  integrity sha512-aaa6vcIlaC8C1SF50LDH0Anybo/EAXnrxqe+bwvr4+YUtZydqjeBjTTD7ziCCkbRrRGSns3I3F6cZsf3W+L+ag==
+
 codem-isoboxer@0.3.10:
   version "0.3.10"
   resolved "https://registry.npmjs.org/codem-isoboxer/-/codem-isoboxer-0.3.10.tgz"

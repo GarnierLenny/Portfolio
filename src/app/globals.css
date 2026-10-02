@@ -2,93 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/* RGB triplets so Tailwind opacity modifiers (bg-ink/5, ring-lagoon/20) work */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --paper: 247 248 246;
+  --ink: 22 27 26;
+  --fog: 85 97 94;
+  --lagoon: 10 92 99;
+  --deep: 5 51 56;
+  --foam: 233 239 237;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: rgb(var(--paper));
+  color: rgb(var(--ink));
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+::selection {
+  background-color: rgb(var(--lagoon));
+  color: #fff;
 }
 
-@keyframes pulseSoft {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.03);
-  }
+/* Scroll/load reveal: opacity + transform only, disabled under reduced motion */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.animate-fade-in {
-  animation: pulseSoft 2.5s ease-in-out infinite;
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
 }
 
-@keyframes gradientMove {
-  0% {
-    background-position: 0% 50%;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-  50% {
-    background-position: 100% 50%;
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-.animate-gradient {
-  animation: gradientMove 3.5s ease infinite;
-}
-
-@keyframes spinSlow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spinSlow 4s linear infinite;
-}
-
-@keyframes radar {
-  0% {
-    transform: scale(0.8);
-    opacity: 0.8;
-  }
-  70% {
-    transform: scale(8);
-    opacity: 0.15;
-  }
-  100% {
-    transform: scale(24);
-    opacity: 0;
-  }
-}
-
-.animate-radar {
-  animation: radar 4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
