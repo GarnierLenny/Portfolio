@@ -35,10 +35,17 @@ export async function POST(req: Request) {
   try {
     const res = await client.messages.create({
       model: MODEL,
-      max_tokens: 8000,
+      // Thinking counts toward max_tokens: at 8,000 and the default effort, Haiku thought its way past the limit and the
+      // ideas came back cut off (17 Nov). Low effort keeps a cross quicker and cheaper; 16,000 leaves room either way.
+      max_tokens: 16000,
+      output_config: { effort: "low" },
       messages: [{ role: "user", content: `${prompt}\n\nAnswer with the JSON only, no other text.` }],
     });
     if (res.stop_reason === "refusal") return Response.json({ code: "refused" }, { status: 422 });
+    if (res.stop_reason === "max_tokens") {
+      console.error("cross: answer cut off at max_tokens", res.usage);
+      return Response.json({ code: "failed" }, { status: 502 });
+    }
     const text = res.content.map((b) => (b.type === "text" ? b.text : "")).join("");
     return Response.json({ text });
   } catch (e) {
