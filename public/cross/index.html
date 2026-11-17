@@ -1,0 +1,2148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Cross two worlds</title>
+  <style>
+    :root {
+      --bg: #ffffff; --side: #f5f5f7; --side-line: #e5e5ea; --canvas: #fafafb; --dot: #e3e3e8;
+      --card: #ffffff; --text: #1d1d1f; --text-2: #3a3a3c; --muted: #6e6e73; --faint: #aeaeb2;
+      --line: #ebebf0; --link: #c7c7cc; --field: #f2f2f7; --hover: #e8e8ed; --sel: #e3e3e8;
+      --accent: #0a66e0; --accent-hover: #0752b8; --accent-text: #0a66e0; --accent-soft: #e8f0fd;
+      --heart: #ff2d55; --heart-soft: #fff0f3; --star: #e8930c; --star-off: #e0e0e5;
+      --cross: #af52de; --cross-text: #8e3fb5; --danger: #d70015;
+      --shadow-card: 0 0 0 1px rgb(0 0 0 / .05), 0 3px 10px rgb(0 0 0 / .06);
+      --shadow-hover: 0 0 0 1px rgb(0 0 0 / .08), 0 8px 20px rgb(0 0 0 / .09);
+      --shadow-float: 0 0 0 1px rgb(0 0 0 / .05), 0 4px 10px rgb(0 0 0 / .05), 0 18px 44px rgb(0 0 0 / .10);
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #1c1c1e; --side: #232325; --side-line: #333336; --canvas: #1c1c1e; --dot: #2e2e31;
+        --card: #2c2c2e; --text: #f5f5f7; --text-2: #d1d1d6; --muted: #a1a1a6; --faint: #8e8e93;
+        --line: #3a3a3d; --link: #4a4a4e; --field: #3a3a3c; --hover: #2e2e31; --sel: #3a3a3d;
+        --accent: #0a66e0; --accent-hover: #1a73e8; --accent-text: #4c9bff; --accent-soft: #1d2f4a;
+        --heart: #ff375f; --heart-soft: #3a2329; --star: #ff9f0a; --star-off: #4a4a4e;
+        --cross: #bf5af2; --cross-text: #d08cf5; --danger: #ff453a;
+        --shadow-card: 0 0 0 1px rgb(255 255 255 / .06), 0 3px 10px rgb(0 0 0 / .35);
+        --shadow-hover: 0 0 0 1px rgb(255 255 255 / .10), 0 8px 22px rgb(0 0 0 / .45);
+        --shadow-float: 0 0 0 1px rgb(255 255 255 / .07), 0 18px 44px rgb(0 0 0 / .55);
+        color-scheme: dark;
+      }
+    }
+    :root[data-theme="dark"] {
+        --bg: #1c1c1e; --side: #232325; --side-line: #333336; --canvas: #1c1c1e; --dot: #2e2e31;
+        --card: #2c2c2e; --text: #f5f5f7; --text-2: #d1d1d6; --muted: #a1a1a6; --faint: #8e8e93;
+        --line: #3a3a3d; --link: #4a4a4e; --field: #3a3a3c; --hover: #2e2e31; --sel: #3a3a3d;
+        --accent: #0a66e0; --accent-hover: #1a73e8; --accent-text: #4c9bff; --accent-soft: #1d2f4a;
+        --heart: #ff375f; --heart-soft: #3a2329; --star: #ff9f0a; --star-off: #4a4a4e;
+        --cross: #bf5af2; --cross-text: #d08cf5; --danger: #ff453a;
+        --shadow-card: 0 0 0 1px rgb(255 255 255 / .06), 0 3px 10px rgb(0 0 0 / .35);
+        --shadow-hover: 0 0 0 1px rgb(255 255 255 / .10), 0 8px 22px rgb(0 0 0 / .45);
+        --shadow-float: 0 0 0 1px rgb(255 255 255 / .07), 0 18px 44px rgb(0 0 0 / .55);
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 var(--font);
+      -webkit-font-smoothing: antialiased; display: flex; overflow: hidden;
+    }
+    button, input { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    ::selection { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    a { color: var(--accent-text); }
+    ::placeholder { color: var(--muted); }
+    .icon { flex: none; }
+
+    /* ---------- sidebar */
+    .sidebar {
+      width: 264px; flex: none; height: 100vh; background: var(--side); border-right: 1px solid var(--side-line);
+      padding: 16px 10px 14px; display: flex; flex-direction: column; gap: 2px; overflow: hidden;
+    }
+    .find { display: flex; align-items: center; gap: 7px; height: 30px; padding: 0 9px; margin-bottom: 12px; border-radius: 8px; background: var(--hover); }
+    .find input { border: 0; outline: 0; background: transparent; flex: 1; min-width: 0; font-size: 13px; }
+    .nav-row {
+      display: flex; align-items: center; gap: 10px; width: 100%; min-height: 34px; padding: 0 10px; border: 0; border-radius: 7px;
+      background: none; text-align: left; font-size: 14px; font-weight: 500; color: var(--text);
+    }
+    .nav-row:hover { background: var(--hover); }
+    .nav-row[aria-current="true"] { background: var(--sel); }
+    .nav-row .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nav-row .count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .nav-row.new { color: var(--accent-text); font-weight: 600; }
+    .nav-row .pair { width: 36px; flex: none; font-size: 14px; letter-spacing: -1px; }
+    .group-label { font-size: 12px; font-weight: 600; color: var(--muted); padding: 18px 10px 6px; }
+    .crosses { list-style: none; margin: 0; padding: 0; overflow: auto; flex: 1; min-height: 0; }
+    .crosses .none { padding: 4px 10px; color: var(--muted); font-size: 13px; }
+    .side-foot { display: flex; flex-direction: column; gap: 10px; padding: 10px 10px 0; }
+    .side-foot .nav-row { padding: 0; color: var(--text-2); }
+    .side-foot .nav-row:hover { background: none; color: var(--text); }
+    .credit { margin: 0; font-size: 11px; line-height: 1.45; color: var(--muted); }
+
+    /* ---------- main */
+    main { flex: 1; min-width: 0; height: 100vh; display: flex; flex-direction: column; background: var(--bg); position: relative; }
+    .toolbar {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 16px 24px; min-height: 72px;
+      border-bottom: 1px solid var(--line); background: var(--bg);
+    }
+    .toolbar .pair { font-size: 22px; letter-spacing: -1px; }
+    .toolbar .titles { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
+    .toolbar h1 { margin: 0; font-size: 20px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+    .toolbar .meta { font-size: 13px; color: var(--muted); }
+    .segmented { display: flex; padding: 2px; border-radius: 9px; background: var(--field); }
+    .segmented button { height: 28px; padding: 0 14px; border: 0; border-radius: 7px; background: none; font-size: 13px; font-weight: 500; color: var(--text-2); }
+    .segmented button[aria-pressed="true"] { background: var(--card); color: var(--text); font-weight: 600; box-shadow: 0 1px 2px rgb(0 0 0 / .14); }
+    .btn {
+      height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card);
+      font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn:hover { border-color: var(--link); }
+    .btn-primary {
+      height: 38px; padding: 0 18px; border: 0; border-radius: 19px; background: var(--accent); color: #fff;
+      font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .15s, transform .1s;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-primary:active:not(:disabled) { transform: scale(.98); }
+    .btn-primary:disabled { opacity: .4; cursor: default; }
+    .icon-btn { width: 32px; height: 32px; flex: none; border: 0; border-radius: 50%; background: var(--field); display: grid; place-items: center; }
+    .icon-btn:hover { background: var(--hover); }
+    .icon-btn.kept { background: var(--heart-soft); }
+    .icon-btn.menu-btn { display: none; }
+
+    /* ---------- tree */
+    .stage {
+      flex: 1; min-height: 0; position: relative; overflow: hidden; touch-action: none; cursor: grab;
+      background-color: var(--canvas); background-image: radial-gradient(var(--dot) 1px, transparent 1.2px); background-size: 22px 22px;
+    }
+    .stage.panning { cursor: grabbing; }
+    .world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+    .world.glide { transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+    .links { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+    .links path { fill: none; stroke: var(--link); stroke-width: 1.5; }
+    .links path.sel { stroke: var(--accent); stroke-width: 2; }
+    .links path.cross { stroke: var(--cross); stroke-dasharray: 4 4; }
+    .links path.ghost { stroke-dasharray: 3 4; opacity: .8; }
+    .links path.enter { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .5s ease-out forwards; }
+    .links path.cross.enter, .links path.ghost.enter { stroke-dashoffset: 0; animation: fade .5s ease-out both; }
+    .links path.cross.enter { stroke-dasharray: 4 4; }
+    .links path.ghost.enter { stroke-dasharray: 3 4; }
+    .links path.enter, .links path.cross.enter, .links path.ghost.enter { animation-delay: var(--delay, 0ms); }
+    .card {
+      position: absolute; left: 0; top: 0; width: 200px; height: 74px; padding: 11px 12px 10px; border: 0; border-radius: 12px;
+      background: color-mix(in srgb, var(--tint, var(--card)) 13%, var(--card)); box-shadow: var(--shadow-card); text-align: left; color: var(--text);
+      display: flex; flex-direction: column; justify-content: space-between; gap: 4px;
+      transform: translate(var(--x), var(--y)); transition: box-shadow .15s;
+    }
+    .card:hover { box-shadow: var(--shadow-hover); }
+    .card .t { font-size: 13px; font-weight: 600; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card .m { display: flex; align-items: center; gap: 5px; min-height: 15px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .card .m .heart { margin-left: auto; }
+    .card .m .new { color: var(--accent-text); font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+    .card .m .new::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-text); }
+    .card .m .wildmark { display: inline-flex; color: var(--cross); }
+    .card .m .kind-cross { color: var(--cross-text); font-weight: 600; }
+    .tag { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 1px 7px; border-radius: 99px; background: color-mix(in srgb, var(--text) 6%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 7%, transparent); color: var(--text-2); font-size: 11px; font-weight: 600; }
+    .card .m .tag { margin-left: auto; }
+    .card .m .tag + .heart { margin-left: 0; }
+    .prefs {
+      inset: auto; margin: 0; width: 260px; padding: 16px; border: 0; border-radius: 14px; background: var(--card); color: var(--text);
+      box-shadow: 0 0 0 1px var(--line), 0 12px 32px rgb(0 0 0 / .16);
+    }
+    .prefs fieldset { border: 0; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+    .prefs legend { padding: 0; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .prefs label { display: flex; align-items: center; gap: 10px; min-height: 30px; font-size: 14px; }
+    .prefs input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
+    .prefs p { margin: 0; font-size: 12px; line-height: 1.45; color: var(--muted); }
+    #prefs-btn[data-on] { color: var(--accent-text); }
+    .pref-note { margin: -4px 0 0; font-size: 13px; color: var(--muted); }
+    .card.seed { border-radius: 16px; align-items: center; justify-content: center; gap: 3px; text-align: center; }
+    .card.seed .emo { display: flex; align-items: center; gap: 8px; font-size: 22px; line-height: 1; }
+    .card.seed .emo i { font-style: normal; font-size: 14px; font-weight: 300; color: var(--faint); }
+    .card.seed .names { font-size: 12px; font-weight: 500; color: var(--muted); max-width: 196px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card.combine { box-shadow: 0 0 0 1px color-mix(in srgb, var(--cross) 45%, transparent), 0 3px 10px rgb(0 0 0 / .06); }
+    .card.sel { box-shadow: 0 0 0 2px var(--accent), 0 6px 18px color-mix(in srgb, var(--accent) 22%, transparent); }
+    .card.drop { box-shadow: 0 0 0 2px var(--cross), 0 6px 18px color-mix(in srgb, var(--cross) 25%, transparent); }
+    .card.dragging { z-index: 5; cursor: grabbing; box-shadow: var(--shadow-float); }
+    .card.busy::after {
+      content: ""; position: absolute; inset: -5px; border-radius: 16px; border: 2px solid var(--accent);
+      animation: pulse 1.3s ease-in-out infinite; pointer-events: none;
+    }
+    .card.seed.busy::after { border-radius: 20px; }
+    .card.ghost {
+      cursor: default; box-shadow: none; pointer-events: none;
+      background: linear-gradient(100deg, var(--field) 30%, var(--hover) 50%, var(--field) 70%); background-size: 300% 100%;
+      animation: shimmer 1.4s linear infinite;
+    }
+    .card.enter { animation: pop .42s cubic-bezier(.2, .9, .25, 1.15) both; animation-delay: var(--delay, 0ms); }
+    .card.ghost.enter { animation: shimmer 1.4s linear infinite, fade .3s ease-out both; }
+    @keyframes pop { from { opacity: 0; transform: translate(var(--x), calc(var(--y) - 10px)) scale(.94); } }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @keyframes fade { from { opacity: 0; } }
+    @keyframes pulse { 0%, 100% { opacity: .15; } 50% { opacity: .7; } }
+    @keyframes shimmer { from { background-position: 100% 0; } to { background-position: -50% 0; } }
+    .node-bar {
+      --edge: color-mix(in srgb, var(--accent) 45%, transparent);
+      position: absolute; z-index: 5; display: flex; gap: 6px; padding: 6px; border-radius: 12px; background: var(--card); cursor: default;
+      border: 1px solid var(--edge); transform-origin: 50% calc(100% + 8px);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 10%, transparent), 0 10px 28px rgba(0, 0, 0, .14);
+    }
+    .node-bar::after { /* a small tail pointing at the node */
+      content: ''; position: absolute; left: 50%; bottom: -7px; width: 12px; height: 12px; background: var(--card);
+      border: solid var(--edge); border-width: 0 1px 1px 0; transform: translateX(-50%) rotate(45deg);
+    }
+    .node-bar.pop { animation: bar-in .32s cubic-bezier(.2, .9, .3, 1.15); }
+    .node-bar.out { animation: bar-out .14s ease-in forwards; pointer-events: none; }
+    @keyframes bar-in { from { opacity: 0; transform: translateY(10px) scale(.9); } }
+    @keyframes bar-out { to { opacity: 0; transform: translateY(6px) scale(.95); } }
+    @media (prefers-reduced-motion: reduce) { .node-bar.pop, .node-bar.out { animation-duration: 1ms; } }
+    .node-bar.glide { transition: left .45s cubic-bezier(.2, .8, .2, 1), top .45s cubic-bezier(.2, .8, .2, 1); }
+    .node-bar .field { flex: 1; min-width: 0; }
+    .node-bar .btn { flex: none; white-space: nowrap; }
+    .stage.picking, .stage.picking .card { cursor: crosshair; }
+    .stage.picking .card:not(.seed):not(.ghost):hover { box-shadow: 0 0 0 2px var(--cross), 0 6px 18px color-mix(in srgb, var(--cross) 25%, transparent); }
+    .stage-hint { position: absolute; left: 20px; bottom: 14px; margin: 0; font-size: 12px; color: var(--muted); pointer-events: none; }
+
+    /* ---------- list view */
+    .list { flex: 1; min-height: 0; overflow: auto; padding: 28px 32px 48px; }
+    .list ul { list-style: none; margin: 0; padding: 0; }
+    .list > ul { max-width: 720px; margin: 0 auto; }
+    .list > ul > li + li { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .list ul ul { margin-left: 13px; padding-left: 21px; border-left: 1px solid var(--line); }
+    .row { display: flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 8px; border-radius: 8px; }
+    .row:hover { background: var(--hover); }
+    .row.sel { background: var(--accent-soft); }
+    .row .open { flex: 1; min-width: 0; border: 0; background: none; text-align: left; padding: 10px 0; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+    .row .open .title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .row .score { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
+    .row .kind-cross { color: var(--cross-text); font-size: 13px; font-weight: 600; }
+    .toggle { width: 28px; height: 28px; flex: none; border: 0; background: none; padding: 0; display: grid; place-items: center; border-radius: 50%; }
+    .toggle .ring { width: 18px; height: 18px; border: 1.5px solid var(--link); border-radius: 50%; }
+    .toggle:hover .ring { border-color: var(--muted); }
+
+    /* ---------- inspector */
+    .inspector {
+      position: absolute; top: 92px; right: 20px; bottom: 20px; width: 344px; z-index: 10; overflow: auto;
+      padding: 18px 20px 20px; border-radius: 14px; box-shadow: var(--shadow-float);
+      background: linear-gradient(to bottom, color-mix(in srgb, var(--tint, var(--card)) 32%, var(--card)), var(--card) 240px) var(--card);
+      display: flex; flex-direction: column; gap: 14px; animation: slide .22s cubic-bezier(.2, .8, .2, 1);
+    }
+    @keyframes slide { from { opacity: 0; transform: translateX(14px); } }
+    .tints { display: flex; gap: 8px; }
+    .tint { width: 20px; height: 20px; padding: 0; border-radius: 50%; border: 0; background: color-mix(in srgb, var(--c) 45%, var(--card)); box-shadow: inset 0 0 0 1px rgb(0 0 0 / .08); cursor: pointer; transition: transform .12s; }
+    .tint:hover { transform: scale(1.12); }
+    .tint[aria-checked="true"] { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--ring, var(--c)); }
+    .inspector .head { display: flex; align-items: flex-start; gap: 8px; }
+    .inspector h2 { margin: 0; flex: 1; font-size: 20px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+    .inspector .trail { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; margin-top: -6px; font-size: 13px; color: var(--muted); }
+    .inspector .trail button { border: 0; background: none; padding: 0; color: inherit; max-width: 20ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inspector .trail button:hover { color: var(--text); }
+    .inspector .pitch { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text-2); }
+    .inspector .for { margin: 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+    .overall { display: flex; align-items: center; gap: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+    .overall b { font-size: 44px; font-weight: 700; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .overall div { display: flex; flex-direction: column; gap: 5px; }
+    .overall span { font-size: 12px; color: var(--muted); }
+    .jury { margin: 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+    .criteria { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+    .criteria li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 10px; align-items: center; }
+    .criteria .n { font-size: 14px; font-weight: 600; color: var(--text); }
+    .criteria small { grid-column: 1 / -1; font-size: 13px; line-height: 1.45; color: var(--text-2); }
+    .stars { display: inline-flex; gap: 2px; }
+    .actions {
+      margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding: 12px 0 0;
+      position: sticky; bottom: -20px; margin-bottom: -20px; padding-bottom: 20px; background: var(--card);
+    }
+    .field { height: 36px; width: 100%; padding: 0 12px; border: 0; border-radius: 9px; background: var(--field); font-size: 14px; }
+    .field:focus { outline: 2px solid var(--accent); outline-offset: 0; }
+
+    /* ---------- new cross */
+    .page { flex: 1; min-height: 0; overflow: auto; padding: 48px 32px 48px; }
+    .page-inner { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+    .page h1 { margin: 0; font-size: 30px; line-height: 1.12; font-weight: 700; letter-spacing: -0.015em; }
+    .page .lead { margin: 6px 0 0; font-size: 15px; color: var(--muted); max-width: 62ch; }
+    .slots { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .slots .x { font-size: 18px; font-weight: 300; color: var(--faint); }
+    .dice-btn { width: 44px; height: 44px; flex: none; border: 0; border-radius: 50%; background: var(--field); color: var(--text-2); display: grid; place-items: center; cursor: pointer; }
+    .dice-btn:hover { background: var(--hover); color: var(--text); }
+    .dice-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .dice-btn.roll svg { animation: roll .45s cubic-bezier(.2, .8, .2, 1); }
+    @keyframes roll { from { transform: rotate(-200deg) scale(.8); } }
+    @media (prefers-reduced-motion: reduce) { .dice-btn.roll svg { animation: none; } }
+    .slot {
+      flex: 1 1 230px; min-width: 0; display: flex; align-items: center; gap: 10px; height: 54px; padding: 0 14px; border: 0;
+      border-radius: 12px; background: var(--field); text-align: left; box-shadow: inset 0 0 0 1px var(--line);
+    }
+    .slot.active { box-shadow: inset 0 0 0 1.5px var(--accent); }
+    .slot .emo { font-size: 22px; }
+    .slot .txt { display: flex; flex-direction: column; min-width: 0; }
+    .slot .txt b { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .slot .txt span { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .slot.empty .txt b { font-weight: 500; color: var(--muted); }
+    .search { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 12px; border-radius: 9px; background: var(--field); }
+    .search input { border: 0; outline: 0; background: transparent; flex: 1; min-width: 0; font-size: 14px; }
+    .columns {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-radius: 12px; background: var(--side);
+      box-shadow: inset 0 0 0 1px var(--side-line); overflow: hidden; height: min(480px, 56vh);
+    }
+    .col { list-style: none; margin: 0; padding: 6px; overflow: auto; border-right: 1px solid var(--side-line); }
+    .col:last-child { border-right: 0; }
+    .item {
+      display: flex; align-items: center; gap: 8px; width: 100%; height: 32px; padding: 0 8px; border: 0; border-radius: 6px;
+      background: none; text-align: left; font-size: 14px; color: var(--text);
+    }
+    .item:hover { background: var(--hover); }
+    .item.open-path { background: var(--sel); }
+    .item.picked { background: var(--accent); color: #fff; font-weight: 600; }
+    .item.picked .c, .item.picked .path { color: rgb(255 255 255 / .8); }
+    .item .e { width: 20px; text-align: center; flex: none; }
+    .item .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .item .c { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .col .empty { padding: 10px; font-size: 13px; color: var(--muted); }
+    .results { list-style: none; margin: 0; padding: 6px; border-radius: 12px; background: var(--side); box-shadow: inset 0 0 0 1px var(--side-line); max-height: min(480px, 56vh); overflow: auto; }
+    .results .item { height: 40px; }
+    .results .item .path { font-size: 12px; color: var(--muted); margin-left: 6px; }
+
+    /* ---------- kept */
+    .kept-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+    .kept-list li { display: flex; align-items: center; gap: 10px; min-height: 56px; border-bottom: 1px solid var(--line); }
+    .kept-list .open { flex: 1; min-width: 0; border: 0; background: none; text-align: left; padding: 8px 0; display: flex; flex-direction: column; gap: 2px; }
+    .kept-list .open b { font-size: 15px; font-weight: 600; }
+    .kept-list .open span { font-size: 13px; color: var(--muted); }
+    .empty-state { color: var(--muted); font-size: 15px; }
+
+    .ctx { position: fixed; z-index: 70; min-width: 150px; padding: 4px; border-radius: 10px; background: var(--card); box-shadow: var(--shadow-float); }
+    .ctx button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 7px 10px; border-radius: 7px; font: inherit; color: var(--danger); cursor: pointer; }
+    .ctx button:hover, .ctx button:focus-visible { background: var(--hover); outline: none; }
+    .confirm { border: 0; border-radius: 14px; padding: 20px; width: min(380px, calc(100vw - 32px)); background: var(--card); color: var(--text); box-shadow: var(--shadow-float); }
+    .confirm::backdrop { background: rgb(0 0 0 / .35); }
+    .confirm h2 { margin: 0 0 6px; font-size: 17px; line-height: 1.3; text-wrap: balance; }
+    .confirm p { margin: 0 0 18px; color: var(--text-2); font-size: 14px; line-height: 1.5; }
+    .confirm .actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .confirm .btn.danger { background: var(--danger); color: #fff; }
+    #toasts { position: fixed; right: 16px; bottom: 16px; display: grid; gap: 8px; z-index: 60; max-width: min(420px, calc(100vw - 32px)); }
+    .toast { background: var(--card); color: var(--text); border-radius: 10px; padding: 10px 14px; box-shadow: var(--shadow-float); cursor: pointer; transition: opacity .3s; font-size: 13px; }
+    .toast.error { display: flex; align-items: baseline; gap: 8px; }
+    .toast.error::before { content: ""; width: 8px; height: 8px; flex: none; border-radius: 50%; background: #ff3b30; transform: translateY(-1px); }
+    .toast.out { opacity: 0; }
+
+    @media (max-width: 760px) {
+      .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 30; width: min(300px, 86vw); box-shadow: 0 0 40px rgb(0 0 0 / .2); transform: translateX(-105%); transition: transform .25s ease; }
+      body.menu .sidebar { transform: none; }
+      .icon-btn.menu-btn { display: grid; }
+      .toolbar { padding: 12px 16px; gap: 10px; }
+      .toolbar .titles { min-width: 0; }
+      .inspector { position: fixed; top: auto; left: 0; right: 0; bottom: 0; width: auto; max-height: 72vh; border-radius: 16px 16px 0 0; animation-name: rise; }
+      @keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+      .columns { grid-template-columns: 1fr; height: auto; }
+      .col { border-right: 0; border-bottom: 1px solid var(--side-line); max-height: 260px; }
+      .page { padding: 24px 16px 32px; }
+      .stage-hint { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+    }
+  </style>
+  <script>window.CROSS_API = '/api/cross';</script>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<nav class="sidebar" aria-label="Crosses">
+  <label class="find">
+    <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="color: var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="find" type="search" placeholder="Quick Find" aria-label="Quick Find">
+  </label>
+  <button class="nav-row new" id="nav-new" type="button">
+    <svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    <span class="name">New Cross</span>
+  </button>
+  <button class="nav-row" id="nav-kept" type="button">
+    <svg class="icon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path style="fill: var(--heart)" d="M12 20.5l-1.3-1.2C5.8 14.9 3 12.4 3 8.9 3 6.1 5.2 4 7.9 4c1.6 0 3.1.7 4.1 1.9C13 4.7 14.5 4 16.1 4 18.8 4 21 6.1 21 8.9c0 3.5-2.8 6-7.7 10.4z"/></svg>
+    <span class="name">Kept</span><span class="count" id="kept-count"></span>
+  </button>
+  <span class="group-label">Crosses</span>
+  <ul class="crosses" id="crosses"></ul>
+  <div class="side-foot">
+    <button class="nav-row" id="dice" type="button">
+      <svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.6" cy="8.6" r="1.1" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.1" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.1" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.1" fill="currentColor"/></svg>
+      <span class="name">Surprise Me</span>
+    </button>
+    <p class="credit">Free to try. Built on <a href="https://github.com/fltman/idea-generator-2" target="_blank" rel="noopener">Anders Bjarby's Idea Generator</a> (MIT).</p>
+  </div>
+</nav>
+
+<main>
+  <section id="view-cross" style="display: flex; flex-direction: column; flex: 1; min-height: 0;" hidden>
+    <header class="toolbar">
+      <button class="icon-btn menu-btn" type="button" aria-label="Show crosses" data-menu>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <span class="pair" id="cross-pair"></span>
+      <div class="titles"><h1 id="cross-title"></h1><span class="meta" id="cross-meta"></span></div>
+      <div class="segmented" role="group" aria-label="View">
+        <button type="button" id="mode-tree" aria-pressed="true">Tree</button>
+        <button type="button" id="mode-list" aria-pressed="false">List</button>
+      </div>
+      <button class="btn" type="button" id="prefs-btn" popovertarget="prefs" aria-label="Preferences">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+        <span id="prefs-label">Preferences</span>
+      </button>
+      <button class="btn" type="button" id="fit">Fit</button>
+    </header>
+    <div class="prefs" id="prefs" popover>
+      <fieldset><legend>Who pays</legend><div id="pref-market"></div></fieldset>
+      <fieldset><legend>What it is</legend><div id="pref-form"></div></fieldset>
+      <p>Every new idea follows what you tick, when you cross, branch or steer. Tick nothing in a group for any.</p>
+    </div>
+    <div class="stage" id="stage">
+      <div class="world" id="world">
+        <svg class="links" id="links" aria-hidden="true"></svg>
+        <div id="cards"></div>
+      </div>
+      <div class="node-bar" id="node-bar" hidden>
+        <input class="field" id="steer" type="text" maxlength="500" aria-label="Say what should change" placeholder="Say what should change…">
+        <button class="btn" id="cross-with" type="button">Cross with…</button>
+      </div>
+      <p class="stage-hint" id="stage-hint">Double-click an idea to branch 3 more · drag one onto another to cross them</p>
+    </div>
+    <div class="list" id="list" hidden></div>
+  </section>
+
+  <section id="view-new" class="page" aria-labelledby="new-title" hidden>
+    <div class="page-inner">
+      <header>
+        <button class="icon-btn menu-btn" type="button" aria-label="Show crosses" data-menu style="margin-bottom: 14px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <h1 id="new-title">New Cross</h1>
+        <p class="lead">Pick two of <span id="world-count"></span> worlds. Click a world to pick it, or go deeper and pick one of its niches. Three small tools grow where they meet.</p>
+      </header>
+      <div class="slots">
+        <button class="slot" id="slot-0" type="button"></button>
+        <span class="x" aria-hidden="true">×</span>
+        <button class="slot" id="slot-1" type="button"></button>
+        <button class="dice-btn" id="dice-near" type="button" aria-label="Pick two random worlds" title="Pick two random worlds"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.6" cy="8.6" r="1.1" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.1" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.1" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.1" fill="currentColor"/></svg></button>
+        <button class="btn-primary" id="cross" type="button" style="height: 44px; border-radius: 22px; padding: 0 24px; font-size: 15px">Cross</button>
+      </div>
+      <p class="pref-note" id="pref-note" hidden></p>
+      <label class="search">
+        <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="color: var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="world-q" type="search" placeholder="Search worlds" aria-label="Search worlds">
+      </label>
+      <div class="columns" id="columns" role="group" aria-label="Browse worlds">
+        <ul class="col" id="col-0" aria-label="Worlds"></ul>
+        <ul class="col" id="col-1" aria-label="Niches"></ul>
+        <ul class="col" id="col-2" aria-label="Micro-niches"></ul>
+      </div>
+      <ul class="results" id="results" aria-label="Matching worlds" hidden></ul>
+    </div>
+  </section>
+
+  <section id="view-kept" class="page" aria-labelledby="kept-title" hidden>
+    <div class="page-inner">
+      <header>
+        <button class="icon-btn menu-btn" type="button" aria-label="Show crosses" data-menu style="margin-bottom: 14px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <h1 id="kept-title">Kept</h1>
+        <p class="lead">The ideas you kept, across every cross.</p>
+      </header>
+      <ul class="kept-list" id="kept-list"></ul>
+    </div>
+  </section>
+
+  <aside class="inspector" id="inspector" aria-label="Idea" hidden></aside>
+</main>
+<div id="toasts" aria-live="polite"></div>
+<div class="ctx" id="ctx" role="menu" hidden><button type="button" role="menuitem" id="ctx-delete">Delete…</button></div>
+<dialog class="confirm" id="confirm" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+  <h2 id="confirm-title"></h2>
+  <p id="confirm-text"></p>
+  <div class="actions"><button class="btn" type="button" id="confirm-no">Cancel</button><button class="btn danger" type="button" id="confirm-yes">Delete</button></div>
+</dialog>
+
+<script type="module">
+// Tiny DOM helpers. Text always goes in as text nodes, never as HTML:
+// ideas are written by language models and by visitors.
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+/**
+ * h('button', { class: 'btn', onclick: fn, title: 'x', dataset: { id: 1 } }, 'Label', child)
+ * Props starting with "on" become listeners; class/text/html-free attributes otherwise.
+ */
+function h(tag, props = {}, ...children) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props ?? {})) {
+    if (v == null || v === false) continue;
+    if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
+    else if (k === 'class') el.className = v;
+    else if (k === 'dataset') Object.assign(el.dataset, v);
+    else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+    else if (k === 'value') el.value = v;
+    else if (k === 'checked') el.checked = !!v;
+    else el.setAttribute(k, v === true ? '' : String(v));
+  }
+  append(el, children);
+  return el;
+}
+
+function append(el, children) {
+  for (const c of children.flat(Infinity)) {
+    if (c == null || c === false) continue;
+    el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  }
+}
+
+function clear(el, ...children) {
+  el.replaceChildren();
+  append(el, children);
+  return el;
+}
+
+function svg(tag, attrs = {}, ...children) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs)) if (v != null) el.setAttribute(k, String(v));
+  for (const c of children.flat()) if (c) el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  return el;
+}
+
+let toastRoot;
+/** A short message in the corner. kind: info | good | error */
+function toast(message, kind = 'info', ms = 5000) {
+  toastRoot ??= document.getElementById('toasts');
+  const el = h('div', { class: `toast ${kind}`, role: kind === 'error' ? 'alert' : 'status' }, message);
+  toastRoot.append(el);
+  setTimeout(() => el.classList.add('out'), ms);
+  setTimeout(() => el.remove(), ms + 400);
+  el.addEventListener('click', () => el.remove());
+}
+
+function debounce(fn, ms) {
+  let t;
+  return (...a) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...a), ms);
+  };
+}
+
+// The worlds for cross.html, in three tiers: a broad world, its niches (indented), and their micro-niches (after the colon).
+
+const WORLDS = `
+🥋 Martial arts
+  Karate: Kata, Kumite sparring, Belt gradings, Running a dojo, Kids karate
+  Boxing: Footwork, Heavy bag training, Amateur fights, Weight cuts, Boxing gyms
+  Brazilian jiu-jitsu: Guard passing, Rolling partners, Competition rules, Gi vs no-gi, Injury recovery
+  Muay Thai: Clinch work, Thai camps abroad, Shin conditioning, Pad holding
+  Self-defense: Women's self-defense, Situational awareness, Pepper spray laws, Escaping holds
+  Martial arts history: Samurai, Shaolin monks, Bruce Lee, Old training manuals
+🍳 Cooking
+  Meal prep: Batch cooking Sundays, Lunchbox ideas, Freezer meals, Macro tracking meals
+  Baking: Sourdough, Pastry lamination, Gluten-free baking, Cake decorating, Bread scoring
+  World cuisines: Indian curries, Japanese home cooking, Mexican street food, Korean banchan, Italian nonna recipes
+  Kitchen skills: Knife skills, Seasoning by taste, Plating, Using leftovers, Cooking for one
+  Fermentation: Kimchi, Kombucha, Hot sauce, Pickling
+  Cooking for others: Dinner parties, Cooking for kids, Cooking for picky eaters, Allergies at the table
+💰 Personal finance
+  Budgeting: Envelope budgeting, Shared couple budgets, Irregular income, Subscription creep
+  Investing: Index funds, Dividend investing, Investing for kids, First brokerage account
+  Debt: Student loans, Credit card payoff, Buy now pay later, Debt snowball
+  Saving: Emergency fund, Saving for a house, Saving for travel, No-spend months
+  Money and relationships: Splitting bills with friends, Talking money with parents, Lending money, Gifts budget
+  Financial independence: FIRE movement, Side income, Early retirement math, Coast FI
+🎮 Gaming
+  Competitive gaming: Ranked ladders, Esports teams, Aim training, Tournament organizing
+  Game design: Level design, Game balance, Indie game launches, Playtesting
+  Speedrunning: Route planning, Glitch hunting, Split timers, Speedrun races
+  Retro gaming: Emulation, Cartridge collecting, Pixel art, CRT setups
+  Gaming communities: Discord servers, LAN parties, Modding, Guilds and clans
+  Tabletop RPGs: Dungeon mastering, Character backstories, Session notes, Homebrew rules
+✈️ Travel
+  Budget travel: Hostels, Overnight buses, Travel hacking points, Street food safety
+  Slow travel: Digital nomads, Month-long rentals, Learning the local routine, Coworking abroad
+  Planning: Itinerary building, Packing light, Visa paperwork, Travel insurance
+  Group travel: Friends trips, Family road trips, Splitting travel costs, Wedding abroad
+  Travel memories: Travel journals, Photo dumps, Souvenir collecting, Trip recaps
+🎵 Music
+  Learning an instrument: Guitar chords, Piano scales, Practice routines, Learning by ear, Drums at home
+  Music production: Beat making, Mixing vocals, Sample digging, Home studios
+  Listening: Album deep dives, Playlist curation, Concert going, Vinyl collecting
+  Singing: Vocal warmups, Karaoke nights, Choir, Harmony singing
+  Music careers: Releasing a single, Gigging, Busking, Music teaching
+🤖 AI agents
+  Agent building: Tool use, Agent memory, Multi-agent setups, Agent evals
+  Coding agents: Code review bots, Refactoring agents, Test writing agents, Pair programming
+  Personal agents: Inbox triage, Calendar assistants, Research assistants, Shopping agents
+  Agent safety: Prompt injection, Permission systems, Human in the loop, Audit logs
+  Prompting: System prompts, Few-shot examples, Structured output, Prompt versioning
+🎨 UI design
+  Visual design: Typography, Color palettes, Spacing systems, Icon design
+  Interaction design: Micro-interactions, Onboarding flows, Empty states, Error messages
+  Design systems: Component libraries, Design tokens, Dark mode, Documentation sites
+  UX research: User interviews, Usability tests, Heatmaps, Surveys
+  Accessibility: Screen readers, Color contrast, Keyboard navigation, Captions
+🗣️ Learning languages
+  Speaking practice: Shadowing, Conversation partners, Tutor sessions, Speaking anxiety
+  Vocabulary: Spaced repetition, Word families, Slang, False friends
+  Scripts and alphabets: Devanagari, Hiragana and katakana, Hangul, Cyrillic, Arabic script
+  Immersion: Shows with subtitles, Podcasts for learners, Reading graded books, Living abroad
+  Family languages: Heritage speakers, Partner's family language, Raising bilingual kids, Grandparents' language
+🏋️ Fitness
+  Strength training: Progressive overload, Powerlifting meets, Home gyms, Deload weeks
+  Calisthenics: Pull-up progressions, Handstands, Muscle-ups, Park workouts
+  Mobility: Hip mobility, Desk posture, Morning stretching, Foam rolling
+  Body composition: Cutting, Bulking, Protein intake, Progress photos
+  Gym life: Gym anxiety, Training partners, Gym etiquette, Workout logs
+😴 Sleep
+  Sleep routine: Wind-down rituals, Consistent wake time, Blue light, Caffeine cutoff
+  Sleep problems: Insomnia, Snoring, Night waking, Racing thoughts
+  Naps: Power naps, Siestas, Nap pods at work
+  Sleep tracking: Sleep scores, Smart alarms, Dream journals
+  Sleeping with others: Partner snoring, Co-sleeping with kids, Shared rooms, Different schedules
+📚 Reading
+  Reading habits: Reading streaks, Reading before bed, Audiobooks on walks, Reading goals
+  Book clubs: Picking books, Discussion questions, Online book clubs, Silent book clubs
+  Notes and memory: Highlights, Book summaries, Zettelkasten, Rereading
+  Genres: Fantasy series, Thrillers, Self-help skeptics, Classics, Manga
+  Libraries and buying: Library holds, Used bookstores, E-readers, Book swaps
+🎬 Filmmaking
+  Short films: Writing a short, Micro-budget shoots, Festival submissions, 48-hour film challenges
+  YouTube video craft: Talking head setups, B-roll, Retention editing, Thumbnails
+  Cinematography: Lighting on a budget, Phone filmmaking, Color grading, Camera movement
+  Editing: Cutting to music, Sound design, Pacing, Editing templates
+  Film watching: Film clubs, Director deep dives, Letterboxd logs, Rewatching classics
+📸 Photography
+  Street photography: Candid portraits, Shooting from the hip, Street ethics, Night streets
+  Portraits: Natural light portraits, Posing people, Headshots, Family photos
+  Phone photography: Phone night mode, Editing on the phone, Vertical framing
+  Photo organizing: Photo backups, Culling photos, Photo books, Duplicate photos
+  Film photography: Film stocks, Home developing, Disposable cameras, Scanning negatives
+🧠 Memory
+  Memorization: Memory palaces, Remembering names, Memorizing speeches, Number memorization
+  Learning science: Spaced repetition, Active recall, Interleaving, Forgetting curve
+  Everyday memory: Where did I put my keys, Remembering birthdays, Remembering what I read, To-remember lists
+  Memory and aging: Grandparents' memories, Recording family stories, Memory games for seniors
+🧘 Meditation
+  Practices: Breath counting, Body scans, Walking meditation, Loving-kindness
+  Building the habit: Two-minute sits, Meditation streaks, Meditating with others, Retreats
+  Mindfulness at work: Meeting breathers, Focus resets, Stress before presentations
+  Apps and tools: Guided meditations, Meditation timers, Ambient sounds
+🪴 Plants
+  Houseplants: Watering schedules, Low-light plants, Repotting, Plant pests
+  Balcony gardening: Herb boxes, Tomatoes in pots, Small-space gardens, Compost on a balcony
+  Garden planning: Seed starting, Companion planting, Garden layouts, Seasonal planting
+  Plant community: Plant swaps, Propagation, Rare plants, Plant shops
+🐶 Pets
+  Dogs: Puppy training, Dog walking, Separation anxiety, Dog parks
+  Cats: Indoor cats, Litter habits, Cat behavior, Multi-cat homes
+  Pet health: Vet visits, Pet insurance, Pet diets, Senior pets
+  Pet logistics: Pet sitters, Traveling with pets, Pet-friendly rentals, Adoption
+👶 Parenting
+  Babies: Baby sleep, Feeding schedules, First words, Baby milestones
+  Toddlers: Tantrums, Potty training, Toddler screen time, Picky eating
+  School years: Homework help, School runs, After-school activities, Reading with kids
+  Teens: Teen phones, First jobs, Teen money, Talking to teens
+  Parent life: Parent burnout, Co-parenting schedules, Family calendar, Grandparents helping
+💼 Job hunting
+  Applications: Cover letters, Tailoring a CV, Application tracking, ATS filters
+  Interviews: Behavioral questions, Technical interviews, Salary negotiation, Interview nerves
+  Networking: Cold messages, Referrals, Coffee chats, LinkedIn posts
+  Career switch: Bootcamps, Transferable skills, Portfolio projects, Starting over at 30
+  Rejection: Rejection emails, Ghosting recruiters, Staying motivated, Feedback requests
+🏠 Home and chores
+  Cleaning: Cleaning routines, Decluttering, Laundry, Cleaning with roommates
+  Home organizing: Small apartments, Closet systems, Labeling, Digital home inventory
+  Home repairs: Leaky taps, Painting walls, Furniture assembly, Calling a handyman
+  Shared homes: Roommate chores, Couple chore splits, Kids chores, House rules
+🚗 Commuting
+  Public transport: Train delays, Bus routes, Commute reading, Night trains
+  Cycling to work: Bike commuting gear, Rain rides, Bike theft, E-bikes
+  Driving: Traffic jams, Carpooling, Parking, Car podcasts
+  Remote vs office: Hybrid schedules, Commute time budgeting, Office days planning
+🛒 Groceries
+  Grocery planning: Shopping lists, Weekly meal plans, Pantry inventory, Bulk buying
+  Saving on food: Discount apps, Store brands, Food waste, Price tracking
+  Shopping trips: Farmers markets, Shopping with kids, Online grocery delivery, Asian supermarkets
+  Healthy shopping: Reading labels, High-protein shopping, Sugar swaps
+👗 Fashion
+  Personal style: Capsule wardrobe, Finding your style, Color analysis, Outfit repeating
+  Thrifting: Thrift flips, Vintage hunting, Selling old clothes, Clothing swaps
+  Clothing care: Laundry care, Repairs and mending, Shoe care, Ironing
+  Fashion making: Sewing, Knitting, Upcycling, Custom sneakers
+⚽ Football
+  Playing: Five-a-side, Sunday league, Goalkeeping, Ball control drills
+  Watching: Match days, Fantasy football, Football stats, Away trips
+  Coaching: Youth coaching, Training sessions, Team selection, Tactics boards
+  Fan culture: Club history, Chants, Kits and shirts, Stadium food
+🏃 Running
+  First races: Couch to 5K, First 10K, Race day nerves, Pacing
+  Marathons: Marathon training plans, Fueling, Long runs, Taper weeks
+  Trail running: Trail shoes, Elevation, Ultra marathons, Trail safety
+  Running together: Run clubs, Running with dogs, Running with kids, Parkrun
+♟️ Chess
+  Improving: Openings, Endgames, Tactics puzzles, Game analysis
+  Playing: Online blitz, Over the board clubs, Chess tournaments, Chess with friends
+  Chess culture: Chess streamers, Famous games, Chess history, Chess variants
+🎲 Board games
+  Game nights: Hosting game night, Party games, Two-player games, Teaching rules
+  Designing games: Prototyping, Playtesting groups, Print and play, Kickstarter games
+  Collecting: Shelf organizing, Game reviews, Board game cafés, Expansions
+🧩 Puzzles
+  Word puzzles: Crosswords, Wordle-likes, Anagrams, Cryptic clues
+  Logic puzzles: Sudoku, Nonograms, Escape rooms, Riddles
+  Jigsaws: 1000-piece puzzles, Puzzle swaps, Puzzle storage
+🎤 Public speaking
+  Presentations: Slide design, Opening lines, Storytelling in talks, Handling questions
+  Speaking nerves: Stage fright, Practicing out loud, Filler words, Voice training
+  Events: Toastmasters, Conference talks, Wedding speeches, Pitch competitions
+✍️ Writing
+  Fiction: Novel drafting, Short stories, World building, Writing dialogue
+  Nonfiction: Essays, Newsletters, Blog posts, Memoir
+  Writing habit: Morning pages, Word count goals, Writer's block, Writing groups
+  Editing: Self-editing, Beta readers, Cutting words, Feedback loops
+📓 Journaling
+  Journal styles: Bullet journal, Gratitude journal, Free writing, Prompt journals
+  Reflection: Weekly reviews, Year in review, Morning check-ins, Evening shutdown
+  Journal tools: Paper notebooks, Journaling apps, Voice journals, Photo journals
+✨ Productivity
+  Focus: Deep work blocks, Phone distractions, Focus music, Pomodoro alternatives
+  Planning: Weekly planning, Daily priorities, Time blocking, Saying no
+  Systems: Second brain, Task inboxes, Note-taking, Templates
+  Procrastination: Starting hard tasks, Perfectionism, Accountability partners, Deadlines
+🧾 Taxes and admin
+  Paperwork: Tax returns, Receipts, Warranty tracking, Important documents
+  Bills: Utility bills, Insurance renewals, Cancelling subscriptions, Bank fees
+  Life admin: Moving house admin, Passport renewals, Doctor appointments, Car registration
+🏥 Health
+  Doctor visits: Symptom tracking, Preparing questions, Second opinions, Medical records
+  Chronic conditions: Migraines, Back pain, Allergies, Diabetes
+  Nutrition: Hydration, Gut health, Vitamins, Intermittent fasting
+  Mental health: Anxiety, Therapy, Burnout, Loneliness
+🦷 Habits
+  Building habits: Habit stacking, Tiny habits, Habit cues, Rewards
+  Breaking habits: Doomscrolling, Nail biting, Late-night snacking, Smoking
+  Consistency: Never miss twice, Restarting after a break, Habit tracking, Accountability
+💌 Dating
+  Dating apps: Profile photos, Opening messages, Swipe fatigue, App safety
+  First dates: Date ideas, Conversation starters, First date nerves, Splitting the bill
+  Relationships: Long-distance, Date nights, Relationship check-ins, Anniversaries
+  Cross-cultural couples: Meeting the family, Two religions, Language gaps, Visiting their country
+👪 Family
+  Family time: Family dinners, Weekend traditions, Family holidays, Family chats
+  Extended family: Family reunions, Family trees, Cousins, In-laws
+  Caring for parents: Aging parents, Long-distance caregiving, Medication reminders, Family decisions
+🤝 Friendship
+  Making friends: Friends as an adult, New city friends, Friends from hobbies, Neighbors
+  Keeping friends: Staying in touch, Birthdays, Group chats, Friend catch-ups
+  Hard moments: Friend breakups, Envy, Helping a friend in crisis, Saying sorry
+🎁 Gifts
+  Gift ideas: Gifts for dads, Last-minute gifts, Experience gifts, Handmade gifts
+  Gift planning: Gift lists, Secret Santa, Gift budgets, Remembering occasions
+  Giving well: Thank-you notes, Wrapping, Regifting, Group gifts
+🎉 Parties
+  Hosting: House parties, Birthday parties, Kids parties, Dinner parties
+  Planning: Guest lists, RSVPs, Party themes, Party playlists
+  Big events: Weddings, Bachelor parties, Graduation parties, Surprise parties
+🌍 Climate
+  Everyday impact: Carbon footprint, Eating less meat, Flying less, Secondhand first
+  Energy: Solar at home, Heat pumps, Energy bills, Smart thermostats
+  Local action: Community gardens, Repair cafés, Local cleanups, Climate groups
+🗳️ Politics
+  Civic life: Voting, Local elections, Contacting representatives, Town halls
+  Understanding news: Fact checking, Media bias, Policy explainers, Polls
+  Debate: Arguing well, Talking politics with family, Political humor
+📰 News
+  Following news: News overload, Daily briefings, Local news, Newsletters
+  News formats: Explainer videos, Podcasts, Long reads, News quizzes
+  Media literacy: Spotting fakes, Source checking, Headline vs article
+📺 YouTube
+  Starting a channel: First video, Channel niche, Upload schedule, Fear of posting
+  Growing: Titles, Thumbnails, Retention graphs, Shorts strategy
+  Watching: Watch later list, Reading transcripts, Subscription overload, Learning from tutorials
+  Creator business: Sponsorships, Memberships, Merch, Editors
+🎙️ Podcasts
+  Making podcasts: Interview prep, Audio quality, Show notes, Guest booking
+  Listening: Podcast backlog, Speed listening, Podcast notes, Discovering shows
+  Podcast formats: Solo shows, Co-hosted shows, Narrative podcasts, Video podcasts
+🛠️ DIY
+  Woodworking: Beginner projects, Tool sharpening, Finishing wood, Workshop layout
+  Electronics: Arduino, Soldering, Smart home hacks, Repairing gadgets
+  Crafts: Candle making, Pottery, Leatherwork, Resin art
+  Home projects: Shelves, Lighting, Upcycled furniture, Wallpaper
+🚲 Cycling
+  Road cycling: Group rides, Climbing, Bike fitting, Cycling nutrition
+  Bike repair: Flat tires, Chain care, Brake adjustments, Bike tools
+  Bike touring: Bikepacking, Route planning, Touring gear, Camping by bike
+🏔️ Hiking
+  Day hikes: Trail finding, Hiking with friends, Weather planning, Snacks
+  Multi-day: Backpacking, Huts and refuges, Water filtering, Lightweight packs
+  Outdoor safety: Navigation, Altitude, First aid kits, Leave no trace
+🌌 Space
+  Stargazing: Telescopes, Star maps, Meteor showers, Light pollution
+  Space news: Rocket launches, Mars missions, Space telescopes, Astronauts
+  Astrophotography: Moon photos, Milky Way shots, Phone astrophotography
+🔬 Science
+  Science learning: Science videos, Physics intuition, Biology basics, Chemistry at home
+  Science at home: Kitchen experiments, Microscopes, Citizen science, Science fairs
+  Science careers: PhD life, Lab work, Research papers, Science communication
+🏛️ History
+  Eras: Ancient Rome, Medieval life, World War II, The Cold War
+  Personal history: Family history, Old letters, Local history, Oral histories
+  History media: History podcasts, Historical fiction, Museums, History maps
+🗺️ Geography
+  Maps: Map reading, Fantasy maps, Map games, Old maps
+  Places: Capital cities, Borders, Tiny countries, Islands
+  Geography games: Geoguessr, Flag quizzes, Country trivia
+🕵️ Mysteries
+  True crime: Cold cases, True crime podcasts, Forensics, Wrongful convictions
+  Unsolved: Lost cities, Unexplained events, Ciphers, Internet mysteries
+  Mystery games: Murder mystery parties, Detective games, Puzzle hunts
+😂 Comedy
+  Stand-up: Open mics, Writing jokes, Crowd work, Comedy specials
+  Funny online: Memes, Sketch videos, Comedy podcasts, Parody accounts
+  Everyday humor: Funny group chats, Office humor, Dad jokes, Pranks
+🎭 Theatre
+  Acting: Auditions, Improv classes, Line memorizing, Stage presence
+  Making theatre: Community theatre, Stage design, Directing, Writing a play
+  Watching: Musicals, Cheap tickets, Theatre reviews
+🍷 Wine and tasting
+  Wine: Wine basics, Pairing food and wine, Wine regions, Natural wine
+  Tasting: Blind tasting, Tasting notes, Tasting parties, Sensory training
+  Other drinks: Craft beer, Cocktails at home, Tea tasting, Non-alcoholic drinks
+☕ Coffee
+  Brewing: Pour-over, Espresso at home, Cold brew, Grinders
+  Coffee culture: Café hopping, Latte art, Coffee origins, Roasting at home
+  Coffee habits: Cutting caffeine, Coffee budgets, Office coffee
+🍣 Japanese culture
+  Japanese food: Ramen, Sushi making, Bento, Izakaya
+  Pop culture: Anime, Manga, J-pop, Studio Ghibli
+  Traditions: Tea ceremony, Onsen etiquette, Festivals, Calligraphy
+  Living in Japan: Japanese at work, Trains in Japan, Konbini life
+🇮🇳 Indian culture
+  Indian food: Regional curries, Street food, Spice boxes, Chai
+  Festivals: Diwali, Holi, Indian weddings, Navratri
+  Languages of India: Hindi, Tamil, Bengali, Hinglish
+  Arts: Bollywood, Classical dance, Cricket, Indian music
+🧑‍💻 Coding
+  Learning to code: First language, Coding katas, Tutorial hell, Side projects
+  Web development: CSS layouts, Frontend frameworks, APIs, Deploying
+  Developer tools: Terminal, Git, Editors, Dotfiles
+  Developer life: Code reviews, Open source, Tech interviews, Remote dev teams
+🐛 Debugging
+  Finding bugs: Reading stack traces, Rubber duck debugging, Logging, Reproducing bugs
+  Hard bugs: Race conditions, Memory leaks, Flaky tests, Timezone bugs
+  After the bug: Postmortems, Bug reports, Regression tests
+📈 Startups
+  Starting: Idea validation, Customer interviews, Landing pages, First users
+  Building: MVPs, Pricing, Churn, Onboarding
+  Founder life: Solo founders, Cofounders, Side projects at night, Founder burnout
+  Growth: Launch day, Product Hunt, Cold email, Content marketing
+🛍️ Selling online
+  Marketplaces: Etsy shops, eBay flipping, Vinted, Selling on Instagram
+  Product: Product photos, Listings, Shipping, Returns
+  Small shop life: Pricing handmade work, Customer messages, Packaging
+🎓 Exams
+  Studying: Revision timetables, Past papers, Flashcards, Study groups
+  Exam days: Exam stress, Exam sleep, Last-minute cramming
+  Big exams: Driving test, Language certificates, University entrance, Professional certifications
+🧒 Kids learning
+  Early learning: Learning to read, Counting games, Phonics, Educational apps
+  Homework: Math homework, Spelling lists, Science projects, Reading logs
+  Curiosity: Kids questions, Museum trips, Nature walks, Kids coding
+`;
+
+/** The worlds as a tree: { emoji, name, tier, parent, children }. Niches inherit their world's emoji. */
+function parseWorlds(text = WORLDS) {
+  const roots = [];
+  let world = null;
+  for (const raw of text.split('\n')) {
+    if (!raw.trim()) continue;
+    if (!raw.startsWith(' ')) {
+      const [emoji, ...name] = raw.trim().split(' ');
+      world = { emoji, name: name.join(' '), tier: 1, parent: null, children: [] };
+      roots.push(world);
+      continue;
+    }
+    const [nicheName, micro = ''] = raw.trim().split(':');
+    const niche = { emoji: world.emoji, name: nicheName.trim(), tier: 2, parent: world, children: [] };
+    niche.children = micro.split(',').map((m) => m.trim()).filter(Boolean)
+      .map((name) => ({ emoji: world.emoji, name, tier: 3, parent: niche, children: [] }));
+    world.children.push(niche);
+  }
+  return roots;
+}
+
+const all = (nodes) => nodes.flatMap((n) => [n, ...all(n.children)]);
+
+
+const GOAL = 'Small tools a person would actually be excited to build, found where two different worlds meet.';
+const BOARD_KEY = 'ideagen.crossBoard';
+const FAV_KEY = 'ideagen.crossFavs';
+const TINT_KEY = 'ideagen.crossTints';
+const TINTS = [['Blue', '#6fa0ff'], ['Purple', '#a98bff'], ['Pink', '#ff8fc8'], ['Peach', '#ffa970'], ['Mint', '#4fcf9e'], ['Lemon', '#f0c93f'], ['White', 'var(--card)']];
+const PASTELS = TINTS.length - 1; // a new cross starts on a pastel, never on white
+/** Colors someone picked, by idea id. Everything else inherits from its parent; a cross starts on its own color. */
+const tints = new Map((() => { try { return Object.entries(JSON.parse(localStorage.getItem(TINT_KEY)) ?? {}).map(([k, v]) => [Number(k), v]); } catch { return []; } })());
+const MORE_LIKE = 'I like this one. Keep what makes it exciting, push it further, and make the three new ideas differ from each other.';
+const CRITERIA = [
+  ['originality', 'Originality'], ['feasibility', 'Feasibility'], ['impact', 'Impact'],
+  ['viral', 'Viral potential'], ['space', 'Market space'], ['marketing', 'Easy to market'], ['revenue', 'Money potential'],
+];
+// Tags the rating gives each idea; the ones ticked in Preferences steer every new idea.
+const TAGS = { market: ['B2B', 'B2C'], form: ['Software', 'Physical', 'Service'] };
+const TAG_PHRASE = {
+  B2B: 'B2B (businesses or organisations pay for it)', B2C: 'B2C (individuals pay for it or use it)',
+  Software: 'software (an app, a site, a bot or a browser extension)', Physical: 'a physical object people hold or place somewhere',
+  Service: 'a service where people do the work',
+};
+const PREFS_KEY = 'ideagen.crossPrefs';
+const SIZE = { w: 200, h: 74, sw: 220, sh: 74, col: 228, row: 128, pad: 48 };
+const ROOTS = parseWorlds();
+const ALL = all(ROOTS);
+
+const S = {
+  board: null, ideas: new Map(), edges: [], ratings: new Map(), judging: new Set(), busy: new Set(), crossing: new Map(), unseen: new Set(),
+  prefs: (() => { try { return { market: [], form: [], ...JSON.parse(localStorage.getItem(PREFS_KEY)) }; } catch { return { market: [], form: [] }; } })(),
+  favs: new Set((() => { try { return JSON.parse(localStorage.getItem(FAV_KEY)) ?? []; } catch { return []; } })()),
+  view: 'new', mode: 'tree', seed: null, selected: null,
+  picked: [null, null], slot: 0, path: [], cam: { x: 0, y: 0, k: 1 },
+};
+let stopFollow = null;
+let lastLayout = { pos: new Map(), width: 0, height: 0 };
+
+// ---------------------------------------------------------------- small helpers
+
+const DIE_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.6" cy="8.6" r="1.3" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.3" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.3" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.3" fill="currentColor"/></svg>';
+const HEART = 'M12 20.5l-1.3-1.2C5.8 14.9 3 12.4 3 8.9 3 6.1 5.2 4 7.9 4c1.6 0 3.1.7 4.1 1.9C13 4.7 14.5 4 16.1 4 18.8 4 21 6.1 21 8.9c0 3.5-2.8 6-7.7 10.4z';
+const STAR = 'M12 2.6l2.9 6 6.6.8-4.9 4.6 1.3 6.5L12 17.3l-5.9 3.2 1.3-6.5L2.5 9.4l6.6-.8z';
+const NS = 'http://www.w3.org/2000/svg';
+/** An inline icon; colours go through `style` so theme variables apply. */
+function icon(d, size, paint = {}) {
+  const s = document.createElementNS(NS, 'svg');
+  s.setAttribute('width', size); s.setAttribute('height', size); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true');
+  s.classList.add('icon');
+  const p = document.createElementNS(NS, 'path');
+  p.setAttribute('d', d);
+  for (const [k, v] of Object.entries(paint)) p.style.setProperty(k, v);
+  s.append(p);
+  return s;
+}
+const heart = (size, on = true) => icon(HEART, size, on ? { fill: 'var(--heart)' } : { fill: 'none', stroke: 'var(--muted)', 'stroke-width': '2', 'stroke-linejoin': 'round' });
+const star = (size, fill = 'var(--star)') => icon(STAR, size, { fill });
+let halfId = 0;
+function starRow(value, size) {
+  const row = h('span', { class: 'stars', role: 'img', 'aria-label': `${value} out of 5` });
+  for (let i = 1; i <= 5; i++) {
+    const f = Math.max(0, Math.min(1, value - i + 1));
+    if (f >= 0.75) row.append(star(size));
+    else if (f < 0.25) row.append(star(size, 'var(--star-off)'));
+    else {
+      const id = `half${++halfId}`;
+      const s = document.createElementNS(NS, 'svg');
+      s.setAttribute('width', size); s.setAttribute('height', size); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true');
+      s.innerHTML = `<defs><linearGradient id="${id}"><stop offset="50%" style="stop-color: var(--star)"/><stop offset="50%" style="stop-color: var(--star-off)"/></linearGradient></defs><path d="${STAR}" fill="url(#${id})"/>`;
+      row.append(s);
+    }
+  }
+  return row;
+}
+
+const graphemes = new Intl.Segmenter();
+/** "🥋 Belt gradings (Martial arts › Karate) × 🍳 Cooking" → each side's emoji, short name and full name. */
+function splitPair(title) {
+  const parts = String(title).split(':')[0].split(' × ');
+  if (parts.length !== 2) return null;
+  const side = (t) => {
+    const first = graphemes.segment(t.trim())[Symbol.iterator]().next().value?.segment ?? '';
+    if (!/\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(first)) return null;
+    const full = t.trim().slice(first.length).trim();
+    return { emoji: first, full, name: full.replace(/\s*\(.*\)$/, '') };
+  };
+  const a = side(parts[0]), b = side(parts[1]);
+  return a && b ? { a, b } : null;
+}
+const pairEmoji = (seed) => { const p = splitPair(seed.title); return p ? `${p.a.emoji}${p.b.emoji}` : '✳️'; };
+const pairName = (seed) => { const p = splitPair(seed.title); return p ? `${p.a.name} × ${p.b.name}` : seed.title; };
+
+const path = (n) => (n.parent ? [...path(n.parent), n.parent] : []);
+const where = (n) => path(n).map((p) => p.name).join(' › ');
+const label = (n) => `${n.emoji} ${n.name}`;
+
+// ---------------------------------------------------------------- the idea graph
+
+const parentsOf = (id) => S.edges.filter((e) => e.to === id && S.ideas.has(e.from)).map((e) => e.from);
+const primaryParent = (id) => parentsOf(id)[0] ?? null;
+const kidsOf = (id) => S.edges.filter((e) => e.from === id && S.ideas.has(e.to) && primaryParent(e.to) === id).map((e) => e.to);
+function rootOf(id) {
+  for (let cur = id, i = 0; i < 50; i++) { const p = primaryParent(cur); if (p == null) return cur; cur = p; }
+  return id;
+}
+/** "B2C · Physical": the tags the rating gave an idea. */
+const tagsOf = (id) => { const r = S.ratings.get(id); return [r?.market, r?.form].filter(Boolean).join(' · '); };
+/** The ticked preferences that narrow anything ("B2B · Software"); a group with all or none ticked means any. */
+const activePrefs = () => Object.entries(TAGS).map(([k, all]) => all.filter((v) => S.prefs[k].includes(v)))
+  .filter((on, i) => on.length && on.length < Object.values(TAGS)[i].length);
+const prefsLabel = () => activePrefs().map((on) => on.join(' or ')).join(' · ');
+/** What every generation is told: "Every idea must be B2B (…). Every idea must be software (…) or a physical object (…)." */
+const prefRules = () => activePrefs().map((on) => `Every idea must be ${on.map((v) => TAG_PHRASE[v]).join(' or ')}.`).join(' ');
+const seeds = () => [...S.ideas.values()].filter((i) => i.kind === 'seed').sort((a, b) => b.id - a.id);
+function treeIds(seedId) {
+  const out = new Set();
+  const walk = (id) => { if (out.has(id)) return; out.add(id); kidsOf(id).forEach(walk); };
+  if (S.ideas.has(seedId)) walk(seedId);
+  return out;
+}
+/** The chain from the pair down to an idea's parent, the pair first. */
+function trailOf(id) {
+  const out = [];
+  for (let cur = primaryParent(id), i = 0; cur != null && i < 50; i++) { out.unshift(S.ideas.get(cur)); cur = primaryParent(cur); }
+  return out;
+}
+
+function criteriaOf(idea) {
+  const r = S.ratings.get(idea.id) ?? {};
+  return CRITERIA.map(([key, name]) => ({
+    name, why: typeof r[key] === 'object' ? r[key].why : '',
+    score: typeof r[key] === 'object' ? r[key].score : Number.isInteger(idea[key]) ? idea[key] : null,
+  }));
+}
+/** The mean of every criterion scored so far, to one decimal. */
+function starsOf(idea) {
+  if (idea.kind === 'seed') return null;
+  const s = criteriaOf(idea).map((c) => c.score).filter((v) => v != null);
+  return s.length ? Math.round((s.reduce((a, b) => a + b, 0) / s.length) * 10) / 10 : null;
+}
+
+/** Every cross's tree side by side, oldest on the left: pairs on top, one row per generation
+ * (a cross sits below its deepest parent, even in another tree), each idea centred over its children. */
+function layout() {
+  const roots = seeds().slice().reverse();
+  const ids = new Set(roots.flatMap((r) => [...treeIds(r.id)]));
+  const pos = new Map();
+  const rows = new Map();
+  const rowOf = (id, seen = new Set()) => {
+    if (rows.has(id)) return rows.get(id);
+    if (seen.has(id)) return 0;
+    seen.add(id);
+    const ps = parentsOf(id).filter((p) => ids.has(p));
+    const r = S.ideas.get(id)?.kind === 'seed' || !ps.length ? 0 : Math.max(...ps.map((p) => rowOf(p, seen))) + 1;
+    rows.set(id, r);
+    return r;
+  };
+  const kids = (id) => {
+    if (typeof id === 'string') return [];
+    const real = kidsOf(id).filter((k) => ids.has(k)).sort((a, b) => a - b);
+    if (S.busy.has(id)) real.push(`ghost-${id}-1`, `ghost-${id}-2`, `ghost-${id}-3`);
+    if (S.crossing.has(id)) real.push(`xghost-${id}-${S.crossing.get(id)}`); // where the cross will land
+    return real;
+  };
+  let cursor = 0;
+  const place = (id, r) => {
+    const ghost = typeof id === 'string';
+    const myRow = !ghost ? rowOf(id) : id.startsWith('x') ? Math.max(r, rowOf(Number(id.split('-')[2])) + 1) : r;
+    const ch = kids(id);
+    let x;
+    if (ch.length) {
+      const xs = ch.map((c) => place(c, myRow + 1));
+      x = (xs[0] + xs[xs.length - 1]) / 2;
+    } else x = cursor++ * SIZE.col;
+    pos.set(id, { x, row: myRow, ghost, parent: ghost ? Number(id.split('-')[1]) : null });
+    return x;
+  };
+  for (const r of roots) { place(r.id, 0); cursor += 0.5; } // a little air between crosses
+  for (const [id, p] of pos) {
+    const seed = S.ideas.get(id)?.kind === 'seed';
+    p.w = seed ? SIZE.sw : SIZE.w;
+    p.h = seed ? SIZE.sh : SIZE.h;
+    p.left = SIZE.pad + p.x + (SIZE.col - p.w) / 2;
+    p.top = SIZE.pad + p.row * SIZE.row + (seed ? 0 : 6);
+  }
+  const vals = [...pos.values()];
+  return {
+    pos,
+    width: vals.length ? Math.max(...vals.map((p) => p.left + p.w)) + SIZE.pad : 0,
+    height: vals.length ? Math.max(...vals.map((p) => p.top + p.h)) + SIZE.pad : 0,
+  };
+}
+
+// ---------------------------------------------------------------- rendering
+
+const cardEls = new Map(); // id → element, reused across renders so focus and animations survive
+const linkEls = new Map();
+
+function current() {
+  const cross = S.view === 'cross' && seeds().length > 0;
+  return { cross, new: S.view === 'new' || (S.view === 'cross' && !cross), kept: S.view === 'kept' };
+}
+
+function render() {
+  const on = current();
+  $('#view-cross').hidden = !on.cross;
+  $('#view-new').hidden = !on.new;
+  $('#view-kept').hidden = !on.kept;
+  renderSidebar(on);
+  if (on.cross) renderCross();
+  if (on.new) renderNew();
+  if (on.kept) renderKept();
+  renderInspector(on.cross);
+}
+
+function renderSidebar(on) {
+  const q = $('#find').value.trim().toLowerCase();
+  const list = seeds().filter((s) => !q || pairName(s).toLowerCase().includes(q)
+    || [...treeIds(s.id)].some((id) => S.ideas.get(id)?.title.toLowerCase().includes(q)));
+  clear($('#crosses'), list.length
+    ? list.map((s) => h('li', {}, h('button', {
+        class: 'nav-row', type: 'button', 'aria-current': String(on.cross && S.seed === s.id), onclick: () => openCross(s.id),
+      }, h('span', { class: 'pair' }, pairEmoji(s)), h('span', { class: 'name' }, pairName(s)),
+        h('span', { class: 'count' }, String(treeIds(s.id).size - 1)))))
+    : h('li', { class: 'none' }, q ? 'No match.' : 'Your crosses appear here.'));
+  $('#nav-new').setAttribute('aria-current', String(on.new));
+  $('#nav-kept').setAttribute('aria-current', String(on.kept));
+  const kept = [...S.favs].filter((id) => S.ideas.has(id)).length;
+  $('#kept-count').textContent = kept ? String(kept) : '';
+}
+
+function renderCross() {
+  const lay = layout();
+  lastLayout = lay;
+  const real = [...lay.pos].filter(([, p]) => !p.ghost).map(([id]) => S.ideas.get(id));
+  const pairs = real.filter((i) => i.kind === 'seed').length;
+  const count = real.length - pairs;
+  const crossed = real.filter((i) => i.kind === 'combine').length;
+  $('#cross-pair').hidden = true;
+  $('#cross-title').textContent = 'All Crosses';
+  $('#cross-meta').textContent = [
+    `${pairs} pair${pairs === 1 ? '' : 's'}`,
+    `${count} idea${count === 1 ? '' : 's'}`,
+    crossed ? `${crossed} crossed` : null,
+  ].filter(Boolean).join(' · ');
+  $('#mode-tree').setAttribute('aria-pressed', String(S.mode === 'tree'));
+  $('#mode-list').setAttribute('aria-pressed', String(S.mode === 'list'));
+  $('#stage').hidden = S.mode !== 'tree';
+  $('#fit').hidden = S.mode !== 'tree';
+  $('#list').hidden = S.mode !== 'list';
+  if (S.mode === 'tree') renderTree(lay); else renderList();
+}
+
+function renderTree(lay) {
+  const world = $('#world');
+  world.style.width = `${lay.width}px`;
+  world.style.height = `${lay.height}px`;
+  const onPath = new Set(S.selected != null ? [S.selected, ...trailOf(S.selected).map((i) => i.id)] : []);
+
+  // Links: parent bottom to child top as a smooth S-curve; a cross's second parent is dashed.
+  const svg = $('#links');
+  svg.setAttribute('width', lay.width);
+  svg.setAttribute('height', lay.height);
+  // New cards appear top-down, row by row; a new link draws once both its cards are in.
+  const enterAt = new Map();
+  for (const [id, p] of lay.pos) if (!cardEls.has(id)) enterAt.set(id, p.row * 110 + Math.round(p.x / SIZE.col) * 15);
+  const first = Math.min(...enterAt.values());
+  for (const [id, t] of enterAt) enterAt.set(id, Math.min(t - first, 900));
+  const wanted = new Set();
+  const link = (key, from, to, cls) => {
+    const a = lay.pos.get(from), b = lay.pos.get(to);
+    if (!a || !b) return;
+    wanted.add(key);
+    const x1 = a.left + a.w / 2, y1 = a.top + a.h, x2 = b.left + b.w / 2, y2 = b.top;
+    const dy = Math.max(28, (y2 - y1) * 0.55);
+    let p = linkEls.get(key);
+    const fresh = !p;
+    if (fresh) {
+      p = document.createElementNS(NS, 'path');
+      p.setAttribute('pathLength', '1');
+      p.addEventListener('animationend', () => p.classList.remove('enter'), { once: true });
+      const t = Math.max(enterAt.get(from) ?? -1, enterAt.get(to) ?? -1);
+      p.style.setProperty('--delay', `${t < 0 ? 0 : t + 320}ms`);
+      linkEls.set(key, p);
+      svg.append(p);
+    }
+    p.setAttribute('d', `M${x1} ${y1} C${x1} ${y1 + dy} ${x2} ${y2 - dy} ${x2} ${y2}`);
+    const entering = fresh || p.classList.contains('enter');
+    p.setAttribute('class', [cls, entering ? 'enter' : ''].filter(Boolean).join(' '));
+  };
+  for (const e of S.edges) {
+    if (!lay.pos.has(e.from) || !lay.pos.has(e.to)) continue;
+    const primary = primaryParent(e.to) === e.from;
+    link(`${e.from}-${e.to}`, e.from, e.to, primary ? (onPath.has(e.from) && onPath.has(e.to) ? 'sel' : '') : 'cross');
+  }
+  for (const [id, p] of lay.pos) {
+    if (p.ghost) link(`g-${id}`, p.parent, id, 'ghost');
+    if (p.ghost && id.startsWith('x')) link(`g2-${id}`, Number(id.split('-')[2]), id, 'ghost');
+  }
+  for (const [key, el] of linkEls) if (!wanted.has(key)) { el.remove(); linkEls.delete(key); }
+  for (const el of svg.querySelectorAll('path.sel')) svg.append(el); // the selected path draws on top
+
+  const box = $('#cards');
+  for (const [id, p] of lay.pos) {
+    let el = cardEls.get(id);
+    if (!el) {
+      el = p.ghost ? h('div', { class: 'card ghost', 'aria-hidden': 'true' }) : h('button', { class: 'card', type: 'button', dataset: { id: String(id) } });
+      el.classList.add('enter');
+      el.style.setProperty('--delay', `${enterAt.get(id) ?? 0}ms`);
+      el.addEventListener('animationend', () => el.classList.remove('enter'), { once: true });
+      cardEls.set(id, el);
+      box.append(el);
+    }
+    if (!el.classList.contains('dragging')) {
+      el.style.setProperty('--x', `${p.left}px`);
+      el.style.setProperty('--y', `${p.top}px`);
+    }
+    el.style.width = `${p.w}px`;
+    el.style.height = `${p.h}px`;
+    if (!p.ghost) fillCard(el, S.ideas.get(id));
+  }
+  for (const [id, el] of cardEls) if (!lay.pos.has(id)) { el.remove(); cardEls.delete(id); }
+  placeBar();
+}
+
+function fillCard(el, idea) {
+  const seed = idea.kind === 'seed';
+  el.style.setProperty('--tint', tintOf(idea.id));
+  const keep = ['enter', 'drop', 'dragging'].filter((c) => el.classList.contains(c));
+  el.className = ['card', seed ? 'seed' : '', idea.kind === 'combine' ? 'combine' : '', S.selected === idea.id ? 'sel' : '',
+    S.busy.has(idea.id) ? 'busy' : '', ...keep].filter(Boolean).join(' ');
+  if (seed) {
+    const p = splitPair(idea.title);
+    clear(el,
+      h('span', { class: 'emo' }, p ? [p.a.emoji, h('i', {}, '×'), p.b.emoji] : '✳️'),
+      h('span', { class: 'names' }, pairName(idea)));
+    el.setAttribute('aria-label', `${pairName(idea)}: the pair`);
+    return;
+  }
+  const st = starsOf(idea);
+  const meta = h('span', { class: 'm' });
+  if (S.busy.has(idea.id)) meta.append('Growing…');
+  else if (S.unseen.has(idea.id)) meta.append(h('span', { class: 'new' }, 'New'));
+  else if (st != null) meta.append(star(11), st.toFixed(1));
+  else if (S.judging.has(idea.id)) meta.append('Rating…');
+  if (idea.twist && !S.busy.has(idea.id)) { // built on a wild card: the same die as the dice buttons
+    const die = h('span', { class: 'wildmark', title: `Wild card: ${idea.twist}${idea.like ? ` (like ${idea.like})` : ''}` });
+    die.innerHTML = DIE_SVG;
+    meta.append(die);
+  }
+  if (idea.kind === 'combine' && !S.busy.has(idea.id)) meta.append(h('span', { class: 'kind-cross' }, 'Cross'));
+  const tags = tagsOf(idea.id);
+  if (tags) meta.append(h('span', { class: 'tag' }, tags));
+  if (S.favs.has(idea.id)) { const hh = heart(12); hh.classList.add('heart'); meta.append(hh); }
+  clear(el, h('span', { class: 't' }, idea.title), meta);
+  el.setAttribute('aria-label', `${idea.title}${st != null ? `, ${st} out of 5` : ''}${idea.twist ? ', built on a wild card' : ''}${S.favs.has(idea.id) ? ', kept' : ''}`);
+}
+
+function renderList() {
+  const make = (id) => {
+    const idea = S.ideas.get(id);
+    const st = starsOf(idea);
+    const kids = kidsOf(id).sort((a, b) => a - b);
+    const seed = idea.kind === 'seed';
+    return h('li', {},
+      h('div', { class: `row${S.selected === id ? ' sel' : ''}` },
+        seed ? null : h('button', {
+          class: 'toggle', type: 'button', 'aria-pressed': String(S.favs.has(id)),
+          'aria-label': S.favs.has(id) ? `Remove ${idea.title} from Kept` : `Keep ${idea.title}`, onclick: () => toggleFav(id),
+        }, S.favs.has(id) ? heart(18) : h('span', { class: 'ring' })),
+        h('button', { class: 'open', type: 'button', onclick: () => select(id) },
+          h('span', { class: 'title', style: seed ? 'font-weight: 600' : '' }, seed ? `${pairEmoji(idea)}  ${pairName(idea)}` : idea.title),
+          idea.kind === 'combine' ? h('span', { class: 'kind-cross' }, 'Cross') : null,
+          S.busy.has(id) ? h('span', { class: 'score' }, 'Growing…')
+            : S.unseen.has(id) ? h('span', { class: 'score', style: 'color: var(--accent-text); font-weight: 600' }, 'New')
+            : st != null ? h('span', { class: 'score' }, star(12), st.toFixed(1)) : null,
+          tagsOf(id) ? h('span', { class: 'tag' }, tagsOf(id)) : null)),
+      kids.length ? h('ul', {}, kids.map(make)) : null);
+  };
+  clear($('#list'), h('ul', {}, seeds().slice().reverse().map((s) => make(s.id))));
+}
+
+function renderInspector(crossShowing) {
+  const box = $('#inspector');
+  const idea = crossShowing && S.selected != null ? S.ideas.get(S.selected) : null;
+  box.hidden = !idea;
+  if (!idea) return;
+  const seed = idea.kind === 'seed';
+  const pair = seed && splitPair(idea.title);
+  const st = starsOf(idea);
+  const r = S.ratings.get(idea.id);
+  const trail = trailOf(idea.id);
+  const kept = S.favs.has(idea.id);
+  const tint = tintOf(idea.id);
+  box.style.setProperty('--tint', tint);
+  clear(box,
+    h('div', { class: 'head' },
+      h('h2', {}, pair ? `${pair.a.emoji} × ${pair.b.emoji}` : idea.title),
+      seed ? null : h('button', {
+        class: `icon-btn${kept ? ' kept' : ''}`, type: 'button', 'aria-pressed': String(kept),
+        'aria-label': kept ? 'Remove from Kept' : 'Keep', title: kept ? 'Remove from Kept' : 'Keep', onclick: () => toggleFav(idea.id),
+      }, heart(17, kept)),
+      h('button', { class: 'icon-btn', type: 'button', 'aria-label': 'Close', onclick: () => select(null) },
+        icon('M6 6l12 12M18 6L6 18', 12, { fill: 'none', stroke: 'var(--muted)', 'stroke-width': '3', 'stroke-linecap': 'round' }))),
+    h('div', { class: 'tints', role: 'radiogroup', 'aria-label': 'Color of this branch' }, TINTS.map(([name, c], i) => h('button', {
+      class: 'tint', type: 'button', role: 'radio', 'aria-checked': String(c === tint), 'aria-label': name, title: name,
+      style: `--c: ${c}${name === 'White' ? '; --ring: var(--faint)' : ''}`, onclick: () => setTint(idea.id, i),
+    }))),
+    trail.length ? h('nav', { class: 'trail', 'aria-label': 'Where it came from' },
+      trail.flatMap((t, i) => [i ? h('span', { 'aria-hidden': 'true' }, '›') : null,
+        h('button', { type: 'button', onclick: () => select(t.id) }, t.kind === 'seed' ? pairEmoji(t) : t.title)])) : null,
+    pair ? h('p', { class: 'pitch' }, `${pair.a.full} × ${pair.b.full}`) : idea.pitch ? h('p', { class: 'pitch' }, idea.pitch) : null,
+    !seed && idea.annoyance ? h('p', { class: 'for' }, `From ${idea.who || 'someone'}: "${idea.annoyance}"`) : null,
+    !seed && idea.borrows ? h('p', { class: 'for' }, `Borrows ${idea.borrows}`) : null,
+    seed && idea.people?.length ? h('ul', { class: 'criteria', 'aria-label': 'The annoyances behind these ideas' }, idea.people.map((x) => h('li', {},
+      h('span', { class: 'n' }, x.who.replace(/^./, (ch) => ch.toUpperCase())),
+      h('small', {}, x.annoyances.map((a) => `"${a}"`).join(' '))))) : null,
+    !seed && idea.twist ? h('p', { class: 'for' }, `Wild card: ${idea.twist}${idea.like ? ` Like ${idea.like}.` : ''}`) : null,
+    !seed && r?.audience ? h('p', { class: 'for' }, r.audience) : null,
+    !seed && tagsOf(idea.id) ? h('p', { class: 'for' }, h('span', { class: 'tag' }, tagsOf(idea.id))) : null,
+    seed ? null : h('div', { class: 'overall' },
+      h('b', {}, st != null ? st.toFixed(1) : '–'), h('div', {}, starRow(st ?? 0, 24),
+      h('span', {}, r?.originality ? 'across 7 criteria' : rateFailed.has(idea.id) ? 'market rating failed, reopen to retry'
+        : st != null ? 'market rating on its way…' : 'being rated…'))),
+    !seed && idea.reason ? h('p', { class: 'jury' }, idea.reason) : null,
+    seed ? null : h('ul', { class: 'criteria' }, criteriaOf(idea).map((c) => h('li', {},
+      h('span', { class: 'n' }, c.name),
+      c.score != null ? starRow(c.score, 16) : h('span', { class: 'n', style: 'color: var(--muted)' }, '…'),
+      c.why ? h('small', {}, c.why) : null))),
+    h('div', { class: 'actions' },
+      h('button', { class: 'btn-primary', type: 'button', disabled: S.busy.has(idea.id), onclick: () => grow(idea.id, seed ? '' : MORE_LIKE) },
+        S.busy.has(idea.id) ? 'Branching…' : 'Branch 3 More')),
+  );
+  if (!seed) rate(idea.id);
+}
+
+// ---------------------------------------------------------------- new cross
+
+function renderNew() {
+  $('#world-count').textContent = ALL.length.toLocaleString('en');
+  $('#pref-note').hidden = !prefsLabel();
+  $('#pref-note').textContent = `Following your preferences: ${prefsLabel()}`;
+  [0, 1].forEach((i) => {
+    const n = S.picked[i], el = $(`#slot-${i}`);
+    el.className = `slot${n ? '' : ' empty'}${S.slot === i ? ' active' : ''}`;
+    el.setAttribute('aria-label', n ? `${n.name}. Clear it` : i ? 'Second world: pick one below' : 'First world: pick one below');
+    clear(el,
+      n ? h('span', { class: 'emo' }, n.emoji) : null,
+      h('span', { class: 'txt' }, h('b', {}, n ? n.name : i ? 'Pick another world' : 'Pick a world'),
+        h('span', {}, n ? (n.parent ? where(n) : 'The whole world') : S.slot === i ? 'Choose below' : '')));
+  });
+  $('#cross').disabled = !(S.picked[0] && S.picked[1]);
+  const q = $('#world-q').value.trim().toLowerCase();
+  $('#columns').hidden = !!q;
+  $('#results').hidden = !q;
+  const picked = (n) => S.picked.includes(n);
+  const item = (n, o = {}) => h('li', {}, h('button', {
+    type: 'button', class: ['item', picked(n) ? 'picked' : '', !picked(n) && S.path.includes(n) ? 'open-path' : ''].filter(Boolean).join(' '),
+    'aria-pressed': String(picked(n)), onclick: () => choose(n),
+  },
+    o.emoji ? h('span', { class: 'e' }, n.emoji) : null,
+    h('span', { class: 'nm' }, n.name, o.search && n.parent ? h('span', { class: 'path' }, where(n)) : null),
+    !o.search && n.children.length ? h('span', { class: 'c' }, String(all(n.children).length)) : null,
+    !o.search && n.children.length ? icon('M9 6l6 6-6 6', 11, { fill: 'none', stroke: 'currentColor', 'stroke-width': '2.6', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }) : null,
+    picked(n) ? icon('M5 12.5l4.5 4.5L19 7.5', 14, { fill: 'none', stroke: '#fff', 'stroke-width': '2.8', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }) : null));
+  if (q) {
+    const hits = ALL.filter((n) => n.name.toLowerCase().includes(q));
+    clear($('#results'), hits.length ? hits.slice(0, 200).map((n) => item(n, { search: true, emoji: true }))
+      : h('li', { class: 'empty-state', style: 'padding: 10px' }, 'No world matches that.'));
+    return;
+  }
+  const [w, n] = S.path;
+  clear($('#col-0'), ROOTS.map((r) => item(r, { emoji: true })));
+  clear($('#col-1'), w ? w.children.map((c) => item(c)) : h('li', { class: 'empty' }, 'Pick a world to see its niches.'));
+  clear($('#col-2'), n ? n.children.map((c) => item(c)) : h('li', { class: 'empty' }, w ? 'Pick a niche to go one level deeper, or keep the whole world.' : ''));
+}
+
+/** Click to pick, at any tier. Going deeper in the same world refines that pick; a different world fills the other slot. */
+function choose(n) {
+  const root = (x) => path(x)[0] ?? x;
+  const cur = S.picked[S.slot], other = S.slot === 0 ? 1 : 0;
+  let target = S.slot;
+  if (cur && root(cur) !== root(n) && (!S.picked[other] || root(S.picked[other]) === root(n))) target = other;
+  if (S.picked[target === 0 ? 1 : 0] === n) return;
+  S.picked[target] = n;
+  S.slot = target;
+  S.path = [...path(n), ...(n.children.length ? [n] : [])];
+  renderNew();
+}
+
+function surprise() {
+  // Each tier has the same chance, however many worlds it holds.
+  const any = () => {
+    const tier = 1 + Math.floor(Math.random() * 3);
+    const pool = ALL.filter((n) => n.tier === tier);
+    return pool[Math.floor(Math.random() * pool.length)];
+  };
+  const root = (n) => path(n)[0] ?? n;
+  const a = any();
+  let b;
+  do b = any(); while (root(b) === root(a));
+  S.picked = [a, b];
+  S.slot = 1;
+  S.path = [...path(b), ...(b.children.length ? [b] : [])];
+  $('#world-q').value = '';
+  show('new');
+}
+
+// ---------------------------------------------------------------- kept
+
+function renderKept() {
+  const list = [...S.favs].map((id) => S.ideas.get(id)).filter(Boolean);
+  clear($('#kept-list'), list.length ? list.map((idea) => {
+    const seed = S.ideas.get(rootOf(idea.id));
+    const st = starsOf(idea);
+    return h('li', {},
+      h('button', { class: 'toggle', type: 'button', 'aria-label': `Remove ${idea.title} from Kept`, onclick: () => toggleFav(idea.id) }, heart(18)),
+      h('button', { class: 'open', type: 'button', onclick: () => { openCross(seed.id); select(idea.id); } },
+        h('b', {}, idea.title),
+        h('span', {}, [seed ? `${pairEmoji(seed)}  ${pairName(seed)}` : null, st != null ? `★ ${st.toFixed(1)}` : null].filter(Boolean).join(' · '))));
+  }) : h('li', { class: 'empty-state', style: 'border: 0' }, 'Nothing kept yet. Open an idea and press ♡ to keep it here.'));
+}
+
+// ---------------------------------------------------------------- navigation
+
+function show(view) {
+  S.view = view;
+  document.body.classList.remove('menu');
+  render();
+}
+/** Show the board and glide to one cross's tree. */
+function openCross(seedId) {
+  const wasBoard = current().cross;
+  S.seed = seedId;
+  if (S.selected != null && rootOf(S.selected) !== seedId) S.selected = null;
+  show('cross');
+  if (S.mode === 'tree') requestAnimationFrame(() => focusTree(seedId, wasBoard));
+}
+function select(id) {
+  if (id !== S.selected) $('#steer').value = '';
+  S.crossFrom = null;
+  S.selected = id;
+  if (id != null) S.seed = rootOf(id);
+  if (id != null) S.unseen.delete(id);
+  rateFailed.delete(id);
+  render();
+  if (id != null && S.mode === 'tree') reveal([id]);
+}
+function toggleFav(id) {
+  S.favs.has(id) ? S.favs.delete(id) : S.favs.add(id);
+  try { localStorage.setItem(FAV_KEY, JSON.stringify([...S.favs])); } catch { /* private window: kept until reload */ }
+  render();
+}
+
+function tintOf(id) {
+  for (let x = id, n = 0; x != null && n < 50; x = primaryParent(x), n++) if (tints.has(x)) return TINTS[tints.get(x)]?.[1];
+  const root = rootOf(id);
+  return TINTS[(root * 7) % PASTELS][1]; // ponytail: a fixed shuffle of the seed id, not truly random, but stable without storing it
+}
+/** Recolor a node; its whole branch follows, so any color set further down is dropped. */
+function setTint(id, i) {
+  const clear = (x) => kidsOf(x).forEach((k) => { tints.delete(k); clear(k); });
+  clear(id);
+  tints.set(id, i);
+  try { localStorage.setItem(TINT_KEY, JSON.stringify(Object.fromEntries(tints))); } catch { /* private window: kept until reload */ }
+  render();
+}
+
+/** Everything that grew from an idea, through any link (a cross made from it goes too). */
+function descendantsOf(id) {
+  const out = new Set();
+  const walk = (x) => S.edges.forEach((e) => { if (e.from === x && e.to !== id && !out.has(e.to)) { out.add(e.to); walk(e.to); } });
+  walk(id);
+  return [...out];
+}
+/** Drop ideas from the page, with their links, ratings, Kept hearts and colors. */
+function forget(ids) {
+  const gone = new Set(ids);
+  for (const id of gone) { S.ideas.delete(id); S.ratings.delete(id); S.unseen.delete(id); S.favs.delete(id); tints.delete(id); }
+  S.edges = S.edges.filter((e) => !gone.has(e.from) && !gone.has(e.to));
+  try {
+    localStorage.setItem(FAV_KEY, JSON.stringify([...S.favs]));
+    localStorage.setItem(TINT_KEY, JSON.stringify(Object.fromEntries(tints)));
+  } catch { /* private window: kept until reload */ }
+  if (gone.has(S.selected)) S.selected = null;
+  if (S.crossFrom != null && gone.has(S.crossFrom)) S.crossFrom = null;
+  if (gone.has(S.seed)) S.seed = seeds()[0]?.id ?? null;
+  if (!seeds().length) show('new'); else render();
+}
+
+// ---------------------------------------------------------------- camera: pan, zoom, fit
+
+const stage = $('#stage');
+function applyCam(glide = false) {
+  const world = $('#world');
+  world.classList.toggle('glide', glide);
+  world.style.transform = `translate(${S.cam.x}px, ${S.cam.y}px) scale(${S.cam.k})`;
+  stage.style.backgroundSize = `${22 * S.cam.k}px ${22 * S.cam.k}px`;
+  stage.style.backgroundPosition = `${S.cam.x}px ${S.cam.y}px`;
+  if (glide) setTimeout(() => world.classList.remove('glide'), 480);
+  placeBar(glide);
+}
+/** The bar above the selected card: steer it, or cross it with another idea. */
+const HINT = 'Double-click an idea to branch 3 more · drag one onto another to cross them';
+function placeBar(glide = false) {
+  const bar = $('#node-bar'), id = S.selected;
+  const p = id != null && S.mode === 'tree' && current().cross ? lastLayout.pos?.get(id) : null;
+  stage.classList.toggle('picking', S.crossFrom != null);
+  $('#stage-hint').textContent = S.crossFrom != null
+    ? `Click another idea to cross it with “${S.ideas.get(S.crossFrom)?.title}” · Esc to cancel` : HINT;
+  if (!p) { // animate out, then hide
+    if (!bar.hidden && !bar.classList.contains('out')) {
+      bar.classList.remove('pop');
+      bar.classList.add('out');
+      setTimeout(() => { if (bar.classList.contains('out')) { bar.hidden = true; bar.classList.remove('out'); } }, 150);
+    }
+    return;
+  }
+  const fresh = bar.hidden || bar.classList.contains('out') || bar.dataset.for !== String(id);
+  bar.hidden = false;
+  bar.classList.remove('out');
+  bar.dataset.for = String(id);
+  if (fresh) glide = false;
+  const seed = S.ideas.get(id)?.kind === 'seed';
+  $('#steer').placeholder = seed ? 'Steer it: "for kids", "a game, not an app"…' : 'Say what should change…';
+  $('#cross-with').hidden = seed;
+  $('#cross-with').textContent = S.crossFrom != null ? 'Cancel' : 'Cross with…';
+  const k = S.cam.k, w = Math.max(340, p.w * k);
+  bar.classList.toggle('glide', glide);
+  bar.style.width = `${w}px`;
+  bar.style.left = `${p.left * k + S.cam.x + (p.w * k - w) / 2}px`;
+  bar.style.top = `${p.top * k + S.cam.y - 62}px`;
+  if (fresh) { bar.classList.remove('pop'); void bar.offsetWidth; bar.classList.add('pop'); } // pop in, again on each new node
+}
+function stopPicking() { S.crossFrom = null; placeBar(); }
+/** The part of the stage the inspector does not cover. */
+function viewport() {
+  const r = stage.getBoundingClientRect();
+  const covered = !$('#inspector').hidden && innerWidth > 760 ? 344 + 40 : 0;
+  return { w: Math.max(200, r.width - covered), h: r.height };
+}
+/** Show the whole board. */
+function fit(glide = true) {
+  const { w, h: hh } = viewport();
+  const lay = lastLayout;
+  if (!lay.width) return;
+  S.cam.k = Math.max(0.3, Math.min(1, (w - 32) / lay.width, (hh - 32) / lay.height));
+  S.cam.x = (w - lay.width * S.cam.k) / 2;
+  S.cam.y = Math.max(8, (hh - lay.height * S.cam.k) / 2);
+  applyCam(glide);
+}
+/** Frame one cross's tree at a readable zoom. */
+function focusTree(seedId, glide = true) {
+  const boxes = [...treeIds(seedId)].map((id) => lastLayout.pos.get(id)).filter(Boolean);
+  if (!boxes.length) return;
+  const { w, h: hh } = viewport();
+  const x0 = Math.min(...boxes.map((b) => b.left)), x1 = Math.max(...boxes.map((b) => b.left + b.w));
+  const y0 = Math.min(...boxes.map((b) => b.top)), y1 = Math.max(...boxes.map((b) => b.top + b.h));
+  S.cam.k = Math.max(0.75, Math.min(1, (w - 64) / (x1 - x0), (hh - 64) / (y1 - y0)));
+  S.cam.x = w / 2 - ((x0 + x1) / 2) * S.cam.k;
+  S.cam.y = (y1 - y0) * S.cam.k < hh - 64 ? (hh - (y0 + y1) * S.cam.k) / 2 : 32 - y0 * S.cam.k;
+  applyCam(glide);
+}
+/** Pan just enough to bring these cards into the visible part of the stage. */
+function reveal(ids) {
+  const { w, h: hh } = viewport();
+  const boxes = ids.map((id) => lastLayout.pos.get(id)).filter(Boolean);
+  if (!boxes.length) return;
+  const k = S.cam.k;
+  const x0 = Math.min(...boxes.map((b) => b.left)) * k + S.cam.x, x1 = Math.max(...boxes.map((b) => b.left + b.w)) * k + S.cam.x;
+  const y0 = Math.min(...boxes.map((b) => b.top)) * k + S.cam.y, y1 = Math.max(...boxes.map((b) => b.top + b.h)) * k + S.cam.y;
+  let dx = 0, dy = 0;
+  if (x0 < 24) dx = 24 - x0; else if (x1 > w - 24) dx = Math.max(24 - x0, w - 24 - x1);
+  if (y0 < 24) dy = 24 - y0; else if (y1 > hh - 24) dy = Math.max(24 - y0, hh - 24 - y1);
+  if (!dx && !dy) return;
+  S.cam.x += dx;
+  S.cam.y += dy;
+  applyCam(true);
+}
+
+stage.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  if (e.ctrlKey || e.metaKey) {
+    const r = stage.getBoundingClientRect();
+    const px = e.clientX - r.left, py = e.clientY - r.top;
+    const k = Math.min(1.6, Math.max(0.3, S.cam.k * Math.exp(-e.deltaY * 0.01)));
+    S.cam.x = px - ((px - S.cam.x) * k) / S.cam.k;
+    S.cam.y = py - ((py - S.cam.y) * k) / S.cam.k;
+    S.cam.k = k;
+  } else {
+    S.cam.x -= e.deltaX;
+    S.cam.y -= e.deltaY;
+  }
+  applyCam();
+}, { passive: false });
+
+// Drag the background to pan, drag a card onto another to cross them. Clicks open, double-clicks grow.
+let drag = null;
+let suppressClick = false;
+stage.addEventListener('pointerdown', (e) => {
+  if (e.button !== 0 || e.target.closest('.node-bar')) return;
+  const card = e.target.closest('.card');
+  if (card?.classList.contains('ghost')) return;
+  drag = { x: e.clientX, y: e.clientY, cam: { ...S.cam }, card, id: card ? Number(card.dataset.id) : null, moved: false, target: null };
+  addEventListener('pointermove', onDrag);
+  addEventListener('pointerup', endDrag, { once: true });
+  addEventListener('pointercancel', endDrag, { once: true });
+});
+function onDrag(e) {
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+  drag.moved = true;
+  if (!drag.card) {
+    stage.classList.add('panning');
+    S.cam.x = drag.cam.x + dx;
+    S.cam.y = drag.cam.y + dy;
+    applyCam();
+    return;
+  }
+  if (S.ideas.get(drag.id)?.kind === 'seed') return;
+  const p = lastLayout.pos.get(drag.id);
+  if (!p) return;
+  drag.card.classList.add('dragging');
+  drag.card.style.pointerEvents = 'none';
+  drag.card.style.setProperty('--x', `${p.left + dx / S.cam.k}px`);
+  drag.card.style.setProperty('--y', `${p.top + dy / S.cam.k}px`);
+  const under = document.elementFromPoint(e.clientX, e.clientY)?.closest('.card:not(.ghost)');
+  const target = under && under !== drag.card && S.ideas.get(Number(under.dataset.id))?.kind !== 'seed' ? under : null;
+  if (target !== drag.target) { drag.target?.classList.remove('drop'); target?.classList.add('drop'); drag.target = target; }
+}
+function endDrag() {
+  removeEventListener('pointermove', onDrag);
+  removeEventListener('pointerup', endDrag);
+  removeEventListener('pointercancel', endDrag);
+  if (!drag) return;
+  const d = drag;
+  drag = null;
+  stage.classList.remove('panning');
+  if (!d.moved) return;
+  suppressClick = true;
+  setTimeout(() => { suppressClick = false; }, 0);
+  if (!d.card) return;
+  d.card.classList.remove('dragging');
+  d.card.style.pointerEvents = '';
+  d.target?.classList.remove('drop');
+  const p = lastLayout.pos.get(d.id);
+  if (p) { d.card.style.setProperty('--x', `${p.left}px`); d.card.style.setProperty('--y', `${p.top}px`); }
+  if (d.target) combine(d.id, Number(d.target.dataset.id));
+}
+stage.addEventListener('click', (e) => {
+  if (suppressClick || e.target.closest('.node-bar')) return;
+  const card = e.target.closest('.card');
+  if (S.crossFrom != null) { // picking the idea to cross with
+    const to = card && !card.classList.contains('ghost') ? Number(card.dataset.id) : null;
+    const from = S.crossFrom;
+    stopPicking();
+    if (to != null && to !== from && S.ideas.get(to)?.kind !== 'seed') combine(from, to);
+    return;
+  }
+  if (card) { if (!card.classList.contains('ghost')) select(Number(card.dataset.id)); }
+  else select(null);
+});
+stage.addEventListener('dblclick', (e) => {
+  const card = e.target.closest('.card');
+  if (!card || card.classList.contains('ghost')) return;
+  const id = Number(card.dataset.id);
+  grow(id, S.ideas.get(id)?.kind === 'seed' ? '' : MORE_LIKE);
+});
+
+// ---------------------------------------------------------------- the brain, in the page
+// Its own prompts (the server's Inventor flow, reworked as a brainstorm on 17 Nov) run here on the viewer's own Claude
+// through the artifact `sample` capability, or window.claude.complete when it's published from a claude.ai chat.
+// The board is kept in this browser's localStorage, mirrored to window.storage where that exists.
+// Add ?fake to the URL to run on canned answers outside claude.ai.
+
+const MODEL = 'claude-sonnet-5-5';
+const STORE_KEY = 'cross.state.v1';
+// The engine (17 Nov): a short brainstorm inside ONE prompt. Two insiders each name 2 real annoyances from their
+// day, every idea fixes one of them in one action and one result, and an outsider bends 2 candidates with a viral-app
+// rule. Strangeness comes from the two worlds and that one card only: the old "fearless inventor", the absurd-first
+// `wild` field and the least-typical pick stacked up into ideas nobody could repeat.
+const FLOW = {
+  system: 'You run a short brainstorm with real people. You care about one thing: a real annoyance in someone\'s real day, fixed in the simplest way that works. You avoid buzzwords, clever metaphors and anything that takes three steps to explain.',
+  people: (seed) => seed
+    ? 'First, the insiders: pick one real, ordinary person from each of the two worlds (a job or a role in plain words, like "a film editor" or "a nurse on night shifts"). Each names 2 real annoyances from their actual day: a specific moment where something goes wrong, said the way they would say it to a friend.'
+    : 'First, the insiders: the person this idea is for, and one other person in the same scene (someone who helps, pays, waits or watches). Each names 2 real annoyances that are still there with this idea, or right next to it: a specific moment, said the way they would say it to a friend.',
+  combine: 'Fuse the two ideas into 3 candidate concepts that neither idea could be alone: one tool that fixes an annoyance from each idea at once, or that fixes one idea\'s annoyance with the other idea\'s way of working. Each names the people and annoyances it fixes.',
+};
+// What the model reaches for by default. Banned so it has to look elsewhere (the board showed every one of these on repeat).
+const AVOID = [
+  'Avoid these unless a card demands it: browser extensions, trackers, dashboards, timers, flashcards, matchmaking, marketplaces, points-badges-quests gamification, and chatbots or "AI assistants".',
+  'Don\'t paste one world\'s vocabulary onto the other (no "boss fight" or "quest log" names): find a real fix instead.',
+].join(' ');
+// Every word a viewer reads. The old "a 7-year-old understands it" rule made Claude swap real names for kid metaphors
+// ("AI coding robots", "scraps on a table"), which were harder to read, not easier.
+const PLAIN = 'Plain words: a friend could repeat it after hearing it once. Short sentences, everyday words, no jargon, no business terms. Call things by their real names (AI is "AI", an app is "an app"): never a metaphor in their place.';
+const CANDIDATE_RULES = [
+  PLAIN,
+  'Each candidate has:',
+  '- who: the person whose annoyance it fixes, copied from the insiders (like "the film editor").',
+  '- annoyance: that annoyance, copied.',
+  '- borrows: what it takes from the OTHER insider\'s world, in a few plain words (like "saving your progress, from games").',
+  '- title: says what it does, literally, in 2–6 everyday words. No wordplay, no poetry, no quotes, no trailing period.',
+  '- pitch: exactly this shape: "You [do one thing]. Then [one thing happens]." then one short sentence on who it is for. At most 30 words. One action, one result: if it needs a second "then", it is too complicated, so pick a simpler idea. Something one person could build or run in a weekend.',
+  '- twist: the outsider\'s rule it uses, copied exactly, or "" if none.',
+  '- probability: from 0 to 1, how likely a typical assistant would be to suggest this idea for this annoyance. Be honest: obvious ideas score high.',
+].join('\n');
+// The wild cards: the one odd rule behind an app that went viral (Lenny's pick, 17 Nov). Claude sees only the rule,
+// never the app, so it borrows the rule instead of cloning the app; the viewer sees "like <app>" in the drawer.
+// The PAGE draws them, because models are bad at random.
+const DECK = {
+  'It happens once a day, the same one for everyone.': 'Wordle',
+  'Everyone does it at the same moment, with 2 minutes to do it.': 'BeReal',
+  'You only see the result later, the next morning.': 'Dispo',
+  'It\'s live at a fixed time, and everyone takes part together.': 'HQ Trivia',
+  'It has a hard limit: tiny, short, one thing only.': 'Twitter\'s 140 characters',
+  'It disappears once you\'ve seen it.': 'Snapchat',
+  'It only works when something is almost over.': 'Die With Me',
+  'Strangers, picked for you, meet in real life.': 'Timeleft',
+  'It lives on a friend\'s home screen.': 'Locket',
+  'Only nice things are allowed.': 'Gas',
+  'A stranger lends you something they own.': 'Airbnb',
+  'You have to go to a real place.': 'Pokémon Go',
+};
+const TWISTS = Object.keys(DECK);
+/** n different wild cards, at random. */
+function drawTwists(n) {
+  return [...TWISTS].sort(() => Math.random() - 0.5).slice(0, n); // ponytail: sort-shuffle is biased, fine for 12 cards
+}
+const twistBlock = (rule, n) => `Then the outsider joins with one rule from an app that went viral:\n- ${rule}\nExactly ${n} candidates apply it to one of the annoyances. The rule must make the fix better or more fun, never an arbitrary limit (like "only people over 80 can log in"). The other candidates ignore it.`;
+const candidatesJson = (n, people) => `Reply with only a JSON object: {${people ? '"people": [{"who": "…", "annoyances": ["…", "…"]}, {"who": "…", "annoyances": ["…", "…"]}], ' : ''}"candidates": [{"who": "…", "annoyance": "…", "borrows": "…", "title": "…", "pitch": "…", "twist": "…", "probability": 0.4}, …]} holding exactly ${n} candidates.`;
+const OBVIOUS = 0.6; // above this, an idea any assistant would suggest
+/** Keep `plain` clear-but-not-obvious ideas and `wild` card ideas out of the candidates.
+ * Plain: drop the obvious ones, then the MOST typical of the rest (the clearest), from different people, else different annoyances.
+ * Wild: the least typical card idea. When one kind runs short, the other fills the gap. */
+function pick(list, plain, wild) {
+  const all = (Array.isArray(list) ? list : [])
+    .map((c) => ({ ...tidy(c), p: Number.isFinite(Number(c?.probability)) ? Number(c.probability) : 0.5 }))
+    .filter((c) => c.title && !existing().some((t) => t.toLowerCase() === c.title.toLowerCase()));
+  const clearest = (xs) => [...xs.filter((c) => c.p <= OBVIOUS).sort((a, b) => b.p - a.p), ...xs.filter((c) => c.p > OBVIOUS).sort((a, b) => a.p - b.p)];
+  const kept = [];
+  const plainOnes = clearest(all.filter((c) => !c.twist));
+  for (const c of plainOnes) if (kept.length < plain && !kept.some((k) => k.who && k.who === c.who)) kept.push(c); // a different person each first
+  for (const c of plainOnes) if (kept.length < plain && !kept.includes(c) && !kept.some((k) => k.annoyance && k.annoyance === c.annoyance)) kept.push(c);
+  kept.push(...all.filter((c) => c.twist).sort((a, b) => a.p - b.p).slice(0, wild));
+  for (const c of clearest(all)) if (kept.length < plain + wild && !kept.includes(c)) kept.push(c);
+  return kept.map(({ p, ...c }) => c);
+}
+const RATING_SCALES = {
+  originality: '1 = an obvious idea everyone has heard ("an app for X", "use AI for Y"). 3 = a known concept in a genuinely new context. 5 = a non-obvious mechanism few people would think of.',
+  feasibility: '1 = needs a breakthrough or a team. 3 = one person could build it in a few weekends with real effort. 5 = a working version in one weekend with existing tools.',
+  impact: '1 = nobody\'s day changes. 3 = a real, recurring annoyance gets smaller for a clear group. 5 = it changes a habit or saves real time or money every week.',
+  viral: '1 = nobody would share it. 3 = shareable inside a niche. 5 = people show it to friends unprompted; it demos in seconds on video.',
+  space: '1 = a crowded market with strong, well-known products. 3 = a few competitors, none clearly winning. 5 = almost nobody does this.',
+  marketing: '1 = buyers are hard to find or reach. 3 = a clear audience reachable with steady work. 5 = an obvious audience gathered in known places, and the idea sells itself in one sentence.',
+  revenue: '1 = nobody would pay. 3 = a few people would pay a small amount. 5 = a clear group would gladly pay every month.',
+};
+
+const fmtIdea = (i) => [i.pitch ? `${i.title}: ${i.pitch}` : i.title, i.annoyance ? `It fixes this, for ${i.who || 'someone'}: "${i.annoyance}"` : ''].filter(Boolean).join('\n');
+const clampScore = (n) => { const v = Math.round(Number(n)); return Number.isFinite(v) ? Math.min(5, Math.max(1, v)) : 1; };
+const tidy = (p) => ({
+  title: String(p?.title ?? '').trim().replace(/^["'«»“”]+|["'«»“”.]+$/g, '').slice(0, 120),
+  pitch: String(p?.pitch ?? '').trim().slice(0, 600),
+  who: String(p?.who ?? '').trim().slice(0, 80),
+  annoyance: String(p?.annoyance ?? '').trim().slice(0, 240),
+  borrows: String(p?.borrows ?? '').trim().slice(0, 120),
+  twist: String(p?.twist ?? '').trim().slice(0, 200),
+  like: DECK[String(p?.twist ?? '').trim()] ?? '',
+});
+const existing = () => [...S.ideas.values()].filter((i) => i.kind !== 'seed').map((i) => i.title);
+function context() {
+  const titles = existing().slice(-40);
+  return [
+    `The board's goal (the general direction): ${GOAL}\nEvery idea must serve this goal. Keep the source idea's substance, but steer it toward the goal.`,
+    titles.length ? `Ideas already on the board (do not repeat or lightly reword them):\n${titles.map((t) => `- ${t}`).join('\n')}` : '',
+  ].filter(Boolean).join('\n\n');
+}
+const LANGUAGE = 'Write in the same language as the source idea(s). If that is unclear or mixed, write in English.';
+
+// ---- asking Claude
+
+const fake = new URLSearchParams(location.search).has('fake');
+// Published from Claude Code, `sample` only works for the owner: link viewers get null (help page, 17 Nov). Published
+// from a claude.ai chat, the page gets window.claude.complete instead, on each signed-in viewer's own usage.
+function parseJson(text) {
+  const t = String(text ?? '');
+  const i = t.search(/[[{]/), j = Math.max(t.lastIndexOf('}'), t.lastIndexOf(']')); // an object, or a list (ratings)
+  try { return JSON.parse(t.slice(i, j + 1)); } catch { throw { code: 'invalid_json' }; }
+}
+function completeShim() {
+  if (typeof window.claude?.complete !== 'function') return null;
+  return { json: async (prompt) => parseJson(await window.claude.complete(`${prompt}\n\nAnswer with the JSON only, no other text.`)) };
+}
+// On lennygarnier.com/cross (the web build sets window.CROSS_API) the site's own route answers, on Lenny's API key,
+// with a daily limit per visitor and a monthly cap.
+function webAsker(url) {
+  return {
+    json: async (prompt) => {
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw { code: data.code };
+      return parseJson(data.text);
+    },
+  };
+}
+const sampleReady = window.CROSS_API ? Promise.resolve(webAsker(window.CROSS_API))
+  : (window.claude?.use ? window.claude.use('sample') : Promise.resolve(null)).then((s) => s ?? completeShim());
+// Out of free crosses: say so, and count who'd pay (/cross/more is a page view in Vercel Analytics).
+const MORE = {
+  daily_limit: 'You\'ve used today\'s free crosses. More tomorrow.',
+  out_of_credit: 'This month\'s free crosses are all used up.',
+};
+function moreError(code) {
+  const err = new Error(MORE[code]);
+  err.node = h('span', {}, MORE[code], ' ', h('a', { href: '/cross/more', target: '_blank', rel: 'noopener' }, 'I\'d pay for more'));
+  return err;
+}
+const SAMPLE_COPY = {
+  not_granted: 'This page needs your OK to use Claude. Reload and allow it to grow ideas.',
+  sampling_disabled: 'Claude isn\'t available on this account.',
+  rate_limited: 'You\'ve reached your Claude usage limit for now. Try again later.',
+  session_expired: 'Sign in to claude.ai again, then retry.',
+  invalid_json: 'Claude\'s answer came back garbled. Try again.',
+  refused: 'Claude declined this one. Try a different pair or steer.',
+};
+async function ask(prompt, { fresh = false } = {}) {
+  if (fake) { window.lastPrompt = prompt; return fakeAnswer(prompt); } // the last prompt, to read in testing
+  const sample = await sampleReady;
+  if (!sample) throw new Error('Open this page on claude.ai, signed in: it runs on your own Claude.');
+  const opts = { model: MODEL, modelTier: 'default' };
+  if (fresh) opts.cache = false; // a new branch must be new ideas, never a replay
+  try {
+    return await sample.json(prompt, opts);
+  } catch (e) {
+    if (MORE[e?.code]) throw moreError(e.code);
+    throw new Error(SAMPLE_COPY[e?.code] ?? 'Claude couldn\'t answer just now. Try again in a moment.');
+  }
+}
+
+// ---- the board, kept in this browser
+
+function apply(d) {
+  if (!d) return false;
+  S.next = d.next;
+    S.ideas = new Map(d.ideas.map((i) => [i.id, i]));
+    S.edges = d.edges;
+  S.ratings = new Map(Object.entries(d.ratings).map(([k, v]) => [Number(k), v]));
+  return true;
+}
+function load() {
+  try { apply(JSON.parse(localStorage.getItem(STORE_KEY))); } catch { /* nothing saved, or unreadable: start empty */ }
+}
+/** A chat artifact may block localStorage: read the board back from window.storage. True when it found one. */
+async function loadStored() {
+  if (S.ideas.size || !window.storage?.get) return false;
+  try {
+    const r = await window.storage.get(STORE_KEY);
+    return apply(JSON.parse(typeof r === 'string' ? r : r?.value));
+  } catch { return false; }
+}
+function save() {
+  const json = JSON.stringify({ next: S.next, ideas: [...S.ideas.values()], edges: S.edges, ratings: Object.fromEntries(S.ratings) });
+  try { localStorage.setItem(STORE_KEY, json); } catch { /* private window, full, or a chat artifact: window.storage below */ }
+  try { Promise.resolve(window.storage?.set?.(STORE_KEY, json)).catch(() => {}); } catch { /* no storage: kept until reload */ }
+}
+function newIdea(p) {
+  S.next = Math.max(S.next ?? 1, ...[...S.ideas.keys()].map((k) => k + 1));
+  const idea = { id: S.next++, ...p };
+  S.ideas.set(idea.id, idea);
+  return idea;
+}
+async function ensureBoard() {
+  S.board ??= { goal: GOAL };
+  return S.board;
+}
+function addEdges(edges) {
+  for (const e of edges) if (!S.edges.some((x) => x.from === e.from && x.to === e.to)) S.edges.push({ from: e.from, to: e.to });
+}
+
+// ---------------------------------------------------------------- growing
+
+const fail = (e) => toast(e?.node ?? e?.message ?? String(e), 'error', e?.node ? 20000 : 5000);
+
+async function cross() {
+  const [a, b] = S.picked;
+  if (!a || !b) return;
+  const btn = $('#cross');
+  btn.disabled = true;
+  btn.textContent = 'Crossing…';
+  try {
+    await ensureBoard();
+    const side = (n) => (n.parent ? `${label(n)} (${where(n)})` : label(n));
+    const seed = newIdea({ title: `${side(a)} × ${side(b)}`, pitch: '', kind: 'seed' });
+    save();
+    S.picked = [null, null];
+    S.slot = 0;
+    S.mode = 'tree';
+    openCross(seed.id);
+    await expand(seed.id, prefRules());
+  } catch (e) {
+    fail(e);
+  } finally {
+    btn.textContent = 'Cross';
+    render();
+  }
+}
+
+const grow = (id, feedback) => expand(id, [prefRules(), feedback].filter(Boolean).join(' ')).catch(fail);
+
+async function expand(id, feedback) {
+  if (S.busy.has(id)) return;
+  S.busy.add(id);
+  render();
+  if (S.mode === 'tree') reveal([id, `ghost-${id}-1`, `ghost-${id}-3`]);
+  let fresh = [];
+  try {
+    const parent = S.ideas.get(id);
+    const seed = parent.kind === 'seed';
+    const out = await ask([
+      FLOW.system,
+      seed ? `The two worlds:\n${parent.title}` : `The idea:\n${fmtIdea(parent)}`,
+      feedback ? `The person's feedback. Every new idea must act on it:\n${feedback}` : '',
+      context(),
+      LANGUAGE,
+      FLOW.people(seed),
+      `Then 6 candidates: 4 that each fix one annoyance plainly, and 2 from the outsider. Every candidate crosses the two sides: it fixes one insider's annoyance with something that is normal in the OTHER insider's world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn't count.`,
+      twistBlock(drawTwists(1)[0], 2),
+      AVOID,
+      CANDIDATE_RULES,
+      candidatesJson(6, true),
+    ].filter(Boolean).join('\n\n'), { fresh: true });
+    if (seed && Array.isArray(out?.people)) parent.people = out.people.slice(0, 2).map((x) => ({
+      who: String(x?.who ?? '').trim().slice(0, 80),
+      annoyances: (Array.isArray(x?.annoyances) ? x.annoyances : []).slice(0, 2).map((a) => String(a).trim().slice(0, 240)),
+    }));
+    const ideas = pick(out?.candidates, 2, 1);
+    if (!ideas.length) throw new Error('Claude returned no ideas. Try again.');
+    const created = ideas.map((p) => newIdea({ ...p, kind: 'expand' }));
+    for (const i of created) S.unseen.add(i.id);
+    addEdges(created.map((c) => ({ from: id, to: c.id })));
+    save();
+    fresh = created.map((i) => i.id);
+    fresh.forEach(rate);
+  } finally {
+    S.busy.delete(id);
+    render();
+    if (S.mode === 'tree' && fresh.length) reveal([id, ...fresh]);
+  }
+}
+
+async function combine(a, b) {
+  if (S.crossing.has(a)) return;
+  S.crossing.set(a, b);
+  render();
+  if (S.mode === 'tree') reveal([`xghost-${a}-${b}`]);
+  try {
+    const rules = prefRules();
+    const out = await ask([
+      FLOW.system,
+      FLOW.combine,
+      `Idea 1:\n${fmtIdea(S.ideas.get(a))}`,
+      `Idea 2:\n${fmtIdea(S.ideas.get(b))}`,
+      rules ? `The person's preferences. The new idea must follow them:\n${rules}` : '',
+      context(),
+      LANGUAGE,
+      AVOID,
+      CANDIDATE_RULES,
+      candidatesJson(3, false),
+    ].filter(Boolean).join('\n\n'), { fresh: true });
+    const [p] = pick(out?.candidates, 1, 0); // no card here: fusing two ideas is already the cross
+    if (!p) throw new Error('Claude returned no idea. Try again.');
+    const idea = newIdea({ ...p, kind: 'combine' });
+    S.unseen.add(idea.id);
+    addEdges([{ from: a, to: idea.id }, { from: b, to: idea.id }]);
+    save();
+    rate(idea.id);
+    S.crossing.delete(a);
+    render();
+    if (S.mode === 'tree') reveal([idea.id]);
+  } catch (e) {
+    fail(e);
+  } finally {
+    S.crossing.delete(a);
+    render();
+  }
+}
+
+async function removeIdeas(ids) {
+  forget(ids);
+  save();
+}
+
+// Ratings: every idea asked for in the same moment goes to Claude in ONE call (3 new ideas = 1 call, not 3).
+const asking = new Set(), rateFailed = new Set(); // failed ones retry when the idea is opened again
+let rateBatch = [];
+function rate(id) {
+  const idea = S.ideas.get(id);
+  if (!idea || idea.kind === 'seed' || 'form' in (S.ratings.get(id) ?? {}) || asking.has(id) || rateFailed.has(id)) return;
+  asking.add(id);
+  S.judging.add(id);
+  rateBatch.push(id);
+  if (rateBatch.length === 1) queueMicrotask(rateNow);
+}
+async function rateNow() {
+  const ids = rateBatch;
+  rateBatch = [];
+  const ideas = ids.map((id) => S.ideas.get(id));
+  const fields = Object.entries(RATING_SCALES).map(([k, scale]) => `- ${k}: {"why": at most 15 words, the concrete reason, naming competitors or channels when you can; "score": integer 1–5. ${scale}}`).join('\n');
+  try {
+    const out = await ask([
+      'You are a blunt market analyst. You rate small ideas (an app, an object, a ritual, an event or a service) that one person could build or run in a few weekends, on seven criteria, each an integer 1–5 where higher is always better. Most ideas land at 2–3; give 5 only when you could defend it to an investor. Name real competitors and real channels when you know them. Judge each idea as written.',
+      `The board's goal (the general direction): ${GOAL}`,
+      PLAIN,
+      `The ideas:\n${ideas.map((i, n) => `${n + 1}. ${fmtIdea(i)}`).join('\n')}`,
+      `Reply with only a JSON array holding one object per idea, in the same order (${ideas.length} in all). Each object has:
+- reason: one sentence, at most 25 words: the main strength, the main weakness, and how well it fits the goal.
+${fields}
+- audience: who the tool is for, one line of at most 14 words, starting with "For ".
+- market: "B2B" (businesses or organisations pay) or "B2C" (individuals pay).
+- form: "Software" (an app, site, bot or extension), "Physical" (an object people hold) or "Service" (people do the work).`,
+    ].join('\n\n'));
+    const list = Array.isArray(out) ? out : [];
+    ids.forEach((id, n) => {
+      const v = list[n];
+      if (!v) { rateFailed.add(id); return; }
+      const r = Object.fromEntries(Object.keys(RATING_SCALES).map((k) => [k, {
+        score: clampScore(v[k]?.score), why: String(v[k]?.why ?? '').trim().slice(0, 160),
+      }]));
+      r.audience = String(v.audience ?? '').trim().slice(0, 140);
+      r.market = TAGS.market.includes(v.market) ? v.market : '';
+      r.form = TAGS.form.includes(v.form) ? v.form : '';
+      S.ratings.set(id, r);
+      const idea = S.ideas.get(id);
+      if (idea) idea.reason = String(v.reason ?? '').trim().slice(0, 400);
+    });
+    save();
+  } catch {
+    ids.forEach((id) => rateFailed.add(id)); // the card shows no stars; reopening the idea asks again
+  } finally {
+    ids.forEach((id) => { asking.delete(id); S.judging.delete(id); });
+    render();
+  }
+}
+
+// ---- canned answers for testing outside claude.ai (?fake)
+
+let fakeN = 0;
+async function fakeAnswer(prompt) {
+  await new Promise((r) => setTimeout(r, 600));
+  const n = () => 1 + Math.floor(Math.random() * 5);
+  if (prompt.includes('market analyst')) {
+    const count = (prompt.match(/^\d+\. /gm) ?? []).length;
+    return Array.from({ length: count }, () => ({
+      reason: 'A fake rating: clear hook, unclear who pays.',
+      ...Object.fromEntries(Object.keys(RATING_SCALES).map((k) => [k, { why: `fake reason for ${k}`, score: n() }])),
+      audience: 'For people testing this page', market: 'B2C', form: 'Software',
+    }));
+  }
+  const twists = [...prompt.matchAll(/^- (.+)$/gm)].map((m) => m[1]).filter((t) => TWISTS.includes(t));
+  const one = (i) => ({
+    who: i % 2 ? 'the film editor' : 'the night nurse', annoyance: `Fake annoyance ${i % 3}`, borrows: 'saving your progress, from games',
+    title: `Fake idea ${++fakeN}`, pitch: 'You tap once. Then the page shows a canned idea. For people testing it.',
+    twist: i >= 4 ? twists[0] ?? '' : '', probability: Math.random(),
+  });
+  const count = Number(prompt.match(/holding exactly (\d+) candidates/)?.[1] ?? 1);
+  const people = [{ who: 'a film editor', annoyances: ['I can never find the take where the actor paused right.', 'Notes from the director come on paper.'] },
+    { who: 'a night nurse', annoyances: ['Handover notes are half-read at 7am.', 'The ward phone rings during the rounds.'] }];
+  return { people, candidates: Array.from({ length: count }, (_, i) => one(i)) };
+}
+
+// ---------------------------------------------------------------- wiring
+
+$('#nav-new').addEventListener('click', () => show('new'));
+$('#nav-kept').addEventListener('click', () => show('kept'));
+$('#dice').addEventListener('click', surprise);
+$('#dice-near').addEventListener('click', (e) => {
+  const b = e.currentTarget;
+  b.classList.remove('roll'); void b.offsetWidth; b.classList.add('roll'); // spin on every roll
+  surprise();
+});
+$('#find').addEventListener('input', () => renderSidebar(current()));
+$('#world-q').addEventListener('input', renderNew);
+$('#cross').addEventListener('click', cross);
+$('#fit').addEventListener('click', () => fit());
+function showPrefs() {
+  $('#prefs-label').textContent = prefsLabel() || 'Preferences';
+  $('#prefs-btn').toggleAttribute('data-on', !!prefsLabel());
+  renderNew();
+}
+for (const [k, opts] of Object.entries(TAGS)) clear($(`#pref-${k}`), opts.map((v) => h('label', {},
+  h('input', { type: 'checkbox', checked: S.prefs[k].includes(v), onchange: (e) => {
+    S.prefs[k] = e.target.checked ? [...S.prefs[k], v] : S.prefs[k].filter((x) => x !== v);
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(S.prefs)); } catch { /* private window: kept until reload */ }
+    showPrefs();
+  } }), v)));
+showPrefs();
+$('#prefs').addEventListener('beforetoggle', (e) => { // open under its button, right-aligned, kept on screen
+  if (e.newState !== 'open') return;
+  const r = $('#prefs-btn').getBoundingClientRect(), w = Math.min(260, innerWidth - 16);
+  Object.assign($('#prefs').style, { top: `${r.bottom + 6}px`, width: `${w}px`, left: `${Math.max(8, Math.min(r.right - w, innerWidth - w - 8))}px` });
+});
+$('#mode-tree').addEventListener('click', () => { S.mode = 'tree'; render(); requestAnimationFrame(() => focusTree(S.seed, false)); });
+$('#mode-list').addEventListener('click', () => { S.mode = 'list'; render(); });
+[0, 1].forEach((i) => $(`#slot-${i}`).addEventListener('click', () => { S.picked[i] = null; S.slot = i; renderNew(); }));
+for (const b of document.querySelectorAll('[data-menu]')) b.addEventListener('click', () => document.body.classList.toggle('menu'));
+// Right-click a node: Delete…, then a confirmation, since a pair takes its whole tree with it.
+let ctxId = null;
+const closeCtx = () => { $('#ctx').hidden = true; };
+stage.addEventListener('contextmenu', (e) => {
+  const card = e.target.closest('.card:not(.ghost)');
+  if (!card) return;
+  e.preventDefault();
+  ctxId = Number(card.dataset.id);
+  const m = $('#ctx');
+  m.hidden = false;
+  m.style.left = `${Math.min(e.clientX, innerWidth - m.offsetWidth - 8)}px`;
+  m.style.top = `${Math.min(e.clientY, innerHeight - m.offsetHeight - 8)}px`;
+  $('#ctx-delete').focus();
+});
+addEventListener('pointerdown', (e) => { if (!e.target.closest('#ctx')) closeCtx(); }, true);
+stage.addEventListener('wheel', closeCtx, { passive: true });
+$('#ctx').addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCtx(); });
+$('#ctx-delete').addEventListener('click', () => { closeCtx(); askDelete(ctxId); });
+function askDelete(id) {
+  const idea = S.ideas.get(id);
+  if (!idea) return;
+  const ids = [id, ...descendantsOf(id)];
+  if (ids.some((x) => S.busy.has(x) || S.crossing.has(x))) return toast('Wait until it finishes growing, then delete it.');
+  const below = ids.length - 1;
+  $('#confirm-title').textContent = idea.kind === 'seed' ? `Delete ${pairName(idea)}?` : `Delete “${idea.title}”?`;
+  $('#confirm-text').textContent = `${below ? `The ${below} idea${below === 1 ? '' : 's'} that grew from it will be deleted too. ` : ''}You can't undo this.`;
+  $('#confirm-yes').onclick = async () => {
+    $('#confirm').close();
+    try { await removeIdeas(ids); toast(ids.length > 1 ? `Deleted ${ids.length} ideas` : 'Deleted'); } catch (err) { fail(err); }
+  };
+  $('#confirm').showModal();
+  $('#confirm-no').focus(); // the safe choice has focus
+}
+$('#confirm-no').addEventListener('click', () => $('#confirm').close());
+
+$('#steer').addEventListener('keydown', (e) => {
+  const text = e.target.value.trim();
+  if (e.key !== 'Enter' || !text || S.selected == null) return;
+  grow(S.selected, text);
+  e.target.value = '';
+});
+$('#cross-with').addEventListener('click', () => {
+  if (S.crossFrom != null) return stopPicking();
+  S.crossFrom = S.selected;
+  placeBar();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (S.crossFrom != null) return stopPicking();
+  if (document.body.classList.contains('menu')) document.body.classList.remove('menu');
+  else if (S.selected != null && !e.target.closest?.('input')) select(null);
+});
+
+load();
+ensureBoard();
+const start = () => { const latest = seeds()[0]; if (latest) openCross(latest.id); else show('new'); };
+start();
+loadStored().then((found) => { if (found) start(); });
+</script>
+</body>
+</html>
