@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-// The Cross two worlds tool (public/cross/index.html) asks Claude through here, on Lenny's API key.
+// Crosswise, the crossing tool (public/cross/index.html) asks Claude through here, on Lenny's API key.
 // Three guards keep the bill small: CALLS_PER_DAY per visitor, MAX_PROMPT and max_tokens per call, and the monthly
 // spend limit set on the key's workspace in the Anthropic Console, which is the real ceiling.
 // CROSS_MODEL switches the model from Vercel's settings, then Redeploy (default Haiku 5.5, the cheapest).

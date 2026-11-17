@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
-  <title>Cross two worlds</title>
+  <title>Crosswise</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%2210%2010%2060%2060%22%3E%3Cdefs%3E%3CclipPath%20id%3D%22cw-a%22%3E%3Crect%20x%3D%2212%22%20y%3D%2216%22%20width%3D%2234%22%20height%3D%2234%22%20rx%3D%229%22/%3E%3C/clipPath%3E%3C/defs%3E%3Crect%20x%3D%2212%22%20y%3D%2216%22%20width%3D%2234%22%20height%3D%2234%22%20rx%3D%229%22%20fill%3D%22%230a66e0%22/%3E%3Crect%20x%3D%2234%22%20y%3D%2230%22%20width%3D%2234%22%20height%3D%2234%22%20rx%3D%229%22%20fill%3D%22%23af52de%22/%3E%3Crect%20x%3D%2234%22%20y%3D%2230%22%20width%3D%2234%22%20height%3D%2234%22%20rx%3D%229%22%20fill%3D%22%234b2ca8%22%20clip-path%3D%22url%28%23cw-a%29%22/%3E%3C/svg%3E">
   <style>
     :root {
       --bg: #ffffff; --side: #f5f5f7; --side-line: #e5e5ea; --canvas: #fafafb; --dot: #e3e3e8;
@@ -172,6 +173,7 @@
     .prefs .opt:has(input:checked) .check { opacity: 1; transform: none; }
     .prefs p { margin: 6px 0 0; padding: 10px 10px 6px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.45; color: var(--muted); }
     #prefs-btn[data-on] { color: var(--accent-text); }
+    .brand { display: flex; align-items: center; gap: 8px; padding: 2px 6px 12px; font-size: 16px; font-weight: 700; letter-spacing: -.02em; color: var(--text); }
     .pref-note { margin: -4px 0 0; font-size: 13px; color: var(--muted); }
     .link-btn { border: 0; background: none; padding: 2px 4px; margin: -2px 0; border-radius: 6px; font: inherit; font-weight: 500; color: var(--accent-text); cursor: pointer; }
     .link-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -406,6 +408,7 @@
 </head>
 <body>
 <nav class="sidebar" aria-label="Crosses">
+  <div class="brand"><svg width="22" height="22" viewBox="10 10 60 60" aria-hidden="true"><defs><clipPath id="cw-a"><rect x="12" y="16" width="34" height="34" rx="9"/></clipPath></defs><rect x="12" y="16" width="34" height="34" rx="9" fill="#0a66e0"/><rect x="34" y="30" width="34" height="34" rx="9" fill="#af52de"/><rect x="34" y="30" width="34" height="34" rx="9" fill="#4b2ca8" clip-path="url(#cw-a)"/></svg>Crosswise</div>
   <label class="find">
     <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="color: var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
     <input id="find" type="search" placeholder="Quick Find" aria-label="Quick Find">
