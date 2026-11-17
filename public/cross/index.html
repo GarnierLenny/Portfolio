@@ -1224,6 +1224,7 @@ function fillCard(el, idea) {
   else if (S.unseen.has(idea.id)) meta.append(h('span', { class: 'new' }, 'New'));
   else if (st != null) meta.append(star(11), st.toFixed(1));
   else if (S.judging.has(idea.id)) meta.append('Rating…');
+  if (idea.world) meta.prepend(h('span', { class: 'from', title: idea.worldName }, idea.world)); // which world a first idea is from
   if (idea.twist && !S.busy.has(idea.id)) { // built on a wild card: the same die as the dice buttons
     const die = h('span', { class: 'wildmark', title: `Wild card: ${idea.twist}${idea.like ? ` (like ${idea.like})` : ''}` });
     die.innerHTML = DIE_SVG;
@@ -1234,7 +1235,7 @@ function fillCard(el, idea) {
   if (tags) meta.append(h('span', { class: 'tag' }, tags));
   if (S.favs.has(idea.id)) { const hh = heart(12); hh.classList.add('heart'); meta.append(hh); }
   clear(el, h('span', { class: 't' }, idea.title), meta);
-  el.setAttribute('aria-label', `${idea.title}${st != null ? `, ${st} out of 5` : ''}${idea.twist ? ', built on a wild card' : ''}${S.favs.has(idea.id) ? ', kept' : ''}`);
+  el.setAttribute('aria-label', `${idea.title}${idea.worldName ? `, from ${idea.worldName}` : ''}${st != null ? `, ${st} out of 5` : ''}${idea.twist ? ', built on a wild card' : ''}${S.favs.has(idea.id) ? ', kept' : ''}`);
 }
 
 function renderList() {
@@ -1712,6 +1713,30 @@ function drawTwists(n) {
 }
 const twistBlock = (rule, n) => `Then the outsider joins with one rule from an app that went viral:\n- ${rule}\nExactly ${n} candidates apply it to one of the annoyances. The rule must make the fix better or more fun, never an arbitrary limit (like "only people over 80 can log in"). The other candidates ignore it.`;
 const candidatesJson = (n, people) => `Reply with only a JSON object: {${people ? '"people": [{"who": "…", "annoyances": ["…", "…"]}, {"who": "…", "annoyances": ["…", "…"]}], ' : ''}"candidates": [{"who": "…", "annoyance": "…", "borrows": "…", "title": "…", "pitch": "…", "twist": "…", "probability": 0.4}, …]} holding exactly ${n} candidates.`;
+// A first cross (Lenny's call, 17 Nov): one simple idea from each world, then one that crosses them. Two simple ideas
+// are easy to picture together, so dragging one onto the other makes sense, and the third shows what a cross looks like.
+// No wild card here: the cross is already the unusual one. Cards stay on "Branch 3 more".
+const SIDES = [
+  'Then 6 candidates, in three pairs:',
+  '- side "a": 2 that fix the first insider\'s annoyance inside the first world, with what is normal there. "borrows" is "".',
+  '- side "b": 2 that fix the second insider\'s annoyance inside the second world, with what is normal there. "borrows" is "".',
+  '- side "both": 2 that cross the worlds: each fixes one insider\'s annoyance with something that is normal in the OTHER insider\'s world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn\'t count.',
+  'For sides "a" and "b", skip the first idea anyone would have and any app that already exists: find a fix people would be surprised nobody built.',
+].join('\n');
+/** One idea per side ("a", "b", "both"), each the clearest non-obvious one; missing sides are filled from the rest. */
+function pickSides(list) {
+  const all = Array.isArray(list) ? list : [];
+  const kept = [];
+  for (const side of ['a', 'b', 'both']) {
+    const [one] = pick(all.filter((c) => c?.side === side && !kept.some((k) => k.title === tidy(c).title)), 1, 0);
+    if (one) kept.push(one);
+  }
+  for (const c of pick(all, 3, 0)) if (kept.length < 3 && !kept.some((k) => k.title === c.title)) kept.push(c);
+  return kept;
+}
+// What the person types in the bar. It goes LAST and beats the rules and the preferences: "I want podcast ideas" once
+// came back as apps, because "Every idea must be software" (a preference) and the app-shaped rules came after it.
+const steerBlock = (text) => `Last, and above everything else: the person asked for this:\n"${text}"\nIf it asks for a kind of idea (a podcast, a video series, a game, an event, a physical thing), every candidate is that kind, even where the rules above say app or tool, and even against the preferences. Keep the pitch shape: "You [do one thing]. Then [one thing happens]."`;
 const OBVIOUS = 0.6; // above this, an idea any assistant would suggest
 /** Keep `plain` clear-but-not-obvious ideas and `wild` card ideas out of the candidates.
  * Plain: drop the obvious ones, then the MOST typical of the rest (the clearest), from different people, else different annoyances.
@@ -1749,6 +1774,7 @@ const tidy = (p) => ({
   borrows: String(p?.borrows ?? '').trim().slice(0, 120),
   twist: String(p?.twist ?? '').trim().slice(0, 200),
   like: DECK[String(p?.twist ?? '').trim()] ?? '',
+  side: ['a', 'b', 'both'].includes(p?.side) ? p.side : '',
 });
 const existing = () => [...S.ideas.values()].filter((i) => i.kind !== 'seed').map((i) => i.title);
 function context() {
@@ -1888,9 +1914,9 @@ async function cross() {
   }
 }
 
-const grow = (id, feedback) => expand(id, [prefRules(), feedback].filter(Boolean).join(' ')).catch(fail);
+const grow = (id, steer) => expand(id, prefRules(), steer).catch(fail);
 
-async function expand(id, feedback) {
+async function expand(id, feedback, steer) {
   if (S.busy.has(id)) return;
   S.busy.add(id);
   render();
@@ -1902,23 +1928,30 @@ async function expand(id, feedback) {
     const out = await ask([
       FLOW.system,
       seed ? `The two worlds:\n${parent.title}` : `The idea:\n${fmtIdea(parent)}`,
-      feedback ? `The person's feedback. Every new idea must act on it:\n${feedback}` : '',
+      feedback ? `The person's preferences. Every new idea must follow them, unless their request at the end says otherwise:\n${feedback}` : '',
       context(),
       LANGUAGE,
       FLOW.people(seed),
-      `Then 6 candidates: 4 that each fix one annoyance plainly, and 2 from the outsider. Every candidate crosses the two sides: it fixes one insider's annoyance with something that is normal in the OTHER insider's world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn't count.`,
-      twistBlock(drawTwists(1)[0], 2),
+      seed ? SIDES : `Then 6 candidates: 4 that each fix one annoyance plainly, and 2 from the outsider. Every candidate crosses the two sides: it fixes one insider's annoyance with something that is normal in the OTHER insider's world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn't count.`,
+      seed ? '' : twistBlock(drawTwists(1)[0], 2),
       AVOID,
       CANDIDATE_RULES,
-      candidatesJson(6, true),
+      steer ? steerBlock(steer) : '',
+      seed ? `${candidatesJson(6, true)} Each candidate also has "side": "a", "b" or "both".` : candidatesJson(6, true),
     ].filter(Boolean).join('\n\n'), { fresh: true });
     if (seed && Array.isArray(out?.people)) parent.people = out.people.slice(0, 2).map((x) => ({
       who: String(x?.who ?? '').trim().slice(0, 80),
       annoyances: (Array.isArray(x?.annoyances) ? x.annoyances : []).slice(0, 2).map((a) => String(a).trim().slice(0, 240)),
     }));
-    const ideas = pick(out?.candidates, 2, 1);
+    const ideas = seed ? pickSides(out?.candidates) : pick(out?.candidates, 2, 1);
+    const pair = seed ? splitPair(parent.title) : null; // the card shows which world each first idea comes from
+    const world = (side) => pair && ({ a: [pair.a.emoji, pair.a.name], b: [pair.b.emoji, pair.b.name],
+      both: [`${pair.a.emoji}×${pair.b.emoji}`, `${pair.a.name} × ${pair.b.name}`] })[side];
     if (!ideas.length) throw new Error('Claude returned no ideas. Try again.');
-    const created = ideas.map((p) => newIdea({ ...p, kind: 'expand' }));
+    const created = ideas.map(({ side, ...p }) => {
+      const w = world(side);
+      return newIdea({ ...p, kind: 'expand', ...(w ? { world: w[0], worldName: w[1] } : {}) });
+    });
     for (const i of created) S.unseen.add(i.id);
     addEdges(created.map((c) => ({ from: id, to: c.id })));
     save();
@@ -2043,7 +2076,7 @@ async function fakeAnswer(prompt) {
   const one = (i) => ({
     who: i % 2 ? 'the film editor' : 'the night nurse', annoyance: `Fake annoyance ${i % 3}`, borrows: 'saving your progress, from games',
     title: `Fake idea ${++fakeN}`, pitch: 'You tap once. Then the page shows a canned idea. For people testing it.',
-    twist: i >= 4 ? twists[0] ?? '' : '', probability: Math.random(),
+    twist: i >= 4 ? twists[0] ?? '' : '', probability: Math.random(), side: ['a', 'a', 'b', 'b', 'both', 'both'][i] ?? '',
   });
   const count = Number(prompt.match(/holding exactly (\d+) candidates/)?.[1] ?? 1);
   const people = [{ who: 'a film editor', annoyances: ['I can never find the take where the actor paused right.', 'Notes from the director come on paper.'] },
