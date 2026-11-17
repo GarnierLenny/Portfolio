@@ -15,6 +15,10 @@ const seen = new Map<string, { day: string; calls: number }>();
 
 const client = new Anthropic(); // ANTHROPIC_API_KEY, set in Vercel
 
+// Six ideas take longer than Vercel's 10-second default (it answered 504 on the first live cross). 60 is the
+// Hobby plan's ceiling.
+export const maxDuration = 60;
+
 export async function POST(req: Request) {
   const { prompt } = await req.json().catch(() => ({}));
   if (typeof prompt !== "string" || !prompt || prompt.length > MAX_PROMPT) {
