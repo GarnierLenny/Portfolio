@@ -1712,7 +1712,8 @@ function drawTwists(n) {
   return [...TWISTS].sort(() => Math.random() - 0.5).slice(0, n); // ponytail: sort-shuffle is biased, fine for 12 cards
 }
 const twistBlock = (rule, n) => `Then the outsider joins with one rule from an app that went viral:\n- ${rule}\nExactly ${n} candidates apply it to one of the annoyances. The rule must make the fix better or more fun, never an arbitrary limit (like "only people over 80 can log in"). The other candidates ignore it.`;
-const candidatesJson = (n, people) => `Reply with only a JSON object: {${people ? '"people": [{"who": "…", "annoyances": ["…", "…"]}, {"who": "…", "annoyances": ["…", "…"]}], ' : ''}"candidates": [{"who": "…", "annoyance": "…", "borrows": "…", "title": "…", "pitch": "…", "twist": "…", "probability": 0.4}, …]} holding exactly ${n} candidates.`;
+// `sides`: a first cross. The field sits IN the shape: said after it, Haiku dropped it and the cross idea went missing.
+const candidatesJson = (n, people, sides) => `Reply with only a JSON object: {${people ? '"people": [{"who": "…", "annoyances": ["…", "…"]}, {"who": "…", "annoyances": ["…", "…"]}], ' : ''}"candidates": [{${sides ? '"side": "a", ' : ''}"who": "…", "annoyance": "…", "borrows": "…", "title": "…", "pitch": "…", "twist": "…", "probability": 0.4}, …]} holding exactly ${n} candidates${sides ? ', 2 for each side ("a", "b", "both")' : ''}.`;
 // A first cross (Lenny's call, 17 Nov): one simple idea from each world, then one that crosses them. Two simple ideas
 // are easy to picture together, so dragging one onto the other makes sense, and the third shows what a cross looks like.
 // No wild card here: the cross is already the unusual one. Cards stay on "Branch 3 more".
@@ -1937,7 +1938,7 @@ async function expand(id, feedback, steer) {
       AVOID,
       CANDIDATE_RULES,
       steer ? steerBlock(steer) : '',
-      seed ? `${candidatesJson(6, true)} Each candidate also has "side": "a", "b" or "both".` : candidatesJson(6, true),
+      candidatesJson(6, true, seed),
     ].filter(Boolean).join('\n\n'), { fresh: true });
     if (seed && Array.isArray(out?.people)) parent.people = out.people.slice(0, 2).map((x) => ({
       who: String(x?.who ?? '').trim().slice(0, 80),
