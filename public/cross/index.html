@@ -1657,14 +1657,15 @@ stage.addEventListener('dblclick', (e) => {
 
 const MODEL = 'claude-sonnet-5-5';
 const STORE_KEY = 'cross.state.v1';
-// The engine (17 Nov): a short brainstorm inside ONE prompt. Two insiders each name 2 real annoyances from their
+// The engine (17 Nov): a short brainstorm inside ONE prompt. Insiders are people who do or enjoy the world, not workers
+// in it: with jobs ("a line cook", "a game tester") every idea came out a workplace fix nobody watching would use. Two insiders each name 2 real annoyances from their
 // day, every idea fixes one of them in one action and one result, and an outsider bends 2 candidates with a viral-app
 // rule. Strangeness comes from the two worlds and that one card only: the old "fearless inventor", the absurd-first
 // `wild` field and the least-typical pick stacked up into ideas nobody could repeat.
 const FLOW = {
   system: 'You run a short brainstorm with real people. You care about one thing: a real annoyance in someone\'s real day, fixed in the simplest way that works. You avoid buzzwords, clever metaphors and anything that takes three steps to explain.',
   people: (seed) => seed
-    ? 'First, the insiders: pick one real, ordinary person from each of the two worlds (a job or a role in plain words, like "a film editor" or "a nurse on night shifts"). Each names 2 real annoyances from their actual day: a specific moment where something goes wrong, said the way they would say it to a friend.'
+    ? 'First, the insiders: pick one real, ordinary person from each of the two worlds: someone who does or enjoys it in their own life, like "someone who cooks dinner after work" or "someone who plays games in the evening". Pick a professional only when the world is itself a job (like nursing or accounting). Each names 2 real annoyances from their own life with it, not from a workplace: a specific moment where something goes wrong, said the way they would say it to a friend.'
     : 'First, the insiders: the person this idea is for, and one other person in the same scene (someone who helps, pays, waits or watches). Each names 2 real annoyances that are still there with this idea, or right next to it: a specific moment, said the way they would say it to a friend.',
   combine: 'Fuse the two ideas into 3 candidate concepts that neither idea could be alone: one tool that fixes an annoyance from each idea at once, or that fixes one idea\'s annoyance with the other idea\'s way of working. Each names the people and annoyances it fixes.',
 };
@@ -1679,7 +1680,7 @@ const PLAIN = 'Plain words: a friend could repeat it after hearing it once. Shor
 const CANDIDATE_RULES = [
   PLAIN,
   'Each candidate has:',
-  '- who: the person whose annoyance it fixes, copied from the insiders (like "the film editor").',
+  '- who: the person whose annoyance it fixes, copied from the insiders (like "the home cook").',
   '- annoyance: that annoyance, copied.',
   '- borrows: what it takes from the OTHER insider\'s world, in a few plain words (like "saving your progress, from games").',
   '- title: says what it does, literally, in 2–6 everyday words. No wordplay, no poetry, no quotes, no trailing period.',
