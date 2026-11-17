@@ -151,16 +151,29 @@
     .card .m .tag { margin-left: auto; }
     .card .m .tag + .heart { margin-left: 0; }
     .prefs {
-      inset: auto; margin: 0; width: 260px; padding: 16px; border: 0; border-radius: 14px; background: var(--card); color: var(--text);
-      box-shadow: 0 0 0 1px var(--line), 0 12px 32px rgb(0 0 0 / .16);
+      inset: auto; margin: 0; width: 300px; padding: 6px; border: 0; border-radius: 14px; color: var(--text);
+      background: color-mix(in srgb, var(--card) 86%, transparent); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
+      box-shadow: var(--shadow-float);
     }
-    .prefs fieldset { border: 0; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-    .prefs legend { padding: 0; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--muted); }
-    .prefs label { display: flex; align-items: center; gap: 10px; min-height: 30px; font-size: 14px; }
-    .prefs input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
-    .prefs p { margin: 0; font-size: 12px; line-height: 1.45; color: var(--muted); }
+    .prefs:popover-open { animation: menu-in .18s cubic-bezier(.2, .9, .3, 1.2); transform-origin: top; }
+    @keyframes menu-in { from { opacity: 0; transform: scale(.96) translateY(-4px); } }
+    .prefs fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; }
+    .prefs fieldset + fieldset { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 6px; }
+    .prefs legend { padding: 8px 10px 4px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+    .prefs .opt { display: grid; grid-template-columns: 26px 1fr 16px; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 9px; cursor: pointer; }
+    .prefs .opt:hover { background: var(--hover); }
+    .prefs .opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .prefs .opt input { position: absolute; opacity: 0; pointer-events: none; }
+    .prefs .opt .emo { font-size: 19px; line-height: 1; text-align: center; }
+    .prefs .opt .txt { display: flex; flex-direction: column; font-size: 14px; font-weight: 500; line-height: 1.25; }
+    .prefs .opt .txt small { font-size: 12px; font-weight: 400; color: var(--muted); }
+    .prefs .opt .check { color: var(--accent-text); opacity: 0; transform: scale(.6); transition: opacity .15s, transform .2s cubic-bezier(.2, .9, .3, 1.4); }
+    .prefs .opt:has(input:checked) .check { opacity: 1; transform: none; }
+    .prefs p { margin: 6px 0 0; padding: 10px 10px 6px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.45; color: var(--muted); }
     #prefs-btn[data-on] { color: var(--accent-text); }
     .pref-note { margin: -4px 0 0; font-size: 13px; color: var(--muted); }
+    .link-btn { border: 0; background: none; padding: 2px 4px; margin: -2px 0; border-radius: 6px; font: inherit; font-weight: 500; color: var(--accent-text); cursor: pointer; }
+    .link-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
     .card.seed { border-radius: 16px; align-items: center; justify-content: center; gap: 3px; text-align: center; }
     .card.seed .emo { display: flex; align-items: center; gap: 8px; font-size: 22px; line-height: 1; }
     .card.seed .emo i { font-style: normal; font-size: 14px; font-weight: 300; color: var(--faint); }
@@ -325,6 +338,44 @@
     .confirm p { margin: 0 0 18px; color: var(--text-2); font-size: 14px; line-height: 1.5; }
     .confirm .actions { display: flex; justify-content: flex-end; gap: 8px; }
     .confirm .btn.danger { background: var(--danger); color: #fff; }
+    .onboard { width: min(540px, calc(100vw - 32px)); padding: 28px; border-radius: 22px; }
+    .onboard[open] { animation: sheet-in .32s cubic-bezier(.2, .9, .3, 1.1); }
+    .onboard::backdrop { background: rgb(0 0 0 / .28); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    @keyframes sheet-in { from { opacity: 0; transform: translateY(12px) scale(.97); } }
+    .onboard h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 6px; }
+    .onboard > p { font-size: 15px; color: var(--muted); margin-bottom: 22px; }
+    .onboard .chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 24px; }
+    @media (max-width: 520px) { .onboard .chips { grid-template-columns: repeat(2, 1fr); } .onboard { padding: 22px; } }
+    .onboard .chip {
+      position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 14px 14px 13px;
+      border: 0; border-radius: 14px; background: var(--field); color: var(--text); font: inherit; text-align: left; cursor: pointer;
+      box-shadow: inset 0 0 0 1.5px transparent; transition: background .15s, box-shadow .15s, transform .15s;
+    }
+    .onboard .chip:hover { background: var(--hover); }
+    .onboard .chip:active { transform: scale(.97); }
+    .onboard .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .onboard .chip .emo { font-size: 26px; line-height: 1; margin-bottom: 8px; }
+    .onboard .chip b { font-size: 14px; font-weight: 600; }
+    .onboard .chip small { font-size: 12px; line-height: 1.3; color: var(--muted); }
+    .onboard .chip .tick {
+      position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
+      background: var(--accent); color: #fff; opacity: 0; transform: scale(.5); transition: opacity .15s, transform .2s cubic-bezier(.2, .9, .3, 1.4);
+    }
+    .onboard .chip[aria-pressed="true"] { background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px var(--accent); }
+    .onboard .chip[aria-pressed="true"] .tick { opacity: 1; transform: none; }
+    .onboard .actions { flex-direction: row; align-items: center; justify-content: space-between; position: static; margin: 0; padding: 0; } /* not the drawer's stacked, sticky .actions */
+    .onboard .actions > * { width: auto; flex: none; }
+    .onboard .skip { border: 0; background: none; font: inherit; font-size: 14px; font-weight: 500; color: var(--muted); padding: 10px 4px; cursor: pointer; }
+    .onboard .skip:hover { color: var(--text); }
+    .onboard .go { border-radius: 999px; padding: 0 24px; height: 40px; font-size: 15px; }
+    @media (prefers-reduced-motion: reduce) { .onboard[open], .prefs:popover-open { animation: none; } }
+    /* After the first-visit question: point at Preferences for a few seconds. */
+    #prefs-btn, #pref-change { position: relative; }
+    .nudge { animation: nudge 1.2s ease-out 4; }
+    #prefs-btn.nudge::after { left: auto; right: 0; }
+    .nudge::after { content: "Change it anytime"; position: absolute; top: calc(100% + 8px); left: 0; white-space: nowrap; background: var(--text); color: var(--bg); font-size: 12px; font-weight: 500; padding: 5px 9px; border-radius: 8px; pointer-events: none; }
+    @keyframes nudge { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
+    @media (prefers-reduced-motion: reduce) { .nudge { animation: none; outline: 2px solid var(--accent); } }
     #toasts { position: fixed; right: 16px; bottom: 16px; display: grid; gap: 8px; z-index: 60; max-width: min(420px, calc(100vw - 32px)); }
     .toast { background: var(--card); color: var(--text); border-radius: 10px; padding: 10px 14px; box-shadow: var(--shadow-float); cursor: pointer; transition: opacity .3s; font-size: 13px; }
     .toast.error { display: flex; align-items: baseline; gap: 8px; }
@@ -395,11 +446,6 @@
       </button>
       <button class="btn" type="button" id="fit">Fit</button>
     </header>
-    <div class="prefs" id="prefs" popover>
-      <fieldset><legend>Who pays</legend><div id="pref-market"></div></fieldset>
-      <fieldset><legend>What it is</legend><div id="pref-form"></div></fieldset>
-      <p>Every new idea follows what you tick, when you cross, branch or steer. Tick nothing in a group for any.</p>
-    </div>
     <div class="stage" id="stage">
       <div class="world" id="world">
         <svg class="links" id="links" aria-hidden="true"></svg>
@@ -430,7 +476,7 @@
         <button class="dice-btn" id="dice-near" type="button" aria-label="Pick two random worlds" title="Pick two random worlds"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.6" cy="8.6" r="1.1" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.1" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.1" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.1" fill="currentColor"/></svg></button>
         <button class="btn-primary" id="cross" type="button" style="height: 44px; border-radius: 22px; padding: 0 24px; font-size: 15px">Cross</button>
       </div>
-      <p class="pref-note" id="pref-note" hidden></p>
+      <p class="pref-note" id="pref-note"><span id="pref-note-text"></span> <button type="button" class="link-btn" id="pref-change" popovertarget="prefs">Change</button></p>
       <label class="search">
         <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="color: var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input id="world-q" type="search" placeholder="Search worlds" aria-label="Search worlds">
@@ -459,8 +505,19 @@
 
   <aside class="inspector" id="inspector" aria-label="Idea" hidden></aside>
 </main>
+<div class="prefs" id="prefs" popover>
+      <fieldset><legend>Format</legend><div id="pref-form"></div></fieldset>
+      <fieldset><legend>Who it's for</legend><div id="pref-market"></div></fieldset>
+      <p>Every new idea follows what you tick. Tick no format and each idea takes the one that fits it best.</p>
+</div>
 <div id="toasts" aria-live="polite"></div>
 <div class="ctx" id="ctx" role="menu" hidden><button type="button" role="menuitem" id="ctx-delete">Delete…</button></div>
+<dialog class="confirm onboard" id="onboard" aria-labelledby="onboard-title">
+  <h2 id="onboard-title">What do you want ideas for?</h2>
+  <p>Pick any. You can change it anytime in Preferences.</p>
+  <div class="chips" id="onboard-chips" role="group" aria-label="Formats"></div>
+  <div class="actions"><button class="skip" type="button" id="onboard-skip">Not sure yet</button><button class="btn-primary go" type="button" id="onboard-go">Start</button></div>
+</dialog>
 <dialog class="confirm" id="confirm" aria-labelledby="confirm-title" aria-describedby="confirm-text">
   <h2 id="confirm-title"></h2>
   <p id="confirm-text"></p>
@@ -882,7 +939,7 @@ function parseWorlds(text = WORLDS) {
 const all = (nodes) => nodes.flatMap((n) => [n, ...all(n.children)]);
 
 
-const GOAL = 'Small tools a person would actually be excited to build, found where two different worlds meet.';
+const GOAL = 'Small things a person would be excited to make or use, found where two different worlds meet.'; // not "tools": that word pulled every idea toward an app
 const BOARD_KEY = 'ideagen.crossBoard';
 const FAV_KEY = 'ideagen.crossFavs';
 const TINT_KEY = 'ideagen.crossTints';
@@ -896,12 +953,23 @@ const CRITERIA = [
   ['viral', 'Viral potential'], ['space', 'Market space'], ['marketing', 'Easy to market'], ['revenue', 'Money potential'],
 ];
 // Tags the rating gives each idea; the ones ticked in Preferences steer every new idea.
-const TAGS = { market: ['B2B', 'B2C'], form: ['Software', 'Physical', 'Service'] };
+// Formats (Lenny's call, 17 Nov): six kinds instead of Software / Physical / Service, so a podcast or a game is a real choice.
+const TAGS = { form: ['App', 'Game', 'Content', 'Physical', 'Event', 'Service'], market: ['B2C', 'B2B'] };
+const TAG_LABEL = {
+  App: ['📱', 'App or tool', 'A phone app, a site, a template'], Game: ['🎲', 'Game', 'Digital, board or card'],
+  Content: ['🎙️', 'Content', 'Video, podcast, newsletter'], Physical: ['📦', 'Physical thing', 'Something you hold or place'],
+  Event: ['🎟️', 'Event', 'People go or join in'], Service: ['🤝', 'Service', 'Someone does it for you'],
+  B2C: ['🙋', 'For people', 'One person uses or pays'], B2B: ['🏢', 'For businesses', 'A company pays'],
+};
+const CHECK_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const checkIcon = (cls) => { const s = h('span', { class: cls, 'aria-hidden': 'true' }); s.innerHTML = CHECK_SVG; return s; };
 const TAG_PHRASE = {
   B2B: 'B2B (businesses or organisations pay for it)', B2C: 'B2C (individuals pay for it or use it)',
-  Software: 'software (an app, a site, a bot or a browser extension)', Physical: 'a physical object people hold or place somewhere',
-  Service: 'a service where people do the work',
+  App: 'an app or tool (a phone app, a site, a bot, a template)', Game: 'a game (digital, board or card)',
+  Content: 'content (a video series, a podcast, a newsletter, a social account)', Physical: 'a physical thing people hold or place somewhere',
+  Event: 'an event or experience people go to or join', Service: 'a service where a person does the work',
 };
+const ANY_FORMAT = 'Format: give each idea the form that fits its annoyance best (an app or tool, a game, content like a video series or a podcast, a physical thing, an event, or a service), and use at least 4 different forms across the candidates: two candidates for the same side or the same annoyance never share a form. Never default to an app.';
 const PREFS_KEY = 'ideagen.crossPrefs';
 const SIZE = { w: 200, h: 74, sw: 220, sh: 74, col: 228, row: 128, pad: 48 };
 const ROOTS = parseWorlds();
@@ -909,7 +977,13 @@ const ALL = all(ROOTS);
 
 const S = {
   board: null, ideas: new Map(), edges: [], ratings: new Map(), judging: new Set(), busy: new Set(), crossing: new Map(), unseen: new Set(),
-  prefs: (() => { try { return { market: [], form: [], ...JSON.parse(localStorage.getItem(PREFS_KEY)) }; } catch { return { market: [], form: [] }; } })(),
+  prefs: (() => { // older boards saved "Software": it's "App" now; unknown tags are dropped
+    try {
+      const p = { market: [], form: [], ...JSON.parse(localStorage.getItem(PREFS_KEY)) };
+      for (const k of Object.keys(TAGS)) p[k] = [...new Set((p[k] ?? []).map((v) => (v === 'Software' ? 'App' : v)))].filter((v) => TAGS[k].includes(v));
+      return p;
+    } catch { return { market: [], form: [] }; }
+  })(),
   favs: new Set((() => { try { return JSON.parse(localStorage.getItem(FAV_KEY)) ?? []; } catch { return []; } })()),
   view: 'new', mode: 'tree', seed: null, selected: null,
   picked: [null, null], slot: 0, path: [], cam: { x: 0, y: 0, k: 1 },
@@ -991,7 +1065,8 @@ const activePrefs = () => Object.entries(TAGS).map(([k, all]) => all.filter((v) 
   .filter((on, i) => on.length && on.length < Object.values(TAGS)[i].length);
 const prefsLabel = () => activePrefs().map((on) => on.join(' or ')).join(' · ');
 /** What every generation is told: "Every idea must be B2B (…). Every idea must be software (…) or a physical object (…)." */
-const prefRules = () => activePrefs().map((on) => `Every idea must be ${on.map((v) => TAG_PHRASE[v]).join(' or ')}.`).join(' ');
+const prefRules = () => [...activePrefs().map((on) => `Every idea must be ${on.map((v) => TAG_PHRASE[v]).join(' or ')}.`),
+  activePrefs().some((on) => TAGS.form.includes(on[0])) ? '' : ANY_FORMAT].filter(Boolean).join(' ');
 const seeds = () => [...S.ideas.values()].filter((i) => i.kind === 'seed').sort((a, b) => b.id - a.id);
 function treeIds(seedId) {
   const out = new Set();
@@ -1320,8 +1395,7 @@ function renderInspector(crossShowing) {
 
 function renderNew() {
   $('#world-count').textContent = ALL.length.toLocaleString('en');
-  $('#pref-note').hidden = !prefsLabel();
-  $('#pref-note').textContent = `Following your preferences: ${prefsLabel()}`;
+  $('#pref-note-text').textContent = prefsLabel() ? `Following your preferences: ${prefsLabel()}.` : 'Any format: each idea takes the one that fits it.';
   [0, 1].forEach((i) => {
     const n = S.picked[i], el = $(`#slot-${i}`);
     el.className = `slot${n ? '' : ' empty'}${S.slot === i ? ' active' : ''}`;
@@ -1685,7 +1759,8 @@ const CANDIDATE_RULES = [
   '- annoyance: that annoyance, copied.',
   '- borrows: what it takes from the OTHER insider\'s world, in a few plain words (like "saving your progress, from games").',
   '- title: says what it does, literally, in 2–6 everyday words. No wordplay, no poetry, no quotes, no trailing period.',
-  '- pitch: exactly this shape: "You [do one thing]. Then [one thing happens]." then one short sentence on who it is for. At most 30 words. One action, one result: if it needs a second "then", it is too complicated, so pick a simpler idea. Something one person could build or run in a weekend.',
+  '- pitch: exactly this shape: "You [do one thing]. Then [one thing happens]." then one short sentence on who it is for. At most 30 words. One action, one result: if it needs a second "then", it is too complicated, so pick a simpler idea. Something one person could make or run in a weekend.',
+  '- form: one of "App", "Game", "Content", "Physical", "Event", "Service".',
   '- twist: the outsider\'s rule it uses, copied exactly, or "" if none.',
   '- probability: from 0 to 1, how likely a typical assistant would be to suggest this idea for this annoyance. Be honest: obvious ideas score high.',
 ].join('\n');
@@ -1713,7 +1788,7 @@ function drawTwists(n) {
 }
 const twistBlock = (rule, n) => `Then the outsider joins with one rule from an app that went viral:\n- ${rule}\nExactly ${n} candidates apply it to one of the annoyances. The rule must make the fix better or more fun, never an arbitrary limit (like "only people over 80 can log in"). The other candidates ignore it.`;
 // `sides`: a first cross. The field sits IN the shape: said after it, Haiku dropped it and the cross idea went missing.
-const candidatesJson = (n, people, sides) => `Reply with only a JSON object: {${people ? '"people": [{"who": "…", "annoyances": ["…", "…"]}, {"who": "…", "annoyances": ["…", "…"]}], ' : ''}"candidates": [{${sides ? '"side": "a", ' : ''}"who": "…", "annoyance": "…", "borrows": "…", "title": "…", "pitch": "…", "twist": "…", "probability": 0.4}, …]} holding exactly ${n} candidates${sides ? ', 2 for each side ("a", "b", "both")' : ''}.`;
+const candidatesJson = (n, people, sides) => `Reply with only a JSON object: {${people ? '"people": [{"who": "…", "annoyances": ["…", "…"]}, {"who": "…", "annoyances": ["…", "…"]}], ' : ''}"candidates": [{${sides ? '"side": "a", ' : ''}"form": "…", "who": "…", "annoyance": "…", "borrows": "…", "title": "…", "pitch": "…", "twist": "…", "probability": 0.4}, …]} holding exactly ${n} candidates${sides ? ', 2 for each side ("a", "b", "both")' : ''}.`;
 // A first cross (Lenny's call, 17 Nov): one simple idea from each world, then one that crosses them. Two simple ideas
 // are easy to picture together, so dragging one onto the other makes sense, and the third shows what a cross looks like.
 // No wild card here: the cross is already the unusual one. Cards stay on "Branch 3 more".
@@ -1722,14 +1797,17 @@ const SIDES = [
   '- side "a": 2 that fix the first insider\'s annoyance inside the first world, with what is normal there. "borrows" is "".',
   '- side "b": 2 that fix the second insider\'s annoyance inside the second world, with what is normal there. "borrows" is "".',
   '- side "both": 2 that cross the worlds: each fixes one insider\'s annoyance with something that is normal in the OTHER insider\'s world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn\'t count.',
-  'For sides "a" and "b", skip the first idea anyone would have and any app that already exists: find a fix people would be surprised nobody built.',
+  'For sides "a" and "b", skip the first idea anyone would have and anything that already exists: find a fix people would be surprised nobody built.',
 ].join('\n');
-/** One idea per side ("a", "b", "both"), each the clearest non-obvious one; missing sides are filled from the rest. */
+/** One idea per side ("a", "b", "both"), each the clearest non-obvious one, in different forms when it can; missing sides
+ * are filled from the rest. */
 function pickSides(list) {
   const all = Array.isArray(list) ? list : [];
   const kept = [];
   for (const side of ['a', 'b', 'both']) {
-    const [one] = pick(all.filter((c) => c?.side === side && !kept.some((k) => k.title === tidy(c).title)), 1, 0);
+    const pool = all.filter((c) => c?.side === side && !kept.some((k) => k.title === tidy(c).title));
+    const other = pool.filter((c) => !kept.some((k) => k.form && k.form === tidy(c).form)); // a form not used yet, when there is one
+    const [one] = pick(other.length ? other : pool, 1, 0);
     if (one) kept.push(one);
   }
   for (const c of pick(all, 3, 0)) if (kept.length < 3 && !kept.some((k) => k.title === c.title)) kept.push(c);
@@ -1776,6 +1854,7 @@ const tidy = (p) => ({
   twist: String(p?.twist ?? '').trim().slice(0, 200),
   like: DECK[String(p?.twist ?? '').trim()] ?? '',
   side: ['a', 'b', 'both'].includes(p?.side) ? p.side : '',
+  form: TAGS.form.includes(p?.form) ? p.form : '',
 });
 const existing = () => [...S.ideas.values()].filter((i) => i.kind !== 'seed').map((i) => i.title);
 function context() {
@@ -2025,7 +2104,7 @@ async function rateNow() {
   const fields = Object.entries(RATING_SCALES).map(([k, scale]) => `- ${k}: {"why": at most 15 words, the concrete reason, naming competitors or channels when you can; "score": integer 1–5. ${scale}}`).join('\n');
   try {
     const out = await ask([
-      'You are a blunt market analyst. You rate small ideas (an app, an object, a ritual, an event or a service) that one person could build or run in a few weekends, on seven criteria, each an integer 1–5 where higher is always better. Most ideas land at 2–3; give 5 only when you could defend it to an investor. Name real competitors and real channels when you know them. Judge each idea as written.',
+      'You are a blunt market analyst. You rate small ideas (an app, a game, content, an object, an event or a service) that one person could build or run in a few weekends, on seven criteria, each an integer 1–5 where higher is always better. Most ideas land at 2–3; give 5 only when you could defend it to an investor. Name real competitors and real channels when you know them. Judge each idea as written.',
       `The board's goal (the general direction): ${GOAL}`,
       PLAIN,
       `The ideas:\n${ideas.map((i, n) => `${n + 1}. ${fmtIdea(i)}`).join('\n')}`,
@@ -2034,7 +2113,7 @@ async function rateNow() {
 ${fields}
 - audience: who the tool is for, one line of at most 14 words, starting with "For ".
 - market: "B2B" (businesses or organisations pay) or "B2C" (individuals pay).
-- form: "Software" (an app, site, bot or extension), "Physical" (an object people hold) or "Service" (people do the work).`,
+- form: "App" (an app, site, bot or template), "Game", "Content" (a video series, podcast, newsletter), "Physical" (an object people hold), "Event" (people go or join in) or "Service" (a person does the work).`,
     ].join('\n\n'));
     const list = Array.isArray(out) ? out : [];
     ids.forEach((id, n) => {
@@ -2070,14 +2149,14 @@ async function fakeAnswer(prompt) {
     return Array.from({ length: count }, () => ({
       reason: 'A fake rating: clear hook, unclear who pays.',
       ...Object.fromEntries(Object.keys(RATING_SCALES).map((k) => [k, { why: `fake reason for ${k}`, score: n() }])),
-      audience: 'For people testing this page', market: 'B2C', form: 'Software',
+      audience: 'For people testing this page', market: 'B2C', form: 'App',
     }));
   }
   const twists = [...prompt.matchAll(/^- (.+)$/gm)].map((m) => m[1]).filter((t) => TWISTS.includes(t));
   const one = (i) => ({
     who: i % 2 ? 'the film editor' : 'the night nurse', annoyance: `Fake annoyance ${i % 3}`, borrows: 'saving your progress, from games',
     title: `Fake idea ${++fakeN}`, pitch: 'You tap once. Then the page shows a canned idea. For people testing it.',
-    twist: i >= 4 ? twists[0] ?? '' : '', probability: Math.random(), side: ['a', 'a', 'b', 'b', 'both', 'both'][i] ?? '',
+    twist: i >= 4 ? twists[0] ?? '' : '', probability: Math.random(), side: ['a', 'a', 'b', 'b', 'both', 'both'][i] ?? '', form: TAGS.form[i % 6],
   });
   const count = Number(prompt.match(/holding exactly (\d+) candidates/)?.[1] ?? 1);
   const people = [{ who: 'a film editor', annoyances: ['I can never find the take where the actor paused right.', 'Notes from the director come on paper.'] },
@@ -2104,17 +2183,47 @@ function showPrefs() {
   $('#prefs-btn').toggleAttribute('data-on', !!prefsLabel());
   renderNew();
 }
-for (const [k, opts] of Object.entries(TAGS)) clear($(`#pref-${k}`), opts.map((v) => h('label', {},
+for (const [k, opts] of Object.entries(TAGS)) clear($(`#pref-${k}`), opts.map((v) => h('label', { class: 'opt' },
   h('input', { type: 'checkbox', checked: S.prefs[k].includes(v), onchange: (e) => {
     S.prefs[k] = e.target.checked ? [...S.prefs[k], v] : S.prefs[k].filter((x) => x !== v);
     try { localStorage.setItem(PREFS_KEY, JSON.stringify(S.prefs)); } catch { /* private window: kept until reload */ }
     showPrefs();
-  } }), v)));
+  } }), h('span', { class: 'emo', 'aria-hidden': 'true' }, TAG_LABEL[v][0]),
+  h('span', { class: 'txt' }, TAG_LABEL[v][1], h('small', {}, TAG_LABEL[v][2])), checkIcon('check'))));
 showPrefs();
+// First visit: ask what kind of ideas they want, then point at Preferences. Skipped when this browser can't remember it.
+const ONBOARD_KEY = 'cross.onboarded';
+function onboard() {
+  try { if (localStorage.getItem(ONBOARD_KEY)) return; localStorage.setItem(ONBOARD_KEY, '1'); } catch { return; }
+  const picked = new Set(S.prefs.form);
+  clear($('#onboard-chips'), TAGS.form.map((v) => h('button', {
+    class: 'chip', type: 'button', 'aria-pressed': String(picked.has(v)),
+    onclick: (e) => { picked.has(v) ? picked.delete(v) : picked.add(v); e.currentTarget.setAttribute('aria-pressed', String(picked.has(v))); },
+  }, h('span', { class: 'emo', 'aria-hidden': 'true' }, TAG_LABEL[v][0]), h('b', {}, TAG_LABEL[v][1]), h('small', {}, TAG_LABEL[v][2]), checkIcon('tick'))));
+  const done = (save) => {
+    if (save) {
+      S.prefs.form = TAGS.form.filter((v) => picked.has(v));
+      try { localStorage.setItem(PREFS_KEY, JSON.stringify(S.prefs)); } catch { /* kept until reload */ }
+      showPrefs();
+      $('#pref-form').querySelectorAll('input').forEach((box, i) => { box.checked = picked.has(TAGS.form[i]); }); // redraw the ticks
+    }
+    $('#onboard').close();
+  };
+  $('#onboard-go').onclick = () => done(true);
+  $('#onboard-skip').onclick = () => done(false);
+  $('#onboard').addEventListener('close', () => {
+    const b = $('#prefs-btn').offsetParent ? $('#prefs-btn') : $('#pref-change'); // whichever is on screen
+    b.classList.add('nudge');
+    setTimeout(() => b.classList.remove('nudge'), 5000);
+  }, { once: true });
+  $('#onboard').showModal();
+}
+onboard();
 $('#prefs').addEventListener('beforetoggle', (e) => { // open under its button, right-aligned, kept on screen
   if (e.newState !== 'open') return;
-  const r = $('#prefs-btn').getBoundingClientRect(), w = Math.min(260, innerWidth - 16);
-  Object.assign($('#prefs').style, { top: `${r.bottom + 6}px`, width: `${w}px`, left: `${Math.max(8, Math.min(r.right - w, innerWidth - w - 8))}px` });
+  const head = $('#prefs-btn').offsetParent, r = (head ? $('#prefs-btn') : $('#pref-change')).getBoundingClientRect(), w = Math.min(300, innerWidth - 16);
+  const left = head ? r.right - w : r.left; // under the header button, right-aligned; under "Change", left-aligned
+  Object.assign($('#prefs').style, { top: `${r.bottom + 6}px`, width: `${w}px`, left: `${Math.max(8, Math.min(left, innerWidth - w - 8))}px` });
 });
 $('#mode-tree').addEventListener('click', () => { S.mode = 'tree'; render(); requestAnimationFrame(() => focusTree(S.seed, false)); });
 $('#mode-list').addEventListener('click', () => { S.mode = 'list'; render(); });
