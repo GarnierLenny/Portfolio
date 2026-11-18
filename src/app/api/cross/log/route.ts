@@ -3,7 +3,7 @@ import postgres from "postgres";
 // Crosswise records every cross and every rated idea here, anonymously (no IP or anything about the person is
 // stored), for public stats later. One table, one JSON row per event, so new stats never need a migration.
 // DATABASE_URL is the Railway Postgres public URL, set in Vercel. Without it logging is off and the tool works as before.
-const url = process.env.DATABASE_URL;
+const url = process.env.DATABASE_URL || process.env.DATABASE_PUBLIC_URL; // Vercel holds it as DATABASE_PUBLIC_URL, Railway's name
 const sql = url ? postgres(url, { max: 1, ssl: /localhost|127\.0\.0\.1/.test(url) ? false : "require" }) : null;
 
 const KINDS = new Set(["cross", "idea"]);
