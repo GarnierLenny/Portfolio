@@ -428,7 +428,7 @@
       <svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.6" cy="8.6" r="1.1" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.1" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.1" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.1" fill="currentColor"/></svg>
       <span class="name">Surprise Me</span>
     </button>
-    <p class="credit">Free to try. Built on <a href="https://github.com/fltman/idea-generator-2" target="_blank" rel="noopener">Anders Bjarby's Idea Generator</a> (MIT).</p>
+    <p class="credit">Free to try. Crosses are saved anonymously for public stats. Built on <a href="https://github.com/fltman/idea-generator-2" target="_blank" rel="noopener">Anders Bjarby's Idea Generator</a> (MIT).</p>
   </div>
 </nav>
 
@@ -1914,6 +1914,13 @@ function webAsker(url) {
     },
   };
 }
+// On the site, every cross and every rated idea is also recorded, anonymously (no IP, nothing about the person), for
+// public stats, through the site's log route. Fire and forget: a failed log never touches the tool. The artifact records nothing.
+function track(rows) {
+  if (!window.CROSS_API || !rows.length) return;
+  fetch(`${window.CROSS_API}/log`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rows }), keepalive: true }).catch(() => {});
+}
 const sampleReady = window.CROSS_API ? Promise.resolve(webAsker(window.CROSS_API))
   : (window.claude?.use ? window.claude.use('sample') : Promise.resolve(null)).then((s) => s ?? completeShim());
 // Out of free crosses: say so, and count who'd pay (/cross/more is a page view in Vercel Analytics).
@@ -2003,6 +2010,7 @@ async function cross() {
     const side = (n) => (n.parent ? `${label(n)} (${where(n)})` : label(n));
     const seed = newIdea({ title: `${side(a)} × ${side(b)}`, pitch: '', kind: 'seed' });
     save();
+    track([{ kind: 'cross', data: { a: side(a), b: side(b), prefs: prefsLabel() || 'any' } }]);
     S.picked = [null, null];
     S.slot = 0;
     S.mode = 'tree';
@@ -2152,6 +2160,14 @@ ${fields}
       if (idea) idea.reason = String(v.reason ?? '').trim().slice(0, 400);
     });
     save();
+    track(ids.filter((id) => S.ratings.has(id) && S.ideas.has(id)).map((id) => {
+      const i = S.ideas.get(id), r = S.ratings.get(id);
+      return { kind: 'idea', data: {
+        cross: S.ideas.get(rootOf(id))?.title ?? '', how: i.kind, world: i.worldName ?? '', title: i.title, pitch: i.pitch,
+        form: i.form || r.form, market: r.market, twist: i.twist ?? '',
+        scores: Object.fromEntries(Object.keys(RATING_SCALES).map((k) => [k, r[k].score])),
+      } };
+    }));
   } catch {
     ids.forEach((id) => rateFailed.add(id)); // the card shows no stars; reopening the idea asks again
   } finally {
