@@ -1455,6 +1455,7 @@ function renderNew() {
 
 /** Click to pick, at any tier. Going deeper in the same world refines that pick; a different world fills the other slot. */
 function choose(n) {
+  rolling++; // a pick mid-roll stops the reels
   const root = (x) => path(x)[0] ?? x;
   const cur = S.picked[S.slot], other = S.slot === 0 ? 1 : 0;
   let target = S.slot;
@@ -1482,6 +1483,25 @@ function surprise() {
   S.path = [...path(b), ...(b.children.length ? [b] : [])];
   $('#world-q').value = '';
   show('new');
+  flicker();
+}
+/** The two slots run through random worlds like slot machine reels, slowing down; the first stops, then the second. */
+let rolling = 0;
+function flicker() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const roll = ++rolling, start = performance.now(), stopAt = [450, 750], done = [false, false];
+  const tick = () => {
+    if (roll !== rolling || S.view !== 'new') return; // a new roll or a click elsewhere takes over
+    const t = performance.now() - start;
+    [0, 1].forEach((i) => {
+      if (done[i]) return;
+      if (t >= stopAt[i]) { done[i] = true; renderNew(); return; } // lands on the real pick (and redraws the other, rolled below)
+      const n = ALL[Math.floor(Math.random() * ALL.length)];
+      clear($(`#slot-${i}`), h('span', { class: 'emo' }, n.emoji), h('span', { class: 'txt' }, h('b', {}, n.name), h('span', {}, '')));
+    });
+    if (!done[1]) setTimeout(tick, 45 + t / 10); // ticks get slower, like reels running out
+  };
+  tick();
 }
 
 // ---------------------------------------------------------------- kept
@@ -2265,7 +2285,7 @@ $('#prefs').addEventListener('beforetoggle', (e) => { // open under its button, 
 });
 $('#mode-tree').addEventListener('click', () => { S.mode = 'tree'; render(); requestAnimationFrame(() => focusTree(S.seed, false)); });
 $('#mode-list').addEventListener('click', () => { S.mode = 'list'; render(); });
-[0, 1].forEach((i) => $(`#slot-${i}`).addEventListener('click', () => { S.picked[i] = null; S.slot = i; renderNew(); }));
+[0, 1].forEach((i) => $(`#slot-${i}`).addEventListener('click', () => { rolling++; S.picked[i] = null; S.slot = i; renderNew(); }));
 for (const b of document.querySelectorAll('[data-menu]')) b.addEventListener('click', () => document.body.classList.toggle('menu'));
 // Right-click a node: Delete…, then a confirmation, since a pair takes its whole tree with it.
 let ctxId = null;
