@@ -148,6 +148,8 @@
     .card .m .new::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-text); }
     .card .m .wildmark { display: inline-flex; color: var(--cross); }
     .card .m .kind-cross { color: var(--cross-text); font-weight: 600; }
+    .logo { border-radius: 4px; flex: none; object-fit: contain; background: #fff; }
+    .exists .rival { display: inline-flex; align-items: center; gap: 5px; vertical-align: middle; font-weight: 600; color: var(--text); }
     .tag { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 1px 7px; border-radius: 99px; background: color-mix(in srgb, var(--text) 6%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 7%, transparent); color: var(--text-2); font-size: 11px; font-weight: 600; }
     .card .m .tag { margin-left: auto; white-space: nowrap; overflow: visible; }
     .card .m .from { white-space: nowrap; }
@@ -951,7 +953,6 @@ const TINTS = [['Blue', '#6fa0ff'], ['Purple', '#a98bff'], ['Pink', '#ff8fc8'], 
 const PASTELS = TINTS.length - 1; // a new cross starts on a pastel, never on white
 /** Colors someone picked, by idea id. Everything else inherits from its parent; a cross starts on its own color. */
 const tints = new Map((() => { try { return Object.entries(JSON.parse(localStorage.getItem(TINT_KEY)) ?? {}).map(([k, v]) => [Number(k), v]); } catch { return []; } })());
-const MORE_LIKE = 'I like this one. Keep what makes it exciting, push it further, and make the three new ideas differ from each other.';
 const CRITERIA = [
   ['originality', 'Originality'], ['feasibility', 'Feasibility'], ['impact', 'Impact'],
   ['viral', 'Viral potential'], ['space', 'Market space'], ['marketing', 'Easy to market'], ['revenue', 'Money potential'],
@@ -1097,6 +1098,17 @@ function criteriaOf(idea) {
   }));
 }
 /** The mean of every criterion scored so far, to one decimal. */
+/** "https://www.Rover.com/sitters" → "rover.com"; anything that isn't a plain domain → "". */
+const cleanSite = (s) => {
+  const d = String(s ?? '').trim().toLowerCase().replace(/^[a-z]+:\/\//, '').replace(/^www\./, '').split(/[/?#]/)[0];
+  return /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(d) && d.length <= 100 ? d : '';
+};
+/** A competitor's site icon, through /api/cross/logo, which answers 404 for sites that don't exist: the image then removes itself. */
+function logo(e, size, title) {
+  if (!e?.site || !window.CROSS_API) return null; // on claude.ai there's no logo route: names only
+  return h('img', { class: 'logo', src: `${window.CROSS_API}/logo?d=${encodeURIComponent(e.site)}`, width: size, height: size,
+    alt: '', title, loading: 'lazy', onerror: (ev) => ev.target.remove() });
+}
 function starsOf(idea) {
   if (idea.kind === 'seed') return null;
   const s = criteriaOf(idea).map((c) => c.score).filter((v) => v != null);
@@ -1328,6 +1340,8 @@ function fillCard(el, idea) {
     meta.append(die);
   }
   if (idea.kind === 'combine' && !S.busy.has(idea.id)) meta.append(h('span', { class: 'kind-cross' }, 'Cross'));
+  const rival = S.ratings.get(idea.id)?.exists?.[0];
+  if (rival && !S.busy.has(idea.id)) meta.append(logo(rival, 14, `Already out there: ${rival.name}`));
   const tags = tagsOf(idea.id);
   if (tags) meta.append(h('span', { class: 'tag' }, tags));
   if (S.favs.has(idea.id)) { const hh = heart(12); hh.classList.add('heart'); meta.append(hh); }
@@ -1402,12 +1416,17 @@ function renderInspector(crossShowing) {
       h('span', {}, r?.originality ? 'across 7 criteria' : rateFailed.has(idea.id) ? 'market rating failed, reopen to retry'
         : st != null ? 'market rating on its way…' : 'being rated…'))),
     !seed && idea.reason ? h('p', { class: 'jury' }, idea.reason) : null,
+    !seed && r?.exists?.length ? h('p', { class: 'for exists' }, 'Already out there: ',
+      r.exists.flatMap((e, i) => [i ? ', ' : null, h('span', { class: 'rival' }, logo(e, 16), e.name)])) : null,
     seed ? null : h('ul', { class: 'criteria' }, criteriaOf(idea).map((c) => h('li', {},
       h('span', { class: 'n' }, c.name),
       c.score != null ? starRow(c.score, 16) : h('span', { class: 'n', style: 'color: var(--muted)' }, '…'),
       c.why ? h('small', {}, c.why) : null))),
     h('div', { class: 'actions' },
-      h('button', { class: 'btn-primary', type: 'button', disabled: S.busy.has(idea.id), onclick: () => grow(idea.id, seed ? '' : MORE_LIKE) },
+      !seed && r?.exists?.[0] ? h('button', { class: 'btn', type: 'button', disabled: S.busy.has(idea.id),
+        onclick: () => grow(idea.id, `Make it better than ${r.exists[0].name} at what ${r.exists[0].name}'s users complain about.`) },
+        `Beat ${r.exists[0].name}`) : null,
+      h('button', { class: 'btn-primary', type: 'button', disabled: S.busy.has(idea.id), onclick: () => grow(idea.id) },
         S.busy.has(idea.id) ? 'Branching…' : 'Branch 3 More')),
   );
   if (!seed) rate(idea.id);
@@ -1763,7 +1782,7 @@ stage.addEventListener('dblclick', (e) => {
   const card = e.target.closest('.card');
   if (!card || card.classList.contains('ghost')) return;
   const id = Number(card.dataset.id);
-  grow(id, S.ideas.get(id)?.kind === 'seed' ? '' : MORE_LIKE);
+  grow(id); // no hidden request: "keep what makes it exciting, push it further" made every child a copy of its parent
 });
 
 // ---------------------------------------------------------------- the brain, in the page
@@ -1786,7 +1805,7 @@ const FLOW = {
     ? 'First, the insiders: pick one real, ordinary person from each of the two worlds: someone who does or enjoys it in their own life, like "someone who cooks dinner after work" or "someone who plays games in the evening". Pick a professional only when the world is itself a job (like nursing or accounting). Each names 2 real annoyances from their own life with it, not from a workplace: a specific moment where something goes wrong, said the way they would say it to a friend.'
     : steer
     ? 'First, the insiders: two people the request is about, on either side of it (for a dating idea, the two people who might date; for a class, the teacher and the student). Each names 2 real annoyances from their own life with it: a specific moment, said the way they would say it to a friend.'
-    : 'First, the insiders: the person this idea is for, and one other person in the same scene (someone who helps, pays, waits or watches). Each names 2 real annoyances that are still there with this idea, or right next to it: a specific moment, said the way they would say it to a friend.',
+    : 'First, the insiders: the person this idea is for, and one other person in the same scene (someone who helps, pays, waits or watches). Each names 2 OTHER real annoyances in the very situation this idea is about (not elsewhere in their life), ones this idea does not fix: never the annoyance it already fixes, nor that same moment told another way. A specific moment, said the way they would say it to a friend.',
   combine: 'Fuse the two ideas into 3 candidate concepts that neither idea could be alone: one tool that fixes an annoyance from each idea at once, or that fixes one idea\'s annoyance with the other idea\'s way of working. Each names the people and annoyances it fixes.',
 };
 // What the model reaches for by default. Banned so it has to look elsewhere (the board showed every one of these on repeat).
@@ -1912,7 +1931,7 @@ function context(...ids) {
   const mine = all.filter((i) => roots.has(rootOf(i.id))).map((i) => i.title);
   const titles = [...new Set([...mine.slice(-40), ...all.map((i) => i.title).reverse()])].slice(0, 40);
   return [
-    `The board's goal (the general direction): ${GOAL}\nEvery idea must serve this goal. Keep the source idea's substance, but steer it toward the goal.`,
+    `The board's goal (the general direction): ${GOAL}\nEvery idea must serve this goal. Start from the source's people and problems, but never hand back the source idea reworded.`,
     titles.length ? `Ideas already on the board (do not repeat them, even in other words; the first ones are from this idea's own tree):\n${titles.map((t) => `- ${t}`).join('\n')}` : '',
   ].filter(Boolean).join('\n\n');
 }
@@ -2073,7 +2092,7 @@ async function expand(id, feedback, steer) {
       context(id),
       LANGUAGE,
       FLOW.people(seed, steer),
-      seed ? SIDES : `Then 6 candidates: 4 that each fix one annoyance plainly, and 2 from the outsider. Every candidate crosses the two sides: it fixes one insider's annoyance with something that is normal in the OTHER insider's world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn't count.`,
+      seed ? SIDES : `Then 6 candidates: 4 that each fix one annoyance plainly, and 2 from the outsider. Each one is a different thing from the idea above and from the other candidates: another object, another way of fixing it, not the same fix with a new name or one more feature. Every candidate crosses the two sides: it fixes one insider's annoyance with something that is normal in the OTHER insider's world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn't count.`,
       seed ? '' : twistBlock(drawTwists(1)[0], 2),
       AVOID,
       CANDIDATE_RULES,
@@ -2172,6 +2191,7 @@ async function rateNow() {
       `Reply with only a JSON array holding one object per idea, in the same order (${ideas.length} in all). Each object has:
 - reason: one sentence, at most 25 words: the main strength, the main weakness, and how well it fits the goal.
 ${fields}
+- exists: up to 2 apps or businesses that already do this or nearly this, main one first, as [{"name": "Strava", "site": "strava.com"}]. Only ones you are sure exist, with their real website. None you are sure of: [].
 - audience: who the tool is for, one line of at most 14 words, starting with "For ".
 - market: "B2B" (businesses or organisations pay) or "B2C" (individuals pay).
 - form: "App" (an app, site, bot or template), "Game", "Content" (a video series, podcast, newsletter), "Physical" (an object people hold), "Event" (people go or join in) or "Service" (a person does the work).`,
@@ -2183,6 +2203,8 @@ ${fields}
       const r = Object.fromEntries(Object.keys(RATING_SCALES).map((k) => [k, {
         score: clampScore(v[k]?.score), why: String(v[k]?.why ?? '').trim().slice(0, 160),
       }]));
+      r.exists = (Array.isArray(v.exists) ? v.exists : []).slice(0, 2)
+        .map((e) => ({ name: String(e?.name ?? '').trim().slice(0, 40), site: cleanSite(e?.site) })).filter((e) => e.name);
       r.audience = String(v.audience ?? '').trim().slice(0, 140);
       r.market = TAGS.market.includes(v.market) ? v.market : '';
       r.form = TAGS.form.includes(v.form) ? v.form : '';
@@ -2218,7 +2240,7 @@ async function fakeAnswer(prompt) {
     return Array.from({ length: count }, () => ({
       reason: 'A fake rating: clear hook, unclear who pays.',
       ...Object.fromEntries(Object.keys(RATING_SCALES).map((k) => [k, { why: `fake reason for ${k}`, score: n() }])),
-      audience: 'For people testing this page', market: 'B2C', form: 'App',
+      audience: 'For people testing this page', market: 'B2C', form: 'App', exists: [{ name: 'Rover', site: 'rover.com' }, { name: 'Made Up Co', site: 'notarealapp-xyz123.com' }],
     }));
   }
   const twists = [...prompt.matchAll(/^- (.+)$/gm)].map((m) => m[1]).filter((t) => TWISTS.includes(t));
