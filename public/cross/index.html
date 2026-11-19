@@ -1799,11 +1799,12 @@ const AVOID = [
 const PLAIN = 'Plain words: a friend could repeat it after hearing it once. Short sentences, everyday words, no jargon, no business terms. Call things by their real names (AI is "AI", an app is "an app"): never a metaphor in their place.';
 const CANDIDATE_RULES = [
   PLAIN,
+  'Every candidate stands on its own: one person could build or run it without another company changing its app or opening up its data. A feature only an existing app could add (pausing a chess site\'s clock, a new button in Instagram) doesn\'t count.',
   'Each candidate has:',
   '- who: the person whose annoyance it fixes, copied from the insiders (like "the home cook").',
   '- annoyance: that annoyance, copied.',
   '- borrows: what it takes from the OTHER insider\'s world, in a few plain words (like "saving your progress, from games").',
-  '- title: says what it does, literally, in 2–6 everyday words. No wordplay, no poetry, no quotes, no trailing period.',
+  '- title: starts with what it is, in the words a friend would use (a dating app, a podcast, a card deck, a walking group…), never the bare form label ("Service", "Physical"), then what it does, literally, in 3–8 everyday words, like "Dating app with a chess-clock first chat". No wordplay, no poetry, no quotes, no trailing period.',
   '- pitch: exactly this shape: "You [do one thing]. Then [one thing happens]." then one short sentence on who it is for. At most 30 words. One action, one result: if it needs a second "then", it is too complicated, so pick a simpler idea. Something one person could make or run in a weekend.',
   '- form: one of "App", "Game", "Content", "Physical", "Event", "Service".',
   '- twist: the outsider\'s rule it uses, copied exactly, or "" if none.',
@@ -1880,7 +1881,7 @@ function pick(list, plain, wild) {
 }
 const RATING_SCALES = {
   originality: '1 = an obvious idea everyone has heard ("an app for X", "use AI for Y"). 3 = a known concept in a genuinely new context. 5 = a non-obvious mechanism few people would think of.',
-  feasibility: '1 = needs a breakthrough or a team. 3 = one person could build it in a few weekends with real effort. 5 = a working version in one weekend with existing tools.',
+  feasibility: '1 = needs a breakthrough or a team, or only works if another company changes its own app or opens its data. 3 = one person could build it in a few weekends with real effort. 5 = a working version in one weekend with existing tools.',
   impact: '1 = nobody\'s day changes. 3 = a real, recurring annoyance gets smaller for a clear group. 5 = it changes a habit or saves real time or money every week.',
   viral: '1 = nobody would share it. 3 = shareable inside a niche. 5 = people show it to friends unprompted; it demos in seconds on video.',
   space: '1 = a crowded market with strong, well-known products. 3 = a few competitors, none clearly winning. 5 = almost nobody does this.',
