@@ -1781,14 +1781,17 @@ const STORE_KEY = 'cross.state.v1';
 // `wild` field and the least-typical pick stacked up into ideas nobody could repeat.
 const FLOW = {
   system: 'You run a short brainstorm with real people. You care about one thing: a real annoyance in someone\'s real day, fixed in the simplest way that works. You avoid buzzwords, clever metaphors and anything that takes three steps to explain.',
-  people: (seed) => seed
+  // A first cross keeps one insider per world (SIDES needs them); a steered branch takes the request's two sides.
+  people: (seed, steer) => seed
     ? 'First, the insiders: pick one real, ordinary person from each of the two worlds: someone who does or enjoys it in their own life, like "someone who cooks dinner after work" or "someone who plays games in the evening". Pick a professional only when the world is itself a job (like nursing or accounting). Each names 2 real annoyances from their own life with it, not from a workplace: a specific moment where something goes wrong, said the way they would say it to a friend.'
+    : steer
+    ? 'First, the insiders: two people the request is about, on either side of it (for a dating idea, the two people who might date; for a class, the teacher and the student). Each names 2 real annoyances from their own life with it: a specific moment, said the way they would say it to a friend.'
     : 'First, the insiders: the person this idea is for, and one other person in the same scene (someone who helps, pays, waits or watches). Each names 2 real annoyances that are still there with this idea, or right next to it: a specific moment, said the way they would say it to a friend.',
   combine: 'Fuse the two ideas into 3 candidate concepts that neither idea could be alone: one tool that fixes an annoyance from each idea at once, or that fixes one idea\'s annoyance with the other idea\'s way of working. Each names the people and annoyances it fixes.',
 };
 // What the model reaches for by default. Banned so it has to look elsewhere (the board showed every one of these on repeat).
 const AVOID = [
-  'Avoid these unless a card demands it: browser extensions, trackers, dashboards, timers, flashcards, matchmaking, marketplaces, points-badges-quests gamification, and chatbots or "AI assistants".',
+  'These come up far too often: browser extensions, trackers, dashboards, timers, flashcards, matchmaking, marketplaces, points-badges-quests gamification, and chatbots or "AI assistants". Never the plain version of one: use one only when it does something the usual one doesn\'t (a dating app is fine if its idea is new).',
   'Don\'t paste one world\'s vocabulary onto the other (no "boss fight" or "quest log" names): find a real fix instead.',
 ].join(' ');
 // Every word a viewer reads. The old "a 7-year-old understands it" rule made Claude swap real names for kid metaphors
@@ -1857,7 +1860,7 @@ function pickSides(list) {
 }
 // What the person types in the bar. It goes LAST and beats the rules and the preferences: "I want podcast ideas" once
 // came back as apps, because "Every idea must be software" (a preference) and the app-shaped rules came after it.
-const steerBlock = (text) => `Last, and above everything else: the person asked for this:\n"${text}"\nIf it asks for a kind of idea (a podcast, a video series, a game, an event, a physical thing), every candidate is that kind, even where the rules above say app or tool, and even against the preferences. Keep the pitch shape: "You [do one thing]. Then [one thing happens]."`;
+const steerBlock = (text) => `Last, and above everything else: the person asked for this:\n"${text}"\nEvery candidate must plainly be what they asked for: its subject, who it is for, and its kind, even if that takes it away from the source idea. A reader should see the request in each title. If it asks for a kind of idea (a podcast, a video series, a game, an event, a physical thing), every candidate is that kind, even where the rules above say app or tool, and even against the preferences. Keep the pitch shape: "You [do one thing]. Then [one thing happens]."`;
 const OBVIOUS = 0.6; // above this, an idea any assistant would suggest
 /** Keep `plain` clear-but-not-obvious ideas and `wild` card ideas out of the candidates.
  * Plain: drop the obvious ones, then the MOST typical of the rest (the clearest), from different people, else different annoyances.
@@ -1899,11 +1902,17 @@ const tidy = (p) => ({
   form: TAGS.form.includes(p?.form) ? p.form : '',
 });
 const existing = () => [...S.ideas.values()].filter((i) => i.kind !== 'seed').map((i) => i.title);
-function context() {
-  const titles = existing().slice(-40);
+// What new ideas must not repeat: every idea in the source's own tree (its root, parents and siblings) first, then the
+// most recent elsewhere on the board, 40 titles in all. Only the last 40 overall used to go in, so on a big board the
+// tree's own early ideas dropped out and came back reworded.
+function context(...ids) {
+  const all = [...S.ideas.values()].filter((i) => i.kind !== 'seed');
+  const roots = new Set(ids.filter((x) => x != null).map(rootOf));
+  const mine = all.filter((i) => roots.has(rootOf(i.id))).map((i) => i.title);
+  const titles = [...new Set([...mine.slice(-40), ...all.map((i) => i.title).reverse()])].slice(0, 40);
   return [
     `The board's goal (the general direction): ${GOAL}\nEvery idea must serve this goal. Keep the source idea's substance, but steer it toward the goal.`,
-    titles.length ? `Ideas already on the board (do not repeat or lightly reword them):\n${titles.map((t) => `- ${t}`).join('\n')}` : '',
+    titles.length ? `Ideas already on the board (do not repeat them, even in other words; the first ones are from this idea's own tree):\n${titles.map((t) => `- ${t}`).join('\n')}` : '',
   ].filter(Boolean).join('\n\n');
 }
 const LANGUAGE = 'Write in the same language as the source idea(s). If that is unclear or mixed, write in English.';
@@ -2058,10 +2067,11 @@ async function expand(id, feedback, steer) {
     const out = await ask([
       FLOW.system,
       seed ? `The two worlds:\n${parent.title}` : `The idea:\n${fmtIdea(parent)}`,
+      steer ? `The person's request for these new ideas: "${steer}". It decides what they are about and who they are for: pick the insiders and their annoyances to fit it. The idea above is only where they start.` : '',
       feedback ? `The person's preferences. Every new idea must follow them, unless their request at the end says otherwise:\n${feedback}` : '',
-      context(),
+      context(id),
       LANGUAGE,
-      FLOW.people(seed),
+      FLOW.people(seed, steer),
       seed ? SIDES : `Then 6 candidates: 4 that each fix one annoyance plainly, and 2 from the outsider. Every candidate crosses the two sides: it fixes one insider's annoyance with something that is normal in the OTHER insider's world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn't count.`,
       seed ? '' : twistBlock(drawTwists(1)[0], 2),
       AVOID,
@@ -2107,7 +2117,7 @@ async function combine(a, b) {
       `Idea 1:\n${fmtIdea(S.ideas.get(a))}`,
       `Idea 2:\n${fmtIdea(S.ideas.get(b))}`,
       rules ? `The person's preferences. The new idea must follow them:\n${rules}` : '',
-      context(),
+      context(a, b),
       LANGUAGE,
       AVOID,
       CANDIDATE_RULES,
