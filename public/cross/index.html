@@ -1107,7 +1107,7 @@ const cleanSite = (s) => {
 function logo(e, size, title) {
   if (!e?.site || !window.CROSS_API) return null; // on claude.ai there's no logo route: names only
   return h('img', { class: 'logo', src: `${window.CROSS_API}/logo?d=${encodeURIComponent(e.site)}`, width: size, height: size,
-    alt: '', title, loading: 'lazy', onerror: (ev) => ev.target.remove() });
+    alt: '', title, loading: 'lazy', dataset: { site: e.site }, onerror: (ev) => ev.target.remove() });
 }
 function starsOf(idea) {
   if (idea.kind === 'seed') return null;
@@ -1171,6 +1171,8 @@ function layout() {
 
 const cardEls = new Map(); // id → element, reused across renders so focus and animations survive
 const linkEls = new Map();
+const shown = new Map(); // id → where its card is drawn right now, in board units
+let glideFrame = 0;
 
 function current() {
   const cross = S.view === 'cross' && seeds().length > 0;
@@ -1261,14 +1263,15 @@ function renderTree(lay) {
   for (const [id, p] of lay.pos) rowH[p.row] = Math.max(rowH[p.row] ?? 0, p.h + (S.ideas.get(id)?.kind === 'seed' ? 0 : 6));
   const rowTop = [SIZE.pad];
   for (let r = 1; r < rowH.length; r++) rowTop[r] = rowTop[r - 1] + (rowH[r - 1] ?? SIZE.h) + GAP;
-  for (const [id, p] of lay.pos) {
-    p.top = rowTop[p.row] + (S.ideas.get(id)?.kind === 'seed' ? 0 : 6);
-    const el = cardEls.get(id);
-    if (!el.classList.contains('dragging')) {
-      el.style.setProperty('--x', `${p.left}px`);
-      el.style.setProperty('--y', `${p.top}px`);
-    }
-  }
+  for (const [id, p] of lay.pos) p.top = rowTop[p.row] + (S.ideas.get(id)?.kind === 'seed' ? 0 : 6);
+  // A re-layout (new cards, a card growing taller) used to snap every card to its new place. Now the card being worked on
+  // stays still on screen (the camera moves by as much as it did) and the others glide to their new places.
+  const anchor = [S.selected, ...S.busy, ...S.crossing.keys()].find((id) => shown.has(id) && lay.pos.has(id));
+  const sx = anchor != null ? lay.pos.get(anchor).left - shown.get(anchor).left : 0;
+  const sy = anchor != null ? lay.pos.get(anchor).top - shown.get(anchor).top : 0;
+  if (sx || sy) { S.cam.x -= sx * S.cam.k; S.cam.y -= sy * S.cam.k; applyCam(); }
+  const from = new Map();
+  for (const [id] of lay.pos) { const s = shown.get(id); from.set(id, s ? { left: s.left + sx, top: s.top + sy } : null); }
   const vals = [...lay.pos.values()];
   lay.height = vals.length ? Math.max(...vals.map((p) => p.top + p.h)) + SIZE.pad : 0;
   world.style.width = `${lay.width}px`;
@@ -1277,24 +1280,22 @@ function renderTree(lay) {
   svg.setAttribute('height', lay.height);
   for (const [id, el] of cardEls) if (!lay.pos.has(id)) { el.remove(); cardEls.delete(id); }
   const wanted = new Set();
-  const link = (key, from, to, cls) => {
-    const a = lay.pos.get(from), b = lay.pos.get(to);
-    if (!a || !b) return;
+  const ends = []; // [path, from id, to id], redrawn on every frame of the glide
+  const link = (key, a, b, cls) => {
+    if (!lay.pos.has(a) || !lay.pos.has(b)) return;
     wanted.add(key);
-    const x1 = a.left + a.w / 2, y1 = a.top + a.h, x2 = b.left + b.w / 2, y2 = b.top;
-    const dy = Math.max(28, (y2 - y1) * 0.55);
     let p = linkEls.get(key);
     const fresh = !p;
     if (fresh) {
       p = document.createElementNS(NS, 'path');
       p.setAttribute('pathLength', '1');
       p.addEventListener('animationend', () => p.classList.remove('enter'), { once: true });
-      const t = Math.max(enterAt.get(from) ?? -1, enterAt.get(to) ?? -1);
+      const t = Math.max(enterAt.get(a) ?? -1, enterAt.get(b) ?? -1);
       p.style.setProperty('--delay', `${t < 0 ? 0 : t + 320}ms`);
       linkEls.set(key, p);
       svg.append(p);
     }
-    p.setAttribute('d', `M${x1} ${y1} C${x1} ${y1 + dy} ${x2} ${y2 - dy} ${x2} ${y2}`);
+    ends.push([p, a, b]);
     const entering = fresh || p.classList.contains('enter');
     p.setAttribute('class', [cls, entering ? 'enter' : ''].filter(Boolean).join(' '));
   };
@@ -1309,6 +1310,35 @@ function renderTree(lay) {
   }
   for (const [key, el] of linkEls) if (!wanted.has(key)) { el.remove(); linkEls.delete(key); }
   for (const el of svg.querySelectorAll('path.sel')) svg.append(el); // the selected path draws on top
+
+  cancelAnimationFrame(glideFrame);
+  const start = performance.now();
+  const moving = [...from].some(([id, f]) => f && (f.left !== lay.pos.get(id).left || f.top !== lay.pos.get(id).top));
+  const draw = (now) => {
+    const t = moving ? Math.min(1, (now - start) / 380) : 1;
+    const e = 1 - (1 - t) ** 3;
+    const at = new Map();
+    for (const [id, p] of lay.pos) {
+      const f = from.get(id) ?? p;
+      const q = { left: f.left + (p.left - f.left) * e, top: f.top + (p.top - f.top) * e, w: p.w, h: p.h };
+      at.set(id, q);
+      shown.set(id, q);
+      const el = cardEls.get(id);
+      if (!el.classList.contains('dragging')) {
+        el.style.setProperty('--x', `${q.left}px`);
+        el.style.setProperty('--y', `${q.top}px`);
+      }
+    }
+    for (const [path, a, b] of ends) {
+      const p = at.get(a), q = at.get(b);
+      const x1 = p.left + p.w / 2, y1 = p.top + p.h, x2 = q.left + q.w / 2, y2 = q.top;
+      const dy = Math.max(28, (y2 - y1) * 0.55);
+      path.setAttribute('d', `M${x1} ${y1} C${x1} ${y1 + dy} ${x2} ${y2 - dy} ${x2} ${y2}`);
+    }
+    if (t < 1) glideFrame = requestAnimationFrame(draw);
+  };
+  draw(start);
+  for (const id of [...shown.keys()]) if (!lay.pos.has(id)) shown.delete(id);
 
   placeBar();
 }
@@ -1341,7 +1371,10 @@ function fillCard(el, idea) {
   }
   if (idea.kind === 'combine' && !S.busy.has(idea.id)) meta.append(h('span', { class: 'kind-cross' }, 'Cross'));
   const rival = S.ratings.get(idea.id)?.exists?.[0];
-  if (rival && !S.busy.has(idea.id)) meta.append(logo(rival, 14, `Already out there: ${rival.name}`));
+  if (rival?.site && !S.busy.has(idea.id)) { // the same image across redraws, so it doesn't blink
+    const img = el.querySelector(`img.logo[data-site="${CSS.escape(rival.site)}"]`) ?? logo(rival, 14, `Already out there: ${rival.name}`);
+    if (img) meta.append(img);
+  }
   const tags = tagsOf(idea.id);
   if (tags) meta.append(h('span', { class: 'tag' }, tags));
   if (S.favs.has(idea.id)) { const hh = heart(12); hh.classList.add('heart'); meta.append(hh); }
