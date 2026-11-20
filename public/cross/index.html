@@ -2087,6 +2087,7 @@ async function expand(id, feedback, steer) {
     const out = await ask([
       FLOW.system,
       seed ? `The two worlds:\n${parent.title}` : `The idea:\n${fmtIdea(parent)}`,
+      !seed && S.ratings.get(id)?.exists?.length ? `${S.ratings.get(id).exists.map((e) => e.name).join(' and ')} already ${S.ratings.get(id).exists.length > 1 ? 'do' : 'does'} this: never hand back the same thing, even in other words.` : '',
       steer ? `The person's request for these new ideas: "${steer}". It decides what they are about and who they are for: pick the insiders and their annoyances to fit it. The idea above is only where they start.` : '',
       feedback ? `The person's preferences. Every new idea must follow them, unless their request at the end says otherwise:\n${feedback}` : '',
       context(id),
