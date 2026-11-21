@@ -1922,6 +1922,11 @@ function pick(list, plain, wild) {
   const all = (Array.isArray(list) ? list : [])
     .map((c) => ({ ...tidy(c), p: Number.isFinite(Number(c?.probability)) ? Number(c.probability) : 0.5 }))
     .filter((c) => c.title && !existing().some((t) => t.toLowerCase() === c.title.toLowerCase()));
+  // The prompt asks for the ticked formats, but Haiku sometimes hands back a podcast anyway: keep only the ideas in a
+  // ticked format, unless none is (a request like "make it a podcast" overrides the preferences on purpose).
+  const forms = activePrefs().find((on) => TAGS.form.includes(on[0]));
+  const fit = forms ? all.filter((c) => forms.includes(c.form)) : all;
+  if (fit.length) all.splice(0, all.length, ...fit);
   const clearest = (xs) => [...xs.filter((c) => c.p <= OBVIOUS).sort((a, b) => b.p - a.p), ...xs.filter((c) => c.p > OBVIOUS).sort((a, b) => a.p - b.p)];
   const kept = [];
   const plainOnes = clearest(all.filter((c) => !c.twist));
