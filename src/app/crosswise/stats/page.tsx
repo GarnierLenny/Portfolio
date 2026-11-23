@@ -107,7 +107,7 @@ export default async function StatsPage() {
     <main className="min-h-screen bg-[#f5f5f7] dark:bg-[#1c1c1e] text-[#1d1d1f] dark:text-[#f5f5f7] px-4 py-10 sm:py-16">
       <div className="mx-auto max-w-3xl flex flex-col gap-6">
         <header className="flex flex-col gap-3">
-          <a href="/cross" className="flex items-center gap-2 w-fit font-bold text-lg"><Logo /> Crosswise</a>
+          <a href="/crosswise" className="flex items-center gap-2 w-fit font-bold text-lg"><Logo /> Crosswise</a>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-balance">What people cross</h1>
           <p className={muted}>
             Every cross made on Crosswise, counted, and how Claude graded the ideas it gave.
@@ -117,7 +117,7 @@ export default async function StatsPage() {
 
         {!s ? (
           <section className={card}>
-            <p>No crosses yet. <a href="/cross" className="text-[#0a66e0] underline underline-offset-4">Make the first one</a>.</p>
+            <p>No crosses yet. <a href="/crosswise" className="text-[#0a66e0] underline underline-offset-4">Make the first one</a>.</p>
           </section>
         ) : (
           <>
@@ -201,7 +201,7 @@ export default async function StatsPage() {
         )}
 
         <footer className={`text-sm ${muted}`}>
-          <a href="/cross" className="text-[#0a66e0] underline underline-offset-4">Make a cross</a> and it shows up here.
+          <a href="/crosswise" className="text-[#0a66e0] underline underline-offset-4">Make a cross</a> and it shows up here.
         </footer>
       </div>
     </main>

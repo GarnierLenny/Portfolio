@@ -20,7 +20,7 @@ export default function MorePage() {
           Paid crosses don&apos;t exist yet. Your click counts as a vote: if enough people want more, I&apos;ll build it.
           Meanwhile, your free crosses come back tomorrow.
         </p>
-        <a href="/cross" className="text-amber-400 hover:text-amber-300 underline underline-offset-4">
+        <a href="/crosswise" className="text-amber-400 hover:text-amber-300 underline underline-offset-4">
           Back to Crosswise
         </a>
       </div>

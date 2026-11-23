@@ -2014,7 +2014,7 @@ function completeShim() {
   if (typeof window.claude?.complete !== 'function') return null;
   return { json: async (prompt) => parseJson(await window.claude.complete(`${prompt}\n\nAnswer with the JSON only, no other text.`)) };
 }
-// On lennygarnier.com/cross (the web build sets window.CROSS_API) the site's own route answers, on Lenny's API key,
+// On lennygarnier.com/crosswise (the web build sets window.CROSS_API) the site's own route answers, on Lenny's API key,
 // with a daily limit per visitor and a monthly cap.
 function webAsker(url) {
   return {
@@ -2035,14 +2035,14 @@ function track(rows) {
 }
 const sampleReady = window.CROSS_API ? Promise.resolve(webAsker(window.CROSS_API))
   : (window.claude?.use ? window.claude.use('sample') : Promise.resolve(null)).then((s) => s ?? completeShim());
-// Out of free crosses: say so, and count who'd pay (/cross/more is a page view in Vercel Analytics).
+// Out of free crosses: say so, and count who'd pay (/crosswise/more is a page view in Vercel Analytics).
 const MORE = {
   daily_limit: 'You\'ve used today\'s free crosses. More tomorrow.',
   out_of_credit: 'This month\'s free crosses are all used up.',
 };
 function moreError(code) {
   const err = new Error(MORE[code]);
-  err.node = h('span', {}, MORE[code], ' ', h('a', { href: '/cross/more', target: '_blank', rel: 'noopener' }, 'I\'d pay for more'));
+  err.node = h('span', {}, MORE[code], ' ', h('a', { href: '/crosswise/more', target: '_blank', rel: 'noopener' }, 'I\'d pay for more'));
   return err;
 }
 const SAMPLE_COPY = {

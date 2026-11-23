@@ -2,14 +2,14 @@ import type postgres from "postgres";
 import { sql, ensureTable } from "@/lib/crosswise-db";
 
 // Crosswise records every cross and every rated idea here, anonymously (no IP or anything about the person is
-// stored), for the public stats at /cross/stats. Without a database URL, logging is off and the tool works as before.
+// stored), for the public stats at /crosswise/stats. Without a database URL, logging is off and the tool works as before.
 
 const KINDS = new Set(["cross", "idea"]);
 const ROWS_PER_DAY = 300; // per visitor: a cross is 1 row plus 3 ideas, a branch 3 ideas, far below this
 const MAX_ROW = 4_000; // characters of JSON per row
 
 // ponytail: per-instance memory like the route next door, and anyone can post made-up rows. They're only stats:
-// if junk ever shows on /cross/stats, delete its rows in Railway (Database tab, crosswise_log).
+// if junk ever shows on /crosswise/stats, delete its rows in Railway (Database tab, crosswise_log).
 const seen = new Map<string, { day: string; rows: number }>();
 
 export async function POST(req: Request) {
