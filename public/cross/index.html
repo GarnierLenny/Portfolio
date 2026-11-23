@@ -297,6 +297,13 @@
       border-radius: 12px; background: var(--field); text-align: left; box-shadow: inset 0 0 0 1px var(--line);
     }
     .slot.active { box-shadow: inset 0 0 0 1.5px var(--accent); }
+    .slot-wrap { flex: 1 1 230px; min-width: 0; position: relative; display: flex; }
+    .slot-wrap .slot { flex: 1; padding-right: 50px; }
+    .lock { position: absolute; right: 8px; top: 50%; translate: 0 -50%; width: 36px; height: 36px; border: 0; border-radius: 50%; background: none; color: var(--faint); display: grid; place-items: center; cursor: pointer; }
+    .lock:hover { background: var(--hover); color: var(--text); }
+    .lock:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .lock[aria-pressed="true"] { color: var(--accent); }
+    .dice-btn:disabled { opacity: .4; cursor: default; }
     .slot .emo { font-size: 22px; }
     .slot .txt { display: flex; flex-direction: column; min-width: 0; }
     .slot .txt b { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -476,9 +483,9 @@
         <p class="lead">Pick two of <span id="world-count"></span> worlds. Click a world to pick it, or go deeper and pick one of its niches. Three small tools grow where they meet.</p>
       </header>
       <div class="slots">
-        <button class="slot" id="slot-0" type="button"></button>
+        <div class="slot-wrap"><button class="slot" id="slot-0" type="button"></button><button class="lock" id="lock-0" type="button" hidden></button></div>
         <span class="x" aria-hidden="true">×</span>
-        <button class="slot" id="slot-1" type="button"></button>
+        <div class="slot-wrap"><button class="slot" id="slot-1" type="button"></button><button class="lock" id="lock-1" type="button" hidden></button></div>
         <button class="dice-btn" id="dice-near" type="button" aria-label="Pick two random worlds" title="Pick two random worlds"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.6" cy="8.6" r="1.1" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.1" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.1" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.1" fill="currentColor"/></svg></button>
         <button class="btn-primary" id="cross" type="button" style="height: 44px; border-radius: 22px; padding: 0 24px; font-size: 15px">Cross</button>
       </div>
@@ -991,7 +998,7 @@ const S = {
   })(),
   favs: new Set((() => { try { return JSON.parse(localStorage.getItem(FAV_KEY)) ?? []; } catch { return []; } })()),
   view: 'new', mode: 'tree', seed: null, selected: null,
-  picked: [null, null], slot: 0, path: [], cam: { x: 0, y: 0, k: 1 },
+  picked: [null, null], locked: [false, false], slot: 0, path: [], cam: { x: 0, y: 0, k: 1 },
 };
 let stopFollow = null;
 let lastLayout = { pos: new Map(), width: 0, height: 0 };
@@ -1000,6 +1007,8 @@ let lastLayout = { pos: new Map(), width: 0, height: 0 };
 
 const DIE_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.6" cy="8.6" r="1.3" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.3" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.3" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.3" fill="currentColor"/></svg>';
 const HEART = 'M12 20.5l-1.3-1.2C5.8 14.9 3 12.4 3 8.9 3 6.1 5.2 4 7.9 4c1.6 0 3.1.7 4.1 1.9C13 4.7 14.5 4 16.1 4 18.8 4 21 6.1 21 8.9c0 3.5-2.8 6-7.7 10.4z';
+const LOCK_SHUT = 'M7 11h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2zM8 11V8a4 4 0 0 1 8 0v3';
+const LOCK_OPEN = 'M7 11h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2zM8 11V8a4 4 0 0 1 7.7-1.5';
 const STAR = 'M12 2.6l2.9 6 6.6.8-4.9 4.6 1.3 6.5L12 17.3l-5.9 3.2 1.3-6.5L2.5 9.4l6.6-.8z';
 const NS = 'http://www.w3.org/2000/svg';
 /** An inline icon; colours go through `style` so theme variables apply. */
@@ -1478,7 +1487,14 @@ function renderNew() {
       n ? h('span', { class: 'emo' }, n.emoji) : null,
       h('span', { class: 'txt' }, h('b', {}, n ? n.name : i ? 'Pick another world' : 'Pick a world'),
         h('span', {}, n ? (n.parent ? where(n) : 'The whole world') : S.slot === i ? 'Choose below' : '')));
+    const lock = $(`#lock-${i}`), on = S.locked[i];
+    lock.hidden = !n;
+    lock.setAttribute('aria-pressed', String(on));
+    lock.setAttribute('aria-label', on ? `Unlock ${n?.name ?? ''}: the dice can change it` : `Lock ${n?.name ?? ''}: the dice keeps it`);
+    lock.title = on ? 'Locked: the dice keeps it' : 'Lock it: the dice keeps it';
+    clear(lock, icon(on ? LOCK_SHUT : LOCK_OPEN, 17, { fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
   });
+  $('#dice-near').disabled = S.locked[0] && S.locked[1];
   $('#cross').disabled = !(S.picked[0] && S.picked[1]);
   const q = $('#world-q').value.trim().toLowerCase();
   $('#columns').hidden = !!q;
@@ -1512,7 +1528,9 @@ function choose(n) {
   const cur = S.picked[S.slot], other = S.slot === 0 ? 1 : 0;
   let target = S.slot;
   if (cur && root(cur) !== root(n) && (!S.picked[other] || root(S.picked[other]) === root(n))) target = other;
+  if (S.locked[target] && !S.locked[target === 0 ? 1 : 0]) target = target === 0 ? 1 : 0; // a locked pick stays
   if (S.picked[target === 0 ? 1 : 0] === n) return;
+  S.locked[target] = false; // both locked: a click replaces the active one, unlocked
   S.picked[target] = n;
   S.slot = target;
   S.path = [...path(n), ...(n.children.length ? [n] : [])];
@@ -1520,20 +1538,25 @@ function choose(n) {
 }
 
 function surprise() {
-  // Each tier has the same chance, however many worlds it holds.
+  // Worlds and niches only, each tier with the same chance however many it holds. Micro-niches (tier 3) are too narrow
+  // to cross at random (few matches, odd ideas): they're picked by hand. A locked slot keeps its pick.
   const any = () => {
-    const tier = 1 + Math.floor(Math.random() * 3);
+    const tier = 1 + Math.floor(Math.random() * 2);
     const pool = ALL.filter((n) => n.tier === tier);
     return pool[Math.floor(Math.random() * pool.length)];
   };
   const root = (n) => path(n)[0] ?? n;
-  const a = any();
-  let b;
-  do b = any(); while (root(b) === root(a));
-  S.picked = [a, b];
-  S.slot = 1;
-  S.path = [...path(b), ...(b.children.length ? [b] : [])];
   $('#world-q').value = '';
+  if (!S.locked[0] || !S.locked[1]) {
+    const [a, b] = S.picked.map((n, i) => (S.locked[i] ? n : null));
+    const next = [a ?? any(), b];
+    if (!b) do next[1] = any(); while (root(next[1]) === root(next[0]));
+    while (!a && root(next[0]) === root(next[1])) next[0] = any();
+    S.picked = next;
+    S.slot = S.locked[1] ? 0 : 1;
+    const last = S.picked[S.slot];
+    S.path = [...path(last), ...(last.children.length ? [last] : [])];
+  }
   show('new');
   flicker();
 }
@@ -1541,7 +1564,8 @@ function surprise() {
 let rolling = 0;
 function flicker() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const roll = ++rolling, start = performance.now(), stopAt = [450, 750], done = [false, false];
+  const roll = ++rolling, start = performance.now(), stopAt = [450, 750], done = [...S.locked]; // a locked slot doesn't spin
+  if (done[1]) stopAt[0] = 750; // only the first spins: give it the full roll
   const tick = () => {
     if (roll !== rolling || S.view !== 'new') return; // a new roll or a click elsewhere takes over
     const t = performance.now() - start;
@@ -2099,8 +2123,8 @@ async function cross() {
     const seed = newIdea({ title: `${side(a)} × ${side(b)}`, pitch: '', kind: 'seed' });
     save();
     track([{ kind: 'cross', data: { a: side(a), b: side(b), prefs: prefsLabel() || 'any' } }]);
-    S.picked = [null, null];
-    S.slot = 0;
+    S.picked = S.picked.map((n, i) => (S.locked[i] ? n : null)); // locked picks wait for the next cross
+    S.slot = S.locked[0] ? 1 : 0;
     S.mode = 'tree';
     openCross(seed.id);
     await expand(seed.id, prefRules());
@@ -2358,7 +2382,8 @@ $('#prefs').addEventListener('beforetoggle', (e) => { // open under its button, 
 });
 $('#mode-tree').addEventListener('click', () => { S.mode = 'tree'; render(); requestAnimationFrame(() => focusTree(S.seed, false)); });
 $('#mode-list').addEventListener('click', () => { S.mode = 'list'; render(); });
-[0, 1].forEach((i) => $(`#slot-${i}`).addEventListener('click', () => { rolling++; S.picked[i] = null; S.slot = i; renderNew(); }));
+[0, 1].forEach((i) => $(`#slot-${i}`).addEventListener('click', () => { rolling++; S.picked[i] = null; S.locked[i] = false; S.slot = i; renderNew(); }));
+[0, 1].forEach((i) => $(`#lock-${i}`).addEventListener('click', () => { S.locked[i] = !S.locked[i]; renderNew(); }));
 for (const b of document.querySelectorAll('[data-menu]')) b.addEventListener('click', () => document.body.classList.toggle('menu'));
 // Right-click a node: Delete…, then a confirmation, since a pair takes its whole tree with it.
 let ctxId = null;
