@@ -490,6 +490,7 @@
         <button class="btn-primary" id="cross" type="button" style="height: 44px; border-radius: 22px; padding: 0 24px; font-size: 15px">Cross</button>
       </div>
       <p class="pref-note" id="pref-note"><span id="pref-note-text"></span> <button type="button" class="link-btn" id="pref-change" popovertarget="prefs">Change</button></p>
+      <p class="pref-note" id="left-note" hidden></p>
       <label class="search">
         <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="color: var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input id="world-q" type="search" placeholder="Search worlds" aria-label="Search worlds">
@@ -2021,11 +2022,21 @@ function webAsker(url) {
     json: async (prompt) => {
       const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
       const data = await res.json().catch(() => ({}));
+      showLeft(data.left);
       if (!res.ok) throw { code: data.code };
       return parseJson(data.text);
     },
   };
 }
+// "N crosses left today", from the route's count of calls (2 per cross or branch). The count lives in one server
+// instance's memory, so it can jump back up on a fresh instance: it only ever errs in the visitor's favour.
+function showLeft(calls) {
+  if (typeof calls !== 'number') return;
+  const n = Math.floor(calls / 2), note = $('#left-note');
+  note.textContent = n ? `${n} free ${n === 1 ? 'cross' : 'crosses'} left today.` : 'No free crosses left today. More tomorrow.';
+  note.hidden = false;
+}
+if (window.CROSS_API && !fake) fetch(window.CROSS_API).then((r) => r.json()).then((d) => showLeft(d.left)).catch(() => {});
 // On the site, every cross and every rated idea is also recorded, anonymously (no IP, nothing about the person), for
 // public stats, through the site's log route. Fire and forget: a failed log never touches the tool. The artifact records nothing.
 function track(rows) {

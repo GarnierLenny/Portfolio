@@ -19,18 +19,28 @@ const client = new Anthropic(); // ANTHROPIC_API_KEY, set in Vercel
 // Hobby plan's ceiling.
 export const maxDuration = 60;
 
+function usage(req: Request) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  const day = new Date().toISOString().slice(0, 10);
+  const mine = seen.get(ip);
+  return { ip, day, count: mine?.day === day ? mine.calls : 0 };
+}
+
+// The page asks on load how many calls this visitor has left today, to show "N crosses left today".
+export async function GET(req: Request) {
+  return Response.json({ left: CALLS_PER_DAY - usage(req).count });
+}
+
 export async function POST(req: Request) {
   const { prompt } = await req.json().catch(() => ({}));
   if (typeof prompt !== "string" || !prompt || prompt.length > MAX_PROMPT) {
     return Response.json({ code: "bad_request" }, { status: 400 });
   }
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
-  const day = new Date().toISOString().slice(0, 10);
-  const mine = seen.get(ip);
-  const count = mine?.day === day ? mine.calls : 0;
-  if (count >= CALLS_PER_DAY) return Response.json({ code: "daily_limit" }, { status: 429 });
+  const { ip, day, count } = usage(req);
+  if (count >= CALLS_PER_DAY) return Response.json({ code: "daily_limit", left: 0 }, { status: 429 });
   seen.set(ip, { day, calls: count + 1 });
+  const left = CALLS_PER_DAY - count - 1;
 
   try {
     const res = await client.messages.create({
@@ -47,7 +57,7 @@ export async function POST(req: Request) {
       return Response.json({ code: "failed" }, { status: 502 });
     }
     const text = res.content.map((b) => (b.type === "text" ? b.text : "")).join("");
-    return Response.json({ text });
+    return Response.json({ text, left });
   } catch (e) {
     // The workspace spend limit or an empty balance comes back as a 400 that names it.
     if (e instanceof Anthropic.BadRequestError && /credit|usage limit|spend/i.test(e.message)) {
