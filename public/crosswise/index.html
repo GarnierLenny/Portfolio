@@ -989,7 +989,7 @@ const ROOTS = parseWorlds();
 const ALL = all(ROOTS);
 
 const S = {
-  board: null, ideas: new Map(), edges: [], ratings: new Map(), judging: new Set(), busy: new Set(), crossing: new Map(), unseen: new Set(),
+  board: null, ideas: new Map(), edges: [], ratings: new Map(), judging: new Set(), busy: new Set(), changing: new Set(), crossing: new Map(), unseen: new Set(),
   prefs: (() => { // older boards saved "Software": it's "App" now; unknown tags are dropped
     try {
       const p = { market: [], form: [], ...JSON.parse(localStorage.getItem(PREFS_KEY)) };
@@ -1144,7 +1144,7 @@ function layout() {
   const kids = (id) => {
     if (typeof id === 'string') return [];
     const real = kidsOf(id).filter((k) => ids.has(k)).sort((a, b) => a - b);
-    if (S.busy.has(id)) real.push(`ghost-${id}-1`, `ghost-${id}-2`, `ghost-${id}-3`);
+    if (S.busy.has(id)) real.push(...(S.changing.has(id) ? [`ghost-${id}-1`] : [`ghost-${id}-1`, `ghost-${id}-2`, `ghost-${id}-3`]));
     if (S.crossing.has(id)) real.push(`xghost-${id}-${S.crossing.get(id)}`); // where the cross will land
     return real;
   };
@@ -1940,6 +1940,8 @@ function pickSides(list) {
 // What the person types in the bar. It goes LAST and beats the rules and the preferences: "I want podcast ideas" once
 // came back as apps, because "Every idea must be software" (a preference) and the app-shaped rules came after it.
 const steerBlock = (text) => `Last, and above everything else: the person asked for this:\n"${text}"\nEvery candidate must plainly be what they asked for: its subject, who it is for, and its kind, even if that takes it away from the source idea. A reader should see the request in each title. If it asks for a kind of idea (a podcast, a video series, a game, an event, a physical thing), every candidate is that kind, even where the rules above say app or tool, and even against the preferences. Keep the pitch shape: "You [do one thing]. Then [one thing happens]."`;
+// A change typed on an idea (Lenny's call, 24 Nov): one child, that same idea with the change made, not three new ones.
+const changeBlock = (text) => `Last, and above everything else: change the idea above as the person asks:\n"${text}"\nEvery candidate is that same idea with the change made: the same person, the same annoyance and the same core, unless the change says otherwise. Change only what they asked for and add nothing they didn't. A reader should see the change in the title. If they ask for a kind of idea (a podcast, a video series, a game, an event, a physical thing), it becomes that kind, even against the preferences. Keep its who and annoyance as they are unless the change says otherwise. Keep the pitch shape: "You [do one thing]. Then [one thing happens]."`;
 const OBVIOUS = 0.6; // above this, an idea any assistant would suggest
 /** Keep `plain` clear-but-not-obvious ideas and `wild` card ideas out of the candidates.
  * Plain: drop the obvious ones, then the MOST typical of the rest (the clearest), from different people, else different annoyances.
@@ -2148,12 +2150,14 @@ async function cross() {
 }
 
 const grow = (id, steer) => expand(id, prefRules(), steer).catch(fail);
+const change = (id, text) => expand(id, prefRules(), text, true).catch(fail);
 
-async function expand(id, feedback, steer) {
+async function expand(id, feedback, steer, one) {
   if (S.busy.has(id)) return;
   S.busy.add(id);
+  if (one) S.changing.add(id);
   render();
-  if (S.mode === 'tree') reveal([id, `ghost-${id}-1`, `ghost-${id}-3`]);
+  if (S.mode === 'tree') reveal([id, `ghost-${id}-1`, ...(one ? [] : [`ghost-${id}-3`])]);
   let fresh = [];
   try {
     const parent = S.ideas.get(id);
@@ -2162,23 +2166,24 @@ async function expand(id, feedback, steer) {
       FLOW.system,
       seed ? `The two worlds:\n${parent.title}` : `The idea:\n${fmtIdea(parent)}`,
       !seed && S.ratings.get(id)?.exists?.length ? `${S.ratings.get(id).exists.map((e) => e.name).join(' and ')} already ${S.ratings.get(id).exists.length > 1 ? 'do' : 'does'} this: never hand back the same thing, even in other words.` : '',
-      steer ? `The person's request for these new ideas: "${steer}". It decides what they are about and who they are for: pick the insiders and their annoyances to fit it. The idea above is only where they start.` : '',
+      steer && !one ? `The person's request for these new ideas: "${steer}". It decides what they are about and who they are for: pick the insiders and their annoyances to fit it. The idea above is only where they start.` : '',
       feedback ? `The person's preferences. Every new idea must follow them, unless their request at the end says otherwise:\n${feedback}` : '',
       context(id),
       LANGUAGE,
-      FLOW.people(seed, steer),
-      seed ? SIDES : `Then 6 candidates: 4 that each fix one annoyance plainly, and 2 from the outsider. Each one is a different thing from the idea above and from the other candidates: another object, another way of fixing it, not the same fix with a new name or one more feature. Every candidate crosses the two sides: it fixes one insider's annoyance with something that is normal in the OTHER insider's world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn't count.`,
-      seed ? '' : twistBlock(drawTwists(1)[0], 2),
+      one ? '' : FLOW.people(seed, steer),
+      one ? 'Then 3 candidates, each the idea above with the change below made, differing only in how they make it.' : seed ? SIDES : `Then 6 candidates: 4 that each fix one annoyance plainly, and 2 from the outsider. Each one is a different thing from the idea above and from the other candidates: another object, another way of fixing it, not the same fix with a new name or one more feature. Every candidate crosses the two sides: it fixes one insider's annoyance with something that is normal in the OTHER insider's world (a habit, a tool, a way of doing things there, not just its words). An idea that would exist without the other world doesn't count.`,
+      seed || one ? '' : twistBlock(drawTwists(1)[0], 2),
       AVOID,
       CANDIDATE_RULES,
-      steer ? steerBlock(steer) : '',
-      candidatesJson(6, true, seed),
+      one ? changeBlock(steer) : steer ? steerBlock(steer) : '',
+      one ? candidatesJson(3, false, false) : candidatesJson(6, true, seed),
     ].filter(Boolean).join('\n\n'), { fresh: true });
     if (seed && Array.isArray(out?.people)) parent.people = out.people.slice(0, 2).map((x) => ({
       who: String(x?.who ?? '').trim().slice(0, 80),
       annoyances: (Array.isArray(x?.annoyances) ? x.annoyances : []).slice(0, 2).map((a) => String(a).trim().slice(0, 240)),
     }));
-    const ideas = seed ? pickSides(out?.candidates) : pick(out?.candidates, 2, 1);
+    const kept = one && pick(out?.candidates, 1, 0);
+    const ideas = seed ? pickSides(out?.candidates) : one ? (kept.length ? kept : pick(out?.candidates, 0, 1)) : pick(out?.candidates, 2, 1);
     const pair = seed ? splitPair(parent.title) : null; // the card shows which world each first idea comes from
     const world = (side) => pair && ({ a: [pair.a.emoji, pair.a.name], b: [pair.b.emoji, pair.b.name],
       both: [`${pair.a.emoji}×${pair.b.emoji}`, `${pair.a.name} × ${pair.b.name}`] })[side];
@@ -2194,6 +2199,7 @@ async function expand(id, feedback, steer) {
     fresh.forEach(rate);
   } finally {
     S.busy.delete(id);
+    S.changing.delete(id);
     render();
     if (S.mode === 'tree' && fresh.length) reveal([id, ...fresh]);
   }
@@ -2434,7 +2440,8 @@ $('#confirm-no').addEventListener('click', () => $('#confirm').close());
 $('#steer').addEventListener('keydown', (e) => {
   const text = e.target.value.trim();
   if (e.key !== 'Enter' || !text || S.selected == null) return;
-  grow(S.selected, text);
+  if (S.ideas.get(S.selected)?.kind === 'seed') grow(S.selected, text); // on the two worlds it steers a fresh cross
+  else change(S.selected, text);
   e.target.value = '';
 });
 $('#cross-with').addEventListener('click', () => {
