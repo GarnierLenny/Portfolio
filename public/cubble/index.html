@@ -1,12 +1,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Daily Cube</title>
+<title>Cubble</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap">
 <style>
-  /* Daily Cube: a plain page like a daily word game. A splash to start, then a thin top bar, the board and one button.
+  /* Cubble: a plain page like a daily word game. A splash to start, then a thin top bar, the board and one button.
      The personality is in the blocks: pastel jelly candies with a shine, that wobble when you stack them. */
   :root {
     --bg: #ffffff;
@@ -265,7 +265,7 @@
 
 <section class="intro" id="s-intro" hidden>
   <svg class="logo" aria-hidden="true"><use href="#jelly"/></svg>
-  <h1>Daily Cube</h1>
+  <h1>Cubble</h1>
   <p class="lede">Memorize the cube. Then rebuild it from memory.</p>
   <button class="btn" id="start" type="button">Play</button>
   <button class="how" id="how" type="button">How to play</button>
@@ -275,7 +275,7 @@
 <header class="top" id="top" hidden>
   <div class="top-in">
     <svg class="mark" aria-hidden="true"><use href="#jelly"/></svg>
-    <h2>Daily Cube</h2>
+    <h2>Cubble</h2>
     <button class="icon-btn" id="help" type="button" aria-label="How to play"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
     <button class="icon-btn" id="stats" type="button" aria-label="Your result" hidden><svg class="ico" viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></button>
   </div>
@@ -307,7 +307,7 @@
     <div class="attempts" id="attempts"></div>
     <div class="share-row">
       <button class="btn with-ico" id="share" type="button">Share <svg class="ico" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></button>
-      <button class="btn soft round" id="copy-link" type="button" aria-label="Copy the link to Daily Cube"><svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+      <button class="btn soft round" id="copy-link" type="button" aria-label="Copy the link to Cubble"><svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
     </div>
     <textarea id="share-text" readonly hidden aria-label="Your result, to copy"></textarea>
     <p class="next" id="next"></p>
@@ -450,16 +450,16 @@ function todayInfo() {
 }
 
 // ---- Saved results (this browser) ----------------------------------------------------------------------------------
-const STORE = 'dailycube.v4';
-const SITE = 'https://lennygarnier.com/cube';
+const STORE = 'cubble.v1';
+const SITE = 'https://lennygarnier.com/cubble';
 // Stats and boards come from the site's API. On claude.ai (the artifact copy) there is none: the card shows this
 // browser's streaks and says where the rest lives.
-const API = location.hostname.endsWith('claude.ai') ? null : '/api/cube';
+const API = location.hostname.endsWith('claude.ai') ? null : '/api/cubble';
 const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* private window */ } } };
 const loadAll = () => { try { return JSON.parse(store.get(STORE)) ?? {}; } catch { return {}; } };
 const saveRec = (key, rec) => { const all = loadAll(); all[key] = rec; store.set(STORE, JSON.stringify(all)); };
-const PLAYER = store.get('dailycube.player') || (() => { const id = crypto.randomUUID(); store.set('dailycube.player', id); return id; })();
-let NICK = store.get('dailycube.nick') || '';
+const PLAYER = store.get('cubble.player') || (() => { const id = crypto.randomUUID(); store.set('cubble.player', id); return id; })();
+let NICK = store.get('cubble.nick') || '';
 // This browser's streaks, for when the API is out of reach: days played in a row and days solved in a row, ending
 // today (or yesterday, while today isn't played yet).
 function localStreaks() {
@@ -662,7 +662,7 @@ function endScreen() {
 
 function shareText() {
   const row = G.result ? G.result.map((v) => (v ? '🟩' : '🟥')).join('') : '';
-  return [`Daily Cube #${G.no} 🧊 ${G.solved ? fmt(G.time) : '✗'}`, row, SITE].join('\n');
+  return [`Cubble #${G.no} 🧊 ${G.solved ? fmt(G.time) : '✗'}`, row, SITE].join('\n');
 }
 
 // ---- Stats --------------------------------------------------------------------------------------------------------
@@ -757,7 +757,7 @@ function renderStats(err) {
 function openResult() {
   const right = G.result ? G.result.filter(Boolean).length : 0;
   $('#res-title').textContent = G.solved ? (G.time < 30000 ? 'Lightning memory!' : 'You solved it!') : right >= 7 ? 'So close!' : 'Not today.';
-  $('#res-sub').textContent = `Daily Cube No. ${G.no} · ${LEVELS[G.weekday].name}`;
+  $('#res-sub').textContent = `Cubble No. ${G.no} · ${LEVELS[G.weekday].name}`;
   $('#st-time').textContent = fmt(G.time);
   $('#st-rank').textContent = '·';
   const box = $('#attempts'); box.textContent = '';
@@ -858,7 +858,7 @@ $('#nick-form').addEventListener('submit', (e) => {
   const nick = $('#nick').value.trim().slice(0, 16);
   if (!nick) return;
   api('PUT', { player: PLAYER, nick }).then((r) => {
-    NICK = r.nick; store.set('dailycube.nick', NICK); toast(`You're ${NICK} on the boards.`);
+    NICK = r.nick; store.set('cubble.nick', NICK); toast(`You're ${NICK} on the boards.`);
     STATS = null; statsReq = null; loadStats();
   }, () => toast('Couldn\'t save the name. Try again later.'));
 });
@@ -868,5 +868,5 @@ for (const tab of document.querySelectorAll('.tab')) tab.addEventListener('click
 });
 
 newGame();
-window.__cube = { generate, visible, LEVELS, mulberry32, draw, get state() { return G; } }; // for testing in the console
+window.__cubble = { generate, visible, LEVELS, mulberry32, draw, get state() { return G; } }; // for testing in the console
 </script>

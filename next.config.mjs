@@ -6,8 +6,8 @@ const nextConfig = {
     return [
       { source: '/teachers', destination: '/teachers/index.html' },
       { source: '/crosswise', destination: '/crosswise/index.html' },
-      // Daily Cube: public/cube/index.html, its results through /api/cube.
-      { source: '/cube', destination: '/cube/index.html' },
+      // Cubble: public/cubble/index.html, its results through /api/cubble.
+      { source: '/cubble', destination: '/cubble/index.html' },
     ];
   },
   // Crosswise lived at /cross until 23 Nov: old links still land on it.

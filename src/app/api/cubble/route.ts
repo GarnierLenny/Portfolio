@@ -1,6 +1,6 @@
-import { sql, ensureTables } from "@/lib/cube-db";
+import { sql, ensureTables } from "@/lib/cubble-db";
 
-// Daily Cube's results and stats (the game is public/cube/index.html).
+// Cubble's results and stats (the game is public/cube/index.html).
 // POST: the page sends today's result at Check, once per player per day (a replay keeps the first). It gets back
 // today's numbers (rank, percentiles, the board), the player's own (streaks, best times, last 4 weeks) and the
 // win-streak board. GET: the same stats without a result, for reopening the card. PUT: the nickname.
@@ -43,7 +43,7 @@ type Me = { solved: boolean; right: number; look_ms: number; build_ms: number; t
 
 async function stats(player: string, day: string) {
   const db = sql!;
-  const [mine] = (await db`select solved, "right", look_ms, build_ms, total_ms from cube_results where day = ${day} and player = ${player}`) as unknown as Me[];
+  const [mine] = (await db`select solved, "right", look_ms, build_ms, total_ms from cubble_results where day = ${day} and player = ${player}`) as unknown as Me[];
   const me = mine ?? { solved: false, right: -1, look_ms: -1, build_ms: -1, total_ms: -1 };
   const [t] = (await db`select count(*)::int as players, count(*) filter (where solved)::int as solvers,
       count(*) filter (where solved and total_ms > ${me.total_ms})::int as slower,
@@ -51,19 +51,19 @@ async function stats(player: string, day: string) {
       count(*) filter (where solved and build_ms > ${me.build_ms})::int as built_slower,
       count(*) filter (where "right" < ${me.right})::int as fewer_right,
       count(*) filter (where solved and total_ms < ${me.total_ms})::int as faster
-    from cube_results where day = ${day}`) as unknown as Record<string, number>[];
+    from cubble_results where day = ${day}`) as unknown as Record<string, number>[];
   const board = await db`select coalesce(p.nick, 'Anonymous') as nick, r.total_ms as "totalMs", r.player = ${player} as you
-    from cube_results r left join cube_players p using (player) where r.day = ${day} and r.solved order by r.total_ms, r.at limit ${BOARD}`;
+    from cubble_results r left join cubble_players p using (player) where r.day = ${day} and r.solved order by r.total_ms, r.at limit ${BOARD}`;
   const streaks = await db`select coalesce(nick, 'Anonymous') as nick, win_streak as "winStreak", player = ${player} as you
-    from cube_players where win_streak > 0 and last_day >= ${shift(day, -1)} order by win_streak desc, updated limit ${BOARD}`;
+    from cubble_players where win_streak > 0 and last_day >= ${shift(day, -1)} order by win_streak desc, updated limit ${BOARD}`;
   const [p] = await db`select nick, played, solved, played_streak as "playedStreak", win_streak as "winStreak",
-    best_win_streak as "bestWinStreak", last_day as "lastDay" from cube_players where player = ${player}`;
+    best_win_streak as "bestWinStreak", last_day as "lastDay" from cubble_players where player = ${player}`;
   let you = null;
   if (p) {
-    const days = await db`select day, solved, total_ms as "totalMs" from cube_results where player = ${player} and day > ${shift(day, -28)} and day <= ${day} order by day`;
-    const best = await db`select extract(isodow from day)::int - 1 as wd, min(total_ms)::int as ms from cube_results
+    const days = await db`select day, solved, total_ms as "totalMs" from cubble_results where player = ${player} and day > ${shift(day, -28)} and day <= ${day} order by day`;
+    const best = await db`select extract(isodow from day)::int - 1 as wd, min(total_ms)::int as ms from cubble_results
       where player = ${player} and solved and day <> ${day} group by 1`;
-    const [a] = await db`select avg(total_ms) filter (where solved)::int as "avgMs" from cube_results where player = ${player}`;
+    const [a] = await db`select avg(total_ms) filter (where solved)::int as "avgMs" from cubble_results where player = ${player}`;
     const bestPrior: (number | null)[] = Array(7).fill(null);
     for (const b of best) bestPrior[b.wd] = b.ms;
     // A streak that ended before yesterday is over: the stored number is stale until the next play.
@@ -89,7 +89,7 @@ export async function GET(req: Request) {
   if (!ID.test(player) || !validDay(day)) return Response.json({ code: "bad_request" }, { status: 400 });
   if (limited(req, 200)) return Response.json({ code: "daily_limit" }, { status: 429 });
   try { await ensureTables(); return Response.json(await stats(player, day)); }
-  catch (e) { console.error("cube: stats failed", e); return Response.json({ code: "failed" }, { status: 502 }); }
+  catch (e) { console.error("cubble: stats failed", e); return Response.json({ code: "failed" }, { status: 502 }); }
 }
 
 export async function POST(req: Request) {
@@ -106,26 +106,26 @@ export async function POST(req: Request) {
   try {
     await ensureTables();
     const db = sql;
-    const inserted = await db`insert into cube_results (day, player, solved, "right", look_ms, build_ms, total_ms)
+    const inserted = await db`insert into cubble_results (day, player, solved, "right", look_ms, build_ms, total_ms)
       values (${day}, ${player}, ${solved}, ${right}, ${lookMs}, ${buildMs}, ${lookMs + buildMs}) on conflict do nothing returning day`;
     if (inserted.length) {
       // The streaks: one more if yesterday was played; a win streak only grows on a solve.
-      const [p] = await db`select played_streak, win_streak, best_win_streak, last_day from cube_players where player = ${player}`;
+      const [p] = await db`select played_streak, win_streak, best_win_streak, last_day from cubble_players where player = ${player}`;
       const last = p?.last_day ? dayStr(p.last_day) : null;
       const chain = last === shift(day, -1);
       const skip = last && last > day; // an out-of-order day (a timezone hop): count it, don't touch the streaks
       const playedStreak = skip ? p.played_streak : chain ? p.played_streak + 1 : 1;
       const winStreak = skip ? p.win_streak : solved ? (chain ? p.win_streak + 1 : 1) : 0;
       const best = Math.max(p?.best_win_streak ?? 0, winStreak);
-      await db`insert into cube_players (player, nick, played, solved, played_streak, win_streak, best_win_streak, last_day, updated)
+      await db`insert into cubble_players (player, nick, played, solved, played_streak, win_streak, best_win_streak, last_day, updated)
         values (${player}, ${nick}, 1, ${solved ? 1 : 0}, ${playedStreak}, ${winStreak}, ${best}, ${day}, now())
-        on conflict (player) do update set played = cube_players.played + 1, solved = cube_players.solved + ${solved ? 1 : 0},
+        on conflict (player) do update set played = cubble_players.played + 1, solved = cubble_players.solved + ${solved ? 1 : 0},
           played_streak = ${playedStreak}, win_streak = ${winStreak}, best_win_streak = ${best},
-          last_day = greatest(cube_players.last_day, ${day}::date), nick = coalesce(${nick}, cube_players.nick), updated = now()`;
+          last_day = greatest(cubble_players.last_day, ${day}::date), nick = coalesce(${nick}, cubble_players.nick), updated = now()`;
     }
     return Response.json(await stats(player, day));
   } catch (e) {
-    console.error("cube: result failed", e);
+    console.error("cubble: result failed", e);
     return Response.json({ code: "failed" }, { status: 502 });
   }
 }
@@ -138,11 +138,11 @@ export async function PUT(req: Request) {
   if (limited(req, 60)) return Response.json({ code: "daily_limit" }, { status: 429 });
   try {
     await ensureTables();
-    await sql`insert into cube_players (player, nick) values (${b.player}, ${nick})
+    await sql`insert into cubble_players (player, nick) values (${b.player}, ${nick})
       on conflict (player) do update set nick = ${nick}, updated = now()`;
     return Response.json({ nick });
   } catch (e) {
-    console.error("cube: nick failed", e);
+    console.error("cubble: nick failed", e);
     return Response.json({ code: "failed" }, { status: 502 });
   }
 }
