@@ -57,7 +57,7 @@
 
   [hidden] { display: none !important; }
   *, *::before, *::after { box-sizing: border-box; }
-  body { background: var(--bg); color: var(--ink); font: 500 16px/1.45 var(--font); -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 500 16px/1.45 var(--font); -webkit-tap-highlight-color: transparent; }
   ::selection { background: var(--b-top); color: #2a2230; }
   button { font: inherit; color: inherit; cursor: pointer; }
   :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 12px; }
@@ -79,6 +79,51 @@
   .intro > :nth-child(4) { animation-delay: 160ms; } .intro > :nth-child(5) { animation-delay: 200ms; } .intro > :nth-child(6) { animation-delay: 240ms; }
   .logo { width: 92px; height: 92px; transform-origin: 50% 90%; }
   .intro > .logo { animation: wobble 900ms ease-out 200ms both; }
+
+  /* How to play: three steps before a first game. The real board, a finger and the clock, nothing else. */
+  .tour { max-width: 460px; margin: 0 auto; min-height: calc(100svh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    display: flex; flex-direction: column; padding-block: 0 24px; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+  .tour-top { height: 64px; display: flex; align-items: center; gap: 8px; padding-left: 4px; }
+  .tour-top .mark { width: 26px; height: 26px; }
+  .tour-top b { flex: 1; font: 600 18px/1 var(--font); }
+  .tour-top .how { margin: 0; text-decoration: none; }
+  .tour-stage { position: relative; display: flex; flex-direction: column; gap: 4px; transition: opacity 240ms ease; }
+  .tour-stage.fade { opacity: 0; }
+  .tour-stage .clock { align-self: flex-end; padding: 6px 8px 0; display: inline-block; transform-origin: 100% 50%; }
+  .tour-stage .clock.bump { animation: bump 420ms var(--ease-spring); }
+  @keyframes bump { 40% { transform: scale(1.14); } }
+  .tour-board { position: relative; width: min(288px, 74vw, 40svh); margin: 0 auto; }
+  .tour-cap { margin: 4px 0 0; min-height: 26px; display: flex; align-items: center; justify-content: center; gap: 6px;
+    font: 600 18px/1 var(--font); color: var(--chart-mint); opacity: 0; transition: opacity 280ms var(--ease-out), transform 280ms var(--ease-out); transform: translateY(4px); }
+  .tour-cap.on { opacity: 1; transform: none; }
+  .tour-cap .ico { width: 18px; height: 18px; stroke-width: 2.8; }
+  .finger { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; pointer-events: none; opacity: 0;
+    background: color-mix(in srgb, var(--ink) 18%, transparent); box-shadow: inset 0 0 0 2px rgb(255 255 255 / .9), 0 4px 12px rgb(42 34 48 / .18);
+    transition: left 520ms cubic-bezier(.65, 0, .35, 1), top 520ms cubic-bezier(.65, 0, .35, 1), opacity 200ms ease, transform 120ms var(--ease-out); }
+  .finger.on { opacity: 1; }
+  .finger.down { transform: scale(.86); }
+  .chip { position: absolute; height: 28px; min-width: 28px; padding: 0 9px; border-radius: 999px; background: var(--sheet); color: var(--ink);
+    box-shadow: 0 2px 8px rgb(42 34 48 / .14); display: grid; place-items: center; font: 600 15px/1 var(--font); pointer-events: none;
+    animation: chip 620ms var(--ease-out) both; }
+  @keyframes chip { 0% { opacity: 0; transform: translate(-50%, -40%) scale(.96); } 30%, 75% { opacity: 1; transform: translate(-50%, -50%); } 100% { opacity: 0; transform: translate(-50%, -62%); } }
+  .tour-text { padding: 20px 4px 0; display: flex; flex-direction: column; gap: 10px; }
+  .tour-text h1 { margin: 0; font: 600 30px/1.1 var(--font); letter-spacing: -.01em; text-wrap: balance; }
+  .tour-text p { margin: 0; font-size: 17px; line-height: 1.42; color: var(--muted); max-width: 32ch; }
+  .tour-text.swap > * { animation: swap 260ms var(--ease-out); }
+  .tour-foot { margin-top: auto; padding-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .tour-foot .btn { width: 100%; max-width: 360px; }
+  /* Short phones: a smaller board and tighter type, so Next stays on screen. */
+  @media (max-height: 720px) {
+    .tour-top { height: 52px; }
+    .tour-board { width: min(288px, 74vw, 31svh); }
+    .tour-text { padding-top: 12px; gap: 8px; }
+    .tour-text h1 { font-size: 26px; }
+    .tour-text p { font-size: 16px; }
+    .tour-foot { padding-top: 16px; gap: 14px; }
+  }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 8px; height: 8px; border-radius: 99px; background: var(--chart-grey); transition: width 240ms var(--ease-out), background-color 240ms ease; }
+  .dots i.on { width: 24px; background: var(--ink); }
 
   /* Top bar */
   .top { border-bottom: 1px solid var(--line); }
@@ -317,8 +362,9 @@
   @keyframes hop { 40% { transform: translateY(-16px); } }
 
   @media (prefers-reduced-motion: reduce) {
-    .pop, .out, .leave, .press, .reveal, .hop, .col.jiggle, #board.shake, .intro > *, .intro > .logo, .actions .btn, .overlay.open .sheet .logo, .overlay.open .stat, .status.swap { animation: none !important; }
+    .pop, .out, .leave, .press, .reveal, .hop, .col.jiggle, #board.shake, .intro > *, .intro > .logo, .actions .btn, .tour-stage .clock.bump, .chip, .tour-text.swap > *, .overlay.open .sheet .logo, .overlay.open .stat, .status.swap { animation: none !important; }
     .sheet { transform: none; }
+    .finger, .tour-cap, .tour-stage, .dots i { transition: none; }
   }
 </style>
 
@@ -346,6 +392,23 @@
   <button class="btn" id="start" type="button">Play</button>
   <button class="how" id="how" type="button">How to play</button>
   <p class="when"><b id="intro-date"></b><span id="intro-no"></span><span id="intro-streak" hidden></span></p>
+</section>
+
+<section class="tour" id="s-tour" hidden aria-labelledby="tour-title">
+  <div class="tour-top">
+    <svg class="mark" aria-hidden="true"><use href="#jelly"/></svg><b>Cubble</b>
+    <button class="how" id="tour-skip" type="button">Skip</button>
+  </div>
+  <div class="tour-stage" id="tour-stage" aria-hidden="true">
+    <span class="clock" id="tour-clock">0:00</span>
+    <div class="tour-board" id="tour-board"><svg class="scene" id="tour-scene" viewBox="-232 -306 464 544"></svg><div class="finger" id="tour-finger"></div></div>
+    <p class="tour-cap" id="tour-cap"><svg class="ico" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Solved</p>
+  </div>
+  <div class="tour-text" id="tour-text" aria-live="polite"><h1 id="tour-title"></h1><p id="tour-p"></p></div>
+  <div class="tour-foot">
+    <div class="dots" id="tour-dots" role="img"><i></i><i></i><i></i></div>
+    <button class="btn" id="tour-next" type="button">Next</button>
+  </div>
 </section>
 
 <header class="top" id="top" hidden>
@@ -620,6 +683,7 @@ function actions(list) {
 }
 function screen(name) {
   $('#s-intro').hidden = name !== 'intro';
+  $('#s-tour').hidden = name !== 'tour';
   $('#top').hidden = $('#s-game').hidden = name !== 'game';
 }
 function setPhase(p) { G.phase = p; svg.classList.toggle('play', p === 'build'); $('#stats').hidden = !G.done; }
@@ -993,10 +1057,10 @@ function toast(msg) {
   document.body.append(t); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.remove(), 1800);
 }
 
-function confetti() {
+function confetti(from = $('#board')) {
   if (reduce) return;
   const box = document.createElement('div'); box.className = 'confetti'; document.body.append(box);
-  const r = $('#board').getBoundingClientRect();
+  const r = from.getBoundingClientRect();
   const x0 = r.left + r.width / 2, y0 = r.top + r.height * 0.45;
   const colors = ['#ffb48e', '#86e2b5', '#ff93ae', '#ffd86b', '#c4a7ff', '#8fd3ff'];
   for (let i = 0; i < 70; i++) {
@@ -1015,6 +1079,109 @@ function confetti() {
   setTimeout(() => box.remove(), 2000);
 }
 
+// ---- How to play -------------------------------------------------------------------------------------------------
+// Three steps, each a short loop on the real board: the cube shows and goes, a column is stacked 1, 2, 3, the build
+// turns green. The cube is always the same one, so step 2 rebuilds step 1 and step 3 checks step 2.
+const DEMO = [3, 2, 1, 2, 1, 0, 1, 0, 0];
+const STEPS = [
+  { title: 'Memorize the cube', text: "It shows for a few seconds, then it's gone. Your clock is already running.", ms: 6500 },
+  { title: 'Rebuild it from memory', text: 'Tap a spot to stack: one, two, three, then empty again. Match every column.', ms: 7000 },
+  { title: 'One chance. Beat the clock.', text: "Tap Check. Every column right and your time goes on today's board. One off: see you tomorrow.", ms: 6000 },
+];
+let TOUR = null; // { step, play: started from Play, timers }
+const tsvg = $('#tour-scene'), finger = $('#tour-finger');
+const paint = (h, opts) => { tsvg.innerHTML = scene(h, opts); };
+// Where a column's top is on the board, in % of the board's box: the finger and the count go there.
+const spot = (c, y, lift = 0) => { const [vx, vy] = proj((c % 3) + 0.5, y, Math.floor(c / 3) + 0.5); return [(vx + 232) / 4.64, (vy - lift + 306) / 5.44]; };
+function tq(ms, fn) { TOUR.timers.push(setTimeout(fn, ms)); }
+function tclock(t) { $('#tour-clock').textContent = t; }
+function tour(play) {
+  store.set('cubble.seen', '1');
+  TOUR = { step: 0, play, timers: [] };
+  $('#tour-next').textContent = 'Next';
+  screen('tour'); scrollTo(0, 0);
+  showStep(0);
+}
+function endTour() {
+  if (!TOUR) return;
+  const play = TOUR.play;
+  TOUR.timers.forEach(clearTimeout); TOUR = null;
+  if (play) look(); else screen('intro');
+}
+function showStep(i) {
+  TOUR.step = i;
+  const s = STEPS[i];
+  $('#tour-title').textContent = s.title; $('#tour-p').textContent = s.text;
+  const tx = $('#tour-text'); tx.classList.remove('swap'); void tx.offsetWidth; tx.classList.add('swap');
+  $('#tour-dots').setAttribute('aria-label', `Step ${i + 1} of 3`);
+  [...$('#tour-dots').children].forEach((d, k) => d.classList.toggle('on', k === i));
+  $('#tour-next').textContent = i < 2 ? 'Next' : TOUR.play ? 'Show me the cube' : 'Got it';
+  playStep();
+}
+// One run of the step's loop. The stage fades out and back in between runs, so nothing visibly rewinds.
+function playStep() {
+  TOUR.timers.forEach(clearTimeout); TOUR.timers = [];
+  const i = TOUR.step, stage = $('#tour-stage');
+  stage.classList.remove('fade');
+  finger.classList.remove('on', 'down'); $('#tour-cap').classList.remove('on');
+  tsvg.parentElement.querySelectorAll('.chip').forEach((c) => c.remove());
+  [step1, step2, step3][i]();
+  tq(STEPS[i].ms - 300, () => stage.classList.add('fade'));
+  tq(STEPS[i].ms, playStep);
+}
+function step1() {
+  const none = Array(9).fill(0);
+  tclock('0:00'); paint(DEMO, { prev: none, stagger: 40 });
+  tq(1000, () => tclock('0:01'));
+  tq(2000, () => tclock('0:02'));
+  tq(2250, () => paint(DEMO, { anim: 'leave' }));
+  tq(2700, () => paint(none));
+}
+function step2() {
+  const h = DEMO.slice(); h[0] = 0;
+  tclock('0:07'); paint(h);
+  ['0:08', '0:09', '0:10', '0:11'].forEach((t, k) => tq(1200 * (k + 1), () => tclock(t)));
+  const go = (y) => { const [x, t] = spot(0, y); finger.style.left = `${x}%`; finger.style.top = `${t}%`; };
+  finger.style.transition = 'none'; finger.style.left = '108%'; finger.style.top = '104%'; void finger.offsetWidth; finger.style.transition = '';
+  tq(250, () => { finger.classList.add('on'); go(0); });
+  for (let k = 0; k < 3; k++) {
+    const t = 1000 + k * 950;
+    tq(t, () => {
+      finger.classList.add('down');
+      const prev = h.slice(); h[0]++; paint(h, { prev, jiggle: 0 });
+      const [x, y] = spot(0, h[0], 60);
+      const chip = el('span', 'chip', String(h[0])); chip.style.left = `${x}%`; chip.style.top = `${y}%`;
+      tsvg.parentElement.append(chip); setTimeout(() => chip.remove(), 700);
+    });
+    tq(t + 110, () => finger.classList.remove('down'));
+    if (k < 2) tq(t + 450, () => go(h[0]));
+  }
+  tq(3400, () => { finger.style.left = '108%'; finger.style.top = '104%'; finger.classList.remove('on'); });
+}
+function step3() {
+  const good = Array(9).fill('good');
+  tclock('0:11'); paint(DEMO);
+  // What Check does in the game: each spot turns its colour in turn, then the green build hops.
+  tq(500, () => paint(DEMO, { marks: good, anim: 'reveal' }));
+  tq(500 + 9 * 85 + 420, () => {
+    paint(DEMO, { marks: good, anim: 'hop' });
+    const c = $('#tour-clock'); c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');
+    $('#tour-cap').classList.add('on');
+    confetti($('#tour-board'));
+  });
+}
+$('#tour-next').addEventListener('click', () => (TOUR.step < 2 ? showStep(TOUR.step + 1) : endTour()));
+$('#tour-skip').addEventListener('click', endTour);
+// A swipe moves between the steps too.
+let swipeX = null;
+$('#s-tour').addEventListener('touchstart', (e) => { swipeX = e.touches[0].clientX; }, { passive: true });
+$('#s-tour').addEventListener('touchend', (e) => {
+  if (swipeX == null || !TOUR) return;
+  const dx = e.changedTouches[0].clientX - swipeX; swipeX = null;
+  if (dx < -50 && TOUR.step < 2) showStep(TOUR.step + 1);
+  else if (dx > 50 && TOUR.step > 0) showStep(TOUR.step - 1);
+});
+
 // ---- Input ----------------------------------------------------------------------------------------------------------
 svg.addEventListener('click', (e) => {
   if (G.phase !== 'build') return;
@@ -1029,9 +1196,10 @@ svg.addEventListener('pointermove', (e) => {
   svg.querySelectorAll('.hov').forEach((el) => el.classList.remove('hov'));
   if (c >= 0) svg.querySelectorAll(`[data-c="${c}"]`).forEach((el) => el.classList.add('hov'));
 });
-$('#start').addEventListener('click', look);
+// A first game starts with the three steps. Anyone who has played or seen them goes straight to the cube.
+$('#start').addEventListener('click', () => (store.get('cubble.seen') || Object.keys(loadAll()).length ? look() : tour(true)));
+$('#how').addEventListener('click', () => tour(false));
 $('#help').addEventListener('click', () => openOverlay('ov-help'));
-$('#how').addEventListener('click', () => openOverlay('ov-help'));
 $('#stats').addEventListener('click', openResult);
 // Share: the phone's share sheet where there is one (not inside the artifact), the clipboard otherwise.
 function copy(text, done) {
