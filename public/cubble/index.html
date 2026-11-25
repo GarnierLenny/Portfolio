@@ -688,7 +688,7 @@ function screen(name) {
 }
 function setPhase(p) { G.phase = p; svg.classList.toggle('play', p === 'build'); $('#stats').hidden = !G.done; }
 function save() {
-  saveRec(T0.key, { result: G.result, done: G.done, solved: G.solved, started: G.started, lookMs: G.lookMs, time: G.time });
+  saveRec(T0.key, { result: G.result, done: G.done, solved: G.solved, started: G.started, lookMs: G.lookMs, time: G.time, build: G.done ? G.build : undefined });
 }
 // The one clock: total time, from the moment the cube appears to the Check.
 function clock(on) {
@@ -709,6 +709,8 @@ function newGame() {
   const rec = loadAll()[T0.key];
   if (rec?.done) {
     Object.assign(G, { result: rec.result ?? null, done: true, solved: !!rec.solved, started: rec.started ?? null, lookMs: rec.lookMs ?? null, time: rec.time ?? null });
+    // The card draws what you built. Results saved before the build was kept: a solve is the answer, a miss stays empty.
+    G.build = rec.build ?? (rec.solved ? G.target.slice() : G.build);
     screen('game'); clock(false); draw(G.target, { marks: G.solved ? Array(9).fill('good') : null, prev: Array(9).fill(0), stagger: 16 }); endScreen(); return;
   }
   // Left mid-game (a reload): no second look. Back to the empty board, the clock still running from the first look.
