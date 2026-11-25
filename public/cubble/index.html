@@ -81,12 +81,9 @@
   .intro > .logo { animation: wobble 900ms ease-out 200ms both; }
 
   /* How to play: three steps before a first game. The real board, a finger and the clock, nothing else. */
-  .tour { max-width: 460px; margin: 0 auto; min-height: calc(100svh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-    display: flex; flex-direction: column; padding-block: 0 24px; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
-  .tour-top { height: 64px; display: flex; align-items: center; gap: 8px; padding-left: 4px; }
-  .tour-top .mark { width: 26px; height: 26px; }
-  .tour-top b { flex: 1; font: 600 18px/1 var(--font); }
-  .tour-top .how { margin: 0; text-decoration: none; }
+  .tour { max-width: 460px; margin: 0 auto; min-height: calc(100svh - 69px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    display: flex; flex-direction: column; padding-block: 12px 24px; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+  .top .skip { margin: 0 4px 0 0; text-decoration: none; }
   .tour-stage { position: relative; display: flex; flex-direction: column; gap: 4px; transition: opacity 240ms ease; }
   .tour-stage.fade { opacity: 0; }
   .tour-stage .clock { align-self: flex-end; padding: 6px 8px 0; display: inline-block; transform-origin: 100% 50%; }
@@ -112,9 +109,13 @@
   .tour-text.swap > * { animation: swap 260ms var(--ease-out); }
   .tour-foot { margin-top: auto; padding-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
   .tour-foot .btn { width: 100%; max-width: 360px; }
+  @media (min-width: 700px) and (min-height: 700px) {
+    .tour { justify-content: center; padding-block: 32px 48px; }
+    .tour-foot { margin-top: 0; padding-top: 36px; }
+  }
   /* Short phones: a smaller board and tighter type, so Next stays on screen. */
   @media (max-height: 720px) {
-    .tour-top { height: 52px; }
+    .tour { padding-top: 4px; }
     .tour-board { width: min(288px, 74vw, 31svh); }
     .tour-text { padding-top: 12px; gap: 8px; }
     .tour-text h1 { font-size: 26px; }
@@ -302,6 +303,40 @@
   textarea { width: 100%; min-height: 110px; font: 15px/1.4 ui-monospace, monospace; background: var(--soft); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 10px; }
   .toast { position: fixed; z-index: 30; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); translate: -50% 0;
     background: var(--ink); color: var(--bg); padding: 11px 18px; border-radius: 999px; font-weight: 600; animation: rise 220ms var(--ease-out); }
+  /* On a phone the two groups are one scroll, in the order you read them: the verdict and the cube, the numbers, then
+     tomorrow and the share bar at the bottom. */
+  .res-hero, .res-more { display: contents; }
+  .results .closing { order: 2; } .results #share-text { order: 3; } .results .pinned { order: 4; }
+  /* On a desktop the sheet fills the screen: the verdict, your cube, sharing and tomorrow stay put on the left; the
+     numbers get the width on the right, Today across the top, You and the boards side by side. */
+  @media (min-width: 1000px) and (min-height: 640px) {
+    #ov-result { padding: 28px; }
+    .sheet.results { max-width: 1240px; height: 100%; max-height: 900px; display: grid; grid-template-columns: 420px minmax(0, 1fr); overflow: hidden; }
+    .res-hero { display: flex; flex-direction: column; overflow: auto; border-right: 1px solid var(--line); padding-bottom: 24px; }
+    /* The order on the left: the verdict, your cube, the share right under it, then tomorrow at the foot. */
+    .res-hero .verdict { padding-top: 40px; }
+    .res-hero .time { font-size: 80px; }
+    .res-hero .card { margin: 0 24px 14px; }
+    .res-hero .card svg.cube { width: 220px; height: 258px; }
+    .res-hero .pinned { position: static; order: 1; border-top: 0; padding: 0 24px 20px; }
+    .res-hero .salvage { order: 2; margin: 0 24px 16px; }
+    .res-hero .closing { order: 3; margin: auto 24px 0; }
+    @media (max-height: 820px) {
+      .res-hero .verdict { padding-top: 28px; }
+      .res-hero .time { font-size: 64px; }
+      .res-hero .card svg.cube { width: 170px; height: 199px; }
+    }
+    .res-more { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; align-content: start; overflow: auto; padding: 12px 48px 40px; }
+    .res-more > * { grid-column: 1 / -1; }
+    .res-more .sect { margin: 0; padding-top: 28px; }
+    .res-more #s-today { border-top: 0; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: 48px; row-gap: 18px; align-items: start; }
+    .res-more #s-today h4 { grid-column: 1 / -1; }
+    .res-more #s-today .group { padding-top: 0 !important; }
+    .res-more #s-today .hist.bars { height: 150px; }
+    .res-more #s-you, .res-more #s-boards { grid-column: auto; }
+    .res-more .sect h4 { font-size: 26px; }
+    .res-more .nickform, .res-more .note, .res-more textarea { margin: 0 0 16px; order: 1; } /* under You and the boards, not between them */
+  }
   .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 25; overflow: hidden; }
   .confetti i { position: absolute; width: 10px; height: 10px; border-radius: 3px; }
 
@@ -394,11 +429,17 @@
   <p class="when"><b id="intro-date"></b><span id="intro-no"></span><span id="intro-streak" hidden></span></p>
 </section>
 
-<section class="tour" id="s-tour" hidden aria-labelledby="tour-title">
-  <div class="tour-top">
-    <svg class="mark" aria-hidden="true"><use href="#jelly"/></svg><b>Cubble</b>
-    <button class="how" id="tour-skip" type="button">Skip</button>
+<header class="top" id="top" hidden>
+  <div class="top-in">
+    <svg class="mark" aria-hidden="true"><use href="#jelly"/></svg>
+    <h2>Cubble</h2>
+    <button class="how skip" id="tour-skip" type="button" hidden>Skip</button>
+    <button class="icon-btn" id="help" type="button" aria-label="How to play"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+    <button class="icon-btn" id="stats" type="button" aria-label="Your result" hidden><svg class="ico" viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></button>
   </div>
+</header>
+
+<section class="tour" id="s-tour" hidden aria-labelledby="tour-title">
   <div class="tour-stage" id="tour-stage" aria-hidden="true">
     <span class="clock" id="tour-clock">0:00</span>
     <div class="tour-board" id="tour-board"><svg class="scene" id="tour-scene" viewBox="-232 -306 464 544"></svg><div class="finger" id="tour-finger"></div></div>
@@ -410,15 +451,6 @@
     <button class="btn" id="tour-next" type="button">Next</button>
   </div>
 </section>
-
-<header class="top" id="top" hidden>
-  <div class="top-in">
-    <svg class="mark" aria-hidden="true"><use href="#jelly"/></svg>
-    <h2>Cubble</h2>
-    <button class="icon-btn" id="help" type="button" aria-label="How to play"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
-    <button class="icon-btn" id="stats" type="button" aria-label="Your result" hidden><svg class="ico" viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></button>
-  </div>
-</header>
 
 <main class="app" id="s-game" hidden>
   <div class="meta">
@@ -436,9 +468,14 @@
 <div class="overlay" id="ov-result" hidden>
   <div class="sheet results" role="dialog" aria-modal="true" aria-labelledby="res-title">
     <button class="icon-btn close" type="button" aria-label="Close" data-close><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    <div class="res-hero">
     <div class="verdict" id="verdict"></div>
     <div class="card" id="card"></div>
     <div class="salvage" id="salvage" hidden></div>
+    <div class="closing" id="closing" hidden></div>
+    <div class="pinned" id="pinned"></div>
+    </div>
+    <div class="res-more">
     <section class="sect" id="s-today" hidden></section>
     <section class="sect" id="s-you" hidden></section>
     <form class="nickform" id="nick-form" hidden>
@@ -447,9 +484,8 @@
     </form>
     <section class="sect" id="s-boards" hidden></section>
     <p class="note" id="stats-note" hidden></p>
-    <div class="closing" id="closing" hidden></div>
     <textarea id="share-text" readonly hidden aria-label="Your result, to copy"></textarea>
-    <div class="pinned" id="pinned"></div>
+    </div>
   </div>
 </div>
 
@@ -684,7 +720,10 @@ function actions(list) {
 function screen(name) {
   $('#s-intro').hidden = name !== 'intro';
   $('#s-tour').hidden = name !== 'tour';
-  $('#top').hidden = $('#s-game').hidden = name !== 'game';
+  $('#s-game').hidden = name !== 'game';
+  $('#top').hidden = name === 'intro';
+  $('#tour-skip').hidden = name !== 'tour';
+  $('#help').hidden = name === 'tour';
 }
 function setPhase(p) { G.phase = p; svg.classList.toggle('play', p === 'build'); $('#stats').hidden = !G.done; }
 function save() {
@@ -992,7 +1031,7 @@ function openResult() {
   $('#share-text').hidden = true;
   clearInterval(nextTimer); nextTimer = setInterval(nextCube, 30000);
   openOverlay('ov-result');
-  $('#ov-result .sheet').scrollTop = 0;
+  document.querySelectorAll('#ov-result .sheet, .res-hero, .res-more').forEach((e) => { e.scrollTop = 0; });
 }
 
 // ---- Share: the card as an image where the phone can take one, the text with the squares otherwise ------------------
