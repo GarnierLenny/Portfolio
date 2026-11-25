@@ -28,6 +28,8 @@
     --r-top: #ffd3de; --r-front: #ff93ae; --r-right: #f46f91; --r-line: #da557a;
     --tile: #f7f0f4; --tile-line: #e7dbe3; --tile-hover: #efe3ea;
     --side-front: #ebe0e7; --side-right: #dfd2db;
+    /* Charts: grey for everyone else, a mint that reads on white (3:1), rose for a missed day. */
+    --chart-grey: #a08c9c; --chart-mint: #2aa36d; --chart-rose: #ffd3de; --chart-rose-ink: #b03a5e;
     --font: Fredoka, ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
     --ease-out: cubic-bezier(.23, 1, .32, 1);
     --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
@@ -40,6 +42,7 @@
       --btn: #f7f1f5; --btn-ink: #17131b; --scrim: rgb(0 0 0 / .55);
       --shadow: 0 2px 6px rgb(0 0 0 / .3), 0 20px 50px rgb(0 0 0 / .5);
       --tile: #262029; --tile-line: #382f3e; --tile-hover: #2f2834; --side-front: #201a24; --side-right: #1c1720;
+      --chart-grey: #7d6d80; --chart-mint: #3cc07f; --chart-rose: #5a2a3a; --chart-rose-ink: #ff9cb8;
       color-scheme: dark;
     }
   }
@@ -48,6 +51,7 @@
     --btn: #f7f1f5; --btn-ink: #17131b; --scrim: rgb(0 0 0 / .55);
     --shadow: 0 2px 6px rgb(0 0 0 / .3), 0 20px 50px rgb(0 0 0 / .5);
     --tile: #262029; --tile-line: #382f3e; --tile-hover: #2f2834; --side-front: #201a24; --side-right: #1c1720;
+    --chart-grey: #7d6d80; --chart-mint: #3cc07f; --chart-rose: #5a2a3a; --chart-rose-ink: #ff9cb8;
     color-scheme: dark;
   }
 
@@ -123,66 +127,133 @@
     padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)); padding-top: max(16px, env(safe-area-inset-top, 0px));
     background: transparent; transition: background-color 240ms ease; }
   .overlay.open { background: var(--scrim); }
-  .sheet { position: relative; width: 100%; max-width: 400px; max-height: 100%; overflow: auto; padding: 30px 22px 22px; border-radius: 24px;
-    background: var(--sheet); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center;
+  .sheet { position: relative; width: 100%; max-width: 400px; max-height: 100%; overflow: auto; border-radius: 24px;
+    background: var(--sheet); box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: stretch; text-align: left;
     opacity: 0; transform: translateY(18px) scale(.97); transition: opacity 220ms var(--ease-out), transform 320ms var(--ease-out); }
   .overlay.open .sheet { opacity: 1; transform: none; }
-  .sheet .close { position: absolute; top: 8px; right: 8px; }
+  .sheet .close { position: absolute; top: 8px; right: 8px; z-index: 2; }
   .sheet h3 { font: 600 28px/1.1 var(--font); margin: 0; text-wrap: balance; }
   .sheet .sub { margin: -10px 0 0; color: var(--muted); }
-  .sheet .logo { width: 64px; height: 64px; }
-  .overlay.open .sheet .logo { animation: wobble 900ms ease-out 160ms both; }
-  .stats { display: flex; justify-content: center; gap: 44px; }
-  .stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .stat b { font: 600 32px/1 var(--font); font-variant-numeric: tabular-nums; }
-  .stat span { color: var(--muted); font-size: 14px; }
-  .overlay.open .stat { animation: rise 320ms var(--ease-out) both; }
-  .overlay.open .stat:nth-child(2) { animation-delay: 50ms; } .overlay.open .stat:nth-child(3) { animation-delay: 100ms; }
-  .attempts { display: flex; flex-direction: column; gap: 5px; align-items: center; }
-  .attempt { display: grid; grid-template-columns: repeat(9, 18px); gap: 4px; }
-  .attempt i { width: 18px; height: 18px; border-radius: 6px; background: var(--r-front); }
-  .attempt i.ok { background: var(--g-front); }
-  .sheet .btn { width: 100%; }
-  .next { margin: -4px 0 0; color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
-  .share-row { display: flex; gap: 10px; width: 100%; }
-  .share-row .btn { flex: 1; }
-  .share-row .round { flex: none; width: 54px; padding: 0; display: grid; place-items: center; }
-  /* The stats: today against everyone, you, the boards. */
-  .panel { width: 100%; padding-top: 18px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; text-align: left; }
-  .panel h4 { margin: 0; font: 600 17px/1.2 var(--font); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-  .panel h4 small { color: var(--muted); font-size: 14px; font-weight: 500; }
-  .facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 16px; }
-  .facts li { position: relative; padding-left: 20px; }
-  .facts li::before { content: ""; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-  .facts b { font-weight: 600; }
-  .streaks { display: flex; justify-content: space-around; }
-  .strip { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; }
-  .strip i { aspect-ratio: 1; border-radius: 4px; background: var(--tile); }
-  .strip i.ok { background: var(--g-front); }
-  .strip i.no { background: var(--r-front); }
-  .strip i.today { outline: 2px solid var(--ink); outline-offset: 1px; }
-  .tabs { display: flex; gap: 4px; background: var(--soft); border-radius: 999px; padding: 4px; }
-  .tab { flex: 1; border: 0; background: none; border-radius: 999px; padding: 8px; font-weight: 600; color: var(--muted); transition: background-color 160ms ease, color 160ms ease; }
-  .tab.on { background: var(--sheet); color: var(--ink); box-shadow: 0 1px 3px rgb(42 34 48 / .12); }
-  .board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-  .board li { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 10px; }
-  .board li.you { background: var(--soft); }
-  .board .n { width: 24px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .board .nick { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .board b { font-weight: 600; font-variant-numeric: tabular-nums; }
-  .board .empty { color: var(--muted); padding: 7px 10px; }
-  .nick { width: 100%; display: flex; flex-direction: column; gap: 6px; text-align: left; }
-  .nick label { font-size: 15px; color: var(--muted); }
-  .nick .row { display: flex; gap: 8px; }
-  .nick input { flex: 1; min-width: 0; height: 46px; border-radius: 12px; border: 2px solid var(--line); background: var(--sheet); color: var(--ink); padding: 0 12px; font: inherit; }
-  .nick input:focus { outline: none; border-color: var(--accent); }
-  .sheet .btn.small { width: auto; flex: none; height: 46px; padding: 0 20px; font-size: 16px; }
-  .note { margin: 0; color: var(--muted); font-size: 14px; }
-  .link-btn { border: 0; background: none; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; padding: 0; font: inherit; font-size: 14px; }
-  .rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; text-align: left; font-size: 17px; }
-  .rules li::marker { color: var(--accent); }
-  .sheet.help { align-items: stretch; text-align: left; }
+  .sheet.help { padding: 30px 22px 22px; gap: 16px; }
   .sheet.help h3 { padding-right: 36px; }
+  .rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 17px; }
+  .rules li::marker { color: var(--accent); }
+
+  /* Results: the verdict, the cube you built, then Today, You and the boards, with the share bar pinned. */
+  .verdict { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 58px 24px 18px; text-align: center; }
+  .tier { border: 0; border-radius: 999px; min-height: 44px; padding: 7px 20px 8px; display: inline-flex; flex-direction: column; align-items: center; gap: 2px;
+    font: 600 32px/1 var(--font); letter-spacing: -.01em; background: var(--tier-bg); color: var(--tier-ink); }
+  .tier small { font: 500 13px/1.2 var(--font); opacity: .85; }
+  .tier.lightning, .tier.first { --tier-bg: #e9dfff; --tier-ink: #3f2580; }
+  .tier.sharp { --tier-bg: #cdf6e1; --tier-ink: #185f3e; }
+  .tier.solid { --tier-bg: #ffdcc6; --tier-ink: #7a3a14; }
+  .time { margin: 0; font: 600 72px/1 var(--font); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .verdict .lost { font-size: 40px; }
+  .line { margin: 0; font-size: 19px; line-height: 1.3; max-width: 28ch; text-wrap: balance; }
+  .line b, .sect b, .card b { font-weight: 600; }
+  .card { margin: 0 20px 20px; border-radius: 22px; background: var(--soft); padding: 12px 16px 14px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .card svg.cube { width: 250px; height: 293px; display: block; }
+  .cap { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px; }
+  .cap .t { font-size: 17px; font-weight: 600; }
+  .cap .d { font-size: 13px; color: var(--muted); }
+  .map { display: grid; grid-template-columns: repeat(3, 13px); gap: 3px; transform: rotate(45deg); margin: 0 12px 0 8px; flex: none; }
+  .map i { width: 13px; height: 13px; border-radius: 4px; background: var(--chart-mint); display: grid; place-items: center; }
+  .map i.short, .map i.extra { background: var(--sheet); box-shadow: inset 0 0 0 2px var(--ink); }
+  .map i.short::before { content: ""; width: 5px; height: 5px; border: 1.5px dashed var(--ink); border-radius: 1px; }
+  .map i.extra::before { content: "×"; color: var(--ink); font: 700 11px/1 var(--font); transform: rotate(-45deg); }
+  .card .legend { width: 100%; margin: 0; font-size: 14px; line-height: 1.35; }
+  .salvage { display: flex; gap: 10px; margin: 0 20px 20px; }
+  .salvage div { flex: 1; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--line); padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
+  .salvage b { font: 600 22px/1 var(--font); font-variant-numeric: tabular-nums; }
+  .salvage span { font-size: 13px; color: var(--muted); }
+  .sect { border-top: 1px solid var(--line); margin: 0 20px; padding: 22px 0 26px; display: flex; flex-direction: column; gap: 14px; }
+  .sect h4 { margin: 0; font: 600 22px/1.1 var(--font); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .sect h4 small { font: 500 14px/1.2 var(--font); color: var(--muted); }
+  .sect h5 { margin: 0; font: 600 15px/1.2 var(--font); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .sect h5 small { font: 500 13px/1.2 var(--font); color: var(--muted); }
+  .sect p { margin: 0; font-size: 15px; line-height: 1.35; }
+  .sect .group { display: flex; flex-direction: column; gap: 6px; }
+  .hist { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 3px; align-items: end; }
+  .hist.marker { height: 22px; }
+  .hist.bars { height: 100px; }
+  .hist .you { grid-column: var(--col); display: flex; flex-direction: column; align-items: center; gap: 1px; justify-self: center; width: 40px;
+    font: 600 12px/1 var(--font); color: #b8471d; letter-spacing: .04em; }
+  .hist .bar { background: var(--chart-grey); border-radius: 3px 3px 0 0; }
+  .hist .bar.me { background: var(--accent); outline: 2px solid var(--ink); outline-offset: -2px; }
+  .hist .bar.lead { background: #b79cff; }
+  .hist .bar.open { background-image: repeating-linear-gradient(135deg, transparent 0 4px, var(--sheet) 4px 6px); }
+  .axis { height: 2px; background: var(--line); border-radius: 1px; }
+  .ticks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ticks span:last-child { display: flex; justify-content: space-between; }
+  .split { display: flex; flex-direction: column; gap: 5px; }
+  .split .lab { display: flex; justify-content: space-between; font-size: 14px; }
+  .split .lab .r { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .split .bar { display: flex; height: 30px; border-radius: 8px; overflow: hidden; gap: 2px; min-width: 180px; }
+  .split .seg { display: grid; place-items: center; font: 600 12px/1 var(--font); min-width: 58px; white-space: nowrap; }
+  .split .look { background: #ffdcc6; color: #7a3a14; }
+  .split .build { flex: 1; background: #ff956a; color: #3b1a08; }
+  .split .med .look { background: var(--line); color: var(--ink); }
+  .split .med .build { background: var(--chart-grey); color: #fff; }
+  .streakrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .streakrow div { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
+  .streakrow b { font: 600 26px/1 var(--font); font-variant-numeric: tabular-nums; }
+  .streakrow span { font-size: 13px; color: var(--muted); }
+  .weeks { position: relative; height: 90px; }
+  .weeks .grid { position: absolute; left: 0; right: 0; height: 1px; background: var(--line); }
+  .weeks .gl { position: absolute; right: 0; transform: translateY(-100%); font-size: 12px; color: var(--muted); background: var(--sheet); padding: 0 0 1px 4px; }
+  .weeks .bars { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(28, minmax(0, 1fr)); gap: 3px; align-items: end; }
+  .weeks .bars i { display: block; border-radius: 3px; background: var(--chart-mint); min-height: 3px; }
+  .weeks .bars i.no { background: var(--chart-rose); outline: 2px solid var(--chart-rose-ink); outline-offset: -2px; }
+  .weeks .bars i.off { height: 4px !important; min-height: 0; background: var(--line); }
+  .weeks .bars i.today { background: var(--accent); outline: 2px solid var(--ink); outline-offset: -2px; }
+  .wlabels { display: grid; grid-template-columns: repeat(28, minmax(0, 1fr)); gap: 3px; font: 600 12px/1 var(--font); color: var(--chart-rose-ink); min-height: 12px; }
+  .wlabels span { grid-column: var(--col) / span 3; text-align: center; }
+  .wlabels span.t { color: var(--ink); text-align: right; }
+  .wfoot { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .wfoot i { display: inline-block; width: 10px; height: 4px; border-radius: 2px; background: var(--line); margin-right: 6px; vertical-align: middle; }
+  .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+  .days div { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 0 8px; border-radius: 12px; background: var(--soft); }
+  .days span { font: 600 12px/1 var(--font); color: var(--muted); }
+  .days b { font: 600 14px/1 var(--font); font-variant-numeric: tabular-nums; }
+  .days div.today { background: #ffdcc6; outline: 2px solid var(--ink); outline-offset: -2px; }
+  .days div.today span { color: #7a3a14; }
+  .days div.today b { color: #2a2230; }
+  .tabs { display: flex; gap: 4px; background: var(--soft); border-radius: 999px; padding: 4px; }
+  .tab { flex: 1; border: 0; background: none; border-radius: 999px; height: 44px; font-weight: 600; font-size: 15px; color: var(--muted); transition: background-color 160ms ease, color 160ms ease; }
+  .tab.on { background: var(--sheet); color: var(--ink); box-shadow: 0 1px 3px rgb(42 34 48 / .14); }
+  .leader { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #f1eafc; color: #2a2230; font-size: 15px; }
+  .board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .board li { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; min-height: 44px; }
+  .board li.you { background: #ffdcc6; color: #2a2230; }
+  .board .n, .leader .n { width: 28px; text-align: center; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; flex: none; }
+  .board li.you .n { color: #7a3a14; font-weight: 600; }
+  .board .n.disc, .leader .n { height: 28px; border-radius: 50%; display: grid; place-items: center; font: 600 13px/1 var(--font); }
+  .board .n.d1, .leader .n { background: #e9dfff; color: #3f2580; }
+  .board .n.d2 { background: #cdf6e1; color: #185f3e; }
+  .board .n.d3 { background: #ffdcc6; color: #7a3a14; }
+  .board .nick { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .board li.you .nick { font-weight: 600; }
+  .board li.you .nick small { font-weight: 500; color: #7a3a14; font-size: inherit; }
+  .board b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .board .empty { color: var(--muted); }
+  .closing { margin: 0 20px 20px; border-radius: 20px; background: var(--ink); color: var(--bg); padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
+  .closing div { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .closing b { font: 600 19px/1.2 var(--font); }
+  .closing span { font-size: 14px; opacity: .8; }
+  .closing svg { width: 48px; height: 48px; flex: none; }
+  .pinned { position: sticky; bottom: 0; z-index: 1; padding: 12px 20px 16px; background: var(--sheet); border-top: 1px solid var(--line); display: flex; gap: 10px; }
+  .pinned .btn { flex: 1; height: 56px; }
+  .pinned .btn.round { flex: none; width: 56px; padding: 0; display: grid; place-items: center; }
+  .pinned .btn.text { flex: none; padding: 0 18px; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; }
+  .nickform { margin: 0 20px 20px; display: flex; flex-direction: column; gap: 6px; }
+  .nickform label { font-size: 15px; color: var(--muted); }
+  .nickform .row { display: flex; gap: 8px; }
+  .nickform input { flex: 1; min-width: 0; height: 46px; border-radius: 12px; border: 2px solid var(--line); background: var(--sheet); color: var(--ink); padding: 0 12px; font: inherit; }
+  .nickform input:focus { outline: none; border-color: var(--accent); }
+  .btn.small { width: auto; flex: none; height: 46px; padding: 0 20px; font-size: 16px; }
+  .note { margin: 0 20px 20px; color: var(--muted); font-size: 14px; }
+  .link-btn { border: 0; background: none; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; padding: 0 2px; font: inherit; font-size: 14px; min-height: 44px; }
+  .sheet textarea { margin: 0 20px 16px; }
   textarea { width: 100%; min-height: 110px; font: 15px/1.4 ui-monospace, monospace; background: var(--soft); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 10px; }
   .toast { position: fixed; z-index: 30; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); translate: -50% 0;
     background: var(--ink); color: var(--bg); padding: 11px 18px; border-radius: 999px; font-weight: 600; animation: rise 220ms var(--ease-out); }
@@ -207,6 +278,11 @@
   .tile.bad { fill: var(--r-top); stroke: var(--r-line); }
   .side-front { fill: var(--side-front); stroke: var(--side-front); }
   .side-right { fill: var(--side-right); stroke: var(--side-right); }
+  /* On a loss, the cube shows the misses in ink: a missing block as a dashed outline, an extra one ghosted with a ×. */
+  .blk.ghost { opacity: .42; }
+  .miss { fill: none; stroke: var(--ink); stroke-width: 3; stroke-dasharray: 7 6; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .badge circle { fill: var(--ink); }
+  .badge path { fill: none; stroke: var(--bg); stroke-width: 3.5; stroke-linecap: round; }
   .play [data-c] { cursor: pointer; }
   @media (hover: hover) and (pointer: fine) {
     .play .tile.hov { fill: var(--tile-hover); }
@@ -295,46 +371,22 @@
 </main>
 
 <div class="overlay" id="ov-result" hidden>
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="res-title">
+  <div class="sheet results" role="dialog" aria-modal="true" aria-labelledby="res-title">
     <button class="icon-btn close" type="button" aria-label="Close" data-close><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-    <svg class="logo" aria-hidden="true"><use href="#jelly"/></svg>
-    <h3 id="res-title"></h3>
-    <p class="sub" id="res-sub"></p>
-    <div class="stats">
-      <div class="stat"><b id="st-time"></b><span>Time</span></div>
-      <div class="stat"><b id="st-rank">·</b><span>Today</span></div>
-    </div>
-    <div class="attempts" id="attempts"></div>
-    <div class="share-row">
-      <button class="btn with-ico" id="share" type="button">Share <svg class="ico" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></button>
-      <button class="btn soft round" id="copy-link" type="button" aria-label="Copy the link to Cubble"><svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
-    </div>
-    <textarea id="share-text" readonly hidden aria-label="Your result, to copy"></textarea>
-    <p class="next" id="next"></p>
-    <section class="panel" id="p-today" hidden>
-      <h4>Today, against everyone <small id="today-n"></small></h4>
-      <ul class="facts" id="facts-today"></ul>
-    </section>
-    <section class="panel" id="p-you" hidden>
-      <h4>You <small id="you-nick"></small></h4>
-      <div class="streaks">
-        <div class="stat"><b id="st-played"></b><span>Days in a row</span></div>
-        <div class="stat"><b id="st-win"></b><span>Win streak</span></div>
-        <div class="stat"><b id="st-best"></b><span>Best streak</span></div>
-      </div>
-      <div class="strip" id="strip" role="img" aria-label="Your last four weeks"></div>
-      <ul class="facts" id="facts-you"></ul>
-    </section>
-    <form class="nick" id="nick-form" hidden>
+    <div class="verdict" id="verdict"></div>
+    <div class="card" id="card"></div>
+    <div class="salvage" id="salvage" hidden></div>
+    <section class="sect" id="s-today" hidden></section>
+    <section class="sect" id="s-you" hidden></section>
+    <form class="nickform" id="nick-form" hidden>
       <label for="nick">Your name on the boards</label>
       <div class="row"><input id="nick" maxlength="16" placeholder="Anonymous" autocomplete="nickname"><button class="btn small" type="submit">Save</button></div>
     </form>
-    <section class="panel" id="p-board" hidden>
-      <div class="tabs" role="tablist"><button class="tab on" type="button" data-tab="today">Fastest today</button><button class="tab" type="button" data-tab="streaks">Win streaks</button></div>
-      <ol class="board" id="board-today"></ol>
-      <ol class="board" id="board-streaks" hidden></ol>
-    </section>
+    <section class="sect" id="s-boards" hidden></section>
     <p class="note" id="stats-note" hidden></p>
+    <div class="closing" id="closing" hidden></div>
+    <textarea id="share-text" readonly hidden aria-label="Your result, to copy"></textarea>
+    <div class="pinned" id="pinned"></div>
   </div>
 </div>
 
@@ -480,9 +532,9 @@ let drawId = 0;
 
 // h: heights to draw. Options: marks per column ('good' | 'bad'), prev heights (new blocks drop in, staggered), gone
 // heights (blocks above h but below gone lift away), anim: 'reveal' (Check, spot by spot), 'hop' (win wave),
-// 'leave' (the cube flies off), press: the spot just tapped, jiggle: the column that wobbles.
-function draw(h, { marks = null, prev = null, stagger = 0, gone = null, anim = null, press = -1, jiggle = -1 } = {}) {
-  drawId++;
+// 'leave' (the cube flies off), press: the spot just tapped, jiggle: the column that wobbles, vs: the answer to show
+// the misses against (a missing block as a dashed outline, an extra one ghosted with a ×).
+function scene(h, { marks = null, prev = null, stagger = 0, gone = null, anim = null, press = -1, jiggle = -1, vs = null } = {}) {
   const order = [6, 7, 8, 3, 4, 5, 0, 1, 2]; // reveal from the front row back, like reading the board
   const rank = (c) => order.indexOf(c);
   const out = [
@@ -502,10 +554,18 @@ function draw(h, { marks = null, prev = null, stagger = 0, gone = null, anim = n
   cols.sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
   let n = 0, i = 0;
   for (const [x, z] of cols) {
-    const c = at(x, z), H = Math.max(h[c], top[c]);
+    const c = at(x, z), H = Math.max(h[c], top[c], vs ? vs[c] : 0);
     if (!H) continue;
     let g = '';
     for (let y = 0; y < H; y++, i++) {
+      const TOP = [[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]];
+      const FRONT = [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]];
+      const RIGHT = [[x + 1, y, z], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x + 1, y + 1, z]];
+      if (vs && y >= h[c]) { // a block the answer has and you don't
+        g += `<polygon class="miss" points="${pts(TOP)}"/><polygon class="miss" points="${pts(FRONT)}"/><polygon class="miss" points="${pts(RIGHT)}"/>`;
+        continue;
+      }
+      const extra = vs && y >= vs[c]; // a block you stacked that the answer doesn't have
       const leaving = y >= h[c], fresh = !leaving && prev && y >= prev[c];
       const a = leaving ? 'out' : anim === 'leave' ? 'leave' : anim === 'reveal' ? 'reveal' : anim === 'hop' ? 'hop' : fresh ? 'pop' : '';
       const d = a === 'out' ? 0
@@ -513,21 +573,26 @@ function draw(h, { marks = null, prev = null, stagger = 0, gone = null, anim = n
         : anim === 'hop' ? (x + z) * 70 + y * 35
         : anim === 'leave' ? i * 14
         : fresh && stagger ? n++ * stagger : 0;
-      const TOP = [[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]];
-      const FRONT = [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]];
-      const RIGHT = [[x + 1, y, z], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x + 1, y + 1, z]];
-      g += `<g class="blk l${y + 1} ${marks?.[c] ?? ''} ${a}"${d ? ` style="animation-delay:${d}ms"` : ''}>`
+      g += `<g class="blk l${y + 1} ${marks?.[c] ?? ''} ${a}${extra ? ' ghost' : ''}"${d ? ` style="animation-delay:${d}ms"` : ''}>`
         + poly(TOP, 'top') + poly(FRONT, 'front') + poly(RIGHT, 'right')
         + `<polygon class="shade" points="${pts(FRONT)}"/><polygon class="shade" points="${pts(RIGHT)}"/><polygon class="gloss" points="${pts(TOP)}"/>`
         // The candy shine: a short stroke and a dot near the top face's back-left edge.
         + `<path class="shine" d="M${pt(x + 0.22, y + 1, z + 0.76)}L${pt(x + 0.22, y + 1, z + 0.48)}M${pt(x + 0.22, y + 1, z + 0.3)}L${pt(x + 0.22, y + 1, z + 0.3)}"/>`
         + '</g>';
+      if (extra) { const [cx, cy] = proj(x + 0.5, y + 1, z + 0.5); g += `<g class="badge"><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="16"/><path d="M${(cx - 6).toFixed(1)} ${(cy - 6).toFixed(1)}l12 12M${(cx + 6).toFixed(1)} ${(cy - 6).toFixed(1)}l-12 12"/></g>`; }
     }
     out.push(`<g class="col${jiggle === c ? ' jiggle' : ''}" data-c="${c}">${g}</g>`);
   }
-  svg.innerHTML = out.join('');
+  return out.join('');
+}
+function draw(h, opts) {
+  drawId++;
+  svg.innerHTML = scene(h, opts);
   return drawId;
 }
+const DEFS = '<defs><linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".14"/></linearGradient></defs>';
+// A still of a cube for the results card (and the share image): your build, with the misses against the answer.
+const cubeSvg = (h, vs, label) => `<svg class="cube" viewBox="-232 -306 464 544" role="img" aria-label="${label}">${DEFS}${scene(h, { vs })}</svg>`;
 const later = (ms, fn) => { const id = drawId; setTimeout(() => { if (id === drawId) fn(); }, reduce ? 0 : ms); };
 
 // ---- Game -----------------------------------------------------------------------------------------------------------
@@ -660,16 +725,183 @@ function endScreen() {
   openResult();
 }
 
-function shareText() {
-  const row = G.result ? G.result.map((v) => (v ? '🟩' : '🟥')).join('') : '';
-  return [`Cubble #${G.no} 🧊 ${G.solved ? fmt(G.time) : '✗'}`, row, SITE].join('\n');
-}
-
-// ---- Stats --------------------------------------------------------------------------------------------------------
-let STATS = null, statsReq = null;
+// ---- Results --------------------------------------------------------------------------------------------------------
+let STATS = null, statsReq = null, showAnswer = false;
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-const sec = (ms) => `${(ms / 1000).toFixed(1)} s`;
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const secs = (ms) => `${Math.round(ms / 1000)} s`;
+const dateLong = () => new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+// The tier, from where today's time sits among the solvers. Only a win has one.
+function tierOf(me, t) {
+  if (!me?.solved) return null;
+  if (me.fasterThan == null) return { k: 'first', name: 'First today', def: 'the first to solve it' };
+  if (me.fasterThan >= 90) return { k: 'lightning', name: 'Lightning', def: 'fastest 10% today' };
+  if (me.fasterThan >= 65) return { k: 'sharp', name: 'Sharp', def: 'fastest third today' };
+  return { k: 'solid', name: 'Solid', def: 'solved' };
+}
+// Where a column sits in the picture (the cube is seen from its front-right corner, so the back corner is at the top).
+const PLACE = ['at the top', 'top right', 'on the right', 'top left', 'in the middle', 'bottom right', 'on the left', 'bottom left', 'at the front'];
+const wrongCols = () => G.result ? G.result.map((v, c) => (v ? -1 : c)).filter((c) => c >= 0) : [];
+function missLegend() {
+  return wrongCols().map((c) => {
+    const d = G.build[c] - G.target[c];
+    return `${d < 0 ? 'Dashed' : 'Crossed'}, ${PLACE[c]}: <b>${Math.abs(d)} block${Math.abs(d) > 1 ? 's' : ''} ${d < 0 ? 'short' : 'too many'}</b>.`;
+  }).join(' ');
+}
+function mapHtml() {
+  let m = '';
+  for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) { const c = at(x, z); const d = G.build[c] - G.target[c]; m += `<i class="${d < 0 ? 'short' : d > 0 ? 'extra' : ''}"></i>`; }
+  const n = wrongCols().length;
+  return `<div class="map" role="img" aria-label="${n ? `Nine columns, ${9 - n} right` : 'Nine columns, all right'}">${m}</div>`;
+}
+function shareText() {
+  const me = STATS?.today?.you, tier = tierOf(me, STATS?.today);
+  const rows = [];
+  for (let z = 0; z < N; z++) rows.push([0, 1, 2].map((x) => (G.result?.[at(x, z)] ? '🟩' : '🟥')).join(''));
+  return [`Cubble ${G.no} · ${G.solved ? fmt(G.time) + (tier ? ` · ${tier.name}` : '') : 'missed'}`, ...rows, SITE].join('\n');
+}
+// The first screen and the card come from what this browser knows; the stats fill in when the API answers.
+function renderResults() {
+  const t = STATS?.today, me = t?.you, tier = tierOf(me, t), n = wrongCols().length;
+  const v = $('#verdict');
+  if (G.solved) {
+    const line = !me ? '' : me.fasterThan == null ? 'First to solve it today. The board fills in as others finish.'
+      : me.rank === 1 ? `<b>#1</b> of ${t.solvers} solvers today. Nobody faster.`
+      : me.fasterThan < 1 ? `<b>#${me.rank}</b> of ${t.solvers} solvers today. You solved it.`
+      : `<b>#${me.rank}</b> of ${t.solvers} solvers today, faster than <b>${me.fasterThan}%</b>.`;
+    v.innerHTML = `${tier ? `<button class="tier ${tier.k}" type="button" aria-label="${tier.name}: ${tier.def}">${tier.name}<small>${tier.def}</small></button>` : ''}
+      <h3 class="time" id="res-title">${fmt(G.time)}</h3><p class="line">${line}</p>`;
+  } else {
+    const others = t ? t.players - t.solvers - 1 : 0;
+    v.innerHTML = `<h3 class="lost" id="res-title">Not today</h3><p class="line"><b>${n} column${n > 1 ? 's' : ''} off.</b>${others > 0 ? ` ${others} other${others > 1 ? 's' : ''} missed it today too.` : ''}</p>`;
+  }
+  const label = G.solved ? 'The cube you built, all nine columns right' : showAnswer ? 'The answer' : `The cube you built, ${n} column${n > 1 ? 's' : ''} wrong: a dashed outline marks a missing block, a crossed block one too many`;
+  const cube = showAnswer ? cubeSvg(G.target, null, label) : cubeSvg(G.build, G.solved ? null : G.target, label);
+  $('#card').innerHTML = cube
+    + `<div class="cap"><div><div class="t">${showAnswer ? 'The answer' : `Cubble ${G.no} · ${G.solved ? fmt(G.time) : 'missed'}${tier ? ` · ${tier.name}` : ''}`}</div><div class="d">${dateLong()}</div></div>${mapHtml()}</div>`
+    + (G.solved || showAnswer ? '' : `<p class="legend">${missLegend()}</p>`);
+  const share = `<svg class="ico" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>`;
+  const link = `<svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+  $('#pinned').innerHTML = G.solved
+    ? `<button class="btn with-ico" id="share" type="button">Share your cube ${share}</button><button class="btn soft round" id="copy-link" type="button" aria-label="Copy the link to Cubble">${link}</button>`
+    : `<button class="btn" id="answer" type="button">${showAnswer ? 'Back to yours' : 'See the answer'}</button><button class="btn soft round" id="share" type="button" aria-label="Share your cube">${share}</button>`;
+  $('#share')?.addEventListener('click', shareCube);
+  $('#copy-link')?.addEventListener('click', () => copy(SITE, 'Link copied.'));
+  $('#answer')?.addEventListener('click', () => { showAnswer = !showAnswer; renderResults(); });
+}
+function renderStats() {
+  const s = STATS, note = $('#stats-note');
+  for (const id of ['salvage', 's-today', 's-you', 'nick-form', 's-boards', 'closing']) $('#' + id).hidden = true;
+  note.hidden = true;
+  renderResults();
+  if (!s) {
+    const { playedStreak } = localStreaks();
+    if (!G.solved && playedStreak) { $('#salvage').hidden = false; $('#salvage').innerHTML = `<div><b>${playedStreak}</b><span>days in a row, still yours</span></div>`; }
+    note.hidden = false;
+    note.textContent = API ? "Today's times, your history and the boards didn't load. They'll be here next time." : `Today's times, your history and the boards live on the site: ${SITE.replace('https://', '')}`;
+    return;
+  }
+  const t = s.today, me = t.you, y = s.you;
+  // A loss: what survives it, said once. On day one, a word about tomorrow instead.
+  if (!G.solved) {
+    $('#salvage').hidden = false;
+    if (y && y.played >= 2) {
+      const last = y.days, solvedN = last.filter((d) => d.solved).length;
+      $('#salvage').innerHTML = `<div><b>${y.playedStreak}</b><span>days in a row, still yours</span></div><div><b>${solvedN} of ${last.length}</b><span>solved, last four weeks</span></div>`;
+    } else $('#salvage').innerHTML = `<div><b>Day 1</b><span>Tomorrow is ${LEVELS[(G.weekday + 1) % 7].name}. Most people get their first one on day 2.</span></div>`;
+  }
+  // Today
+  const st = $('#s-today'); st.hidden = false;
+  let html = `<h4>Today <small>${t.players} played · ${t.solvers} solved</small></h4>`;
+  if (t.solvers >= 2) {
+    const max = Math.max(...t.hist), myBin = me?.solved ? Math.min(23, Math.floor(me.totalMs / 5000)) : -1;
+    const leadBin = t.board[0] ? Math.min(23, Math.floor(t.board[0].totalMs / 5000)) : -1;
+    const bars = t.hist.map((n, i) => `<i class="bar${i === myBin ? ' me' : i === leadBin ? ' lead' : ''}${i === 23 ? ' open' : ''}" style="height:${n ? Math.max(3, Math.round((100 * n) / max)) : 0}%"></i>`).join('');
+    html += `<div class="group"><h5>Every solver's time</h5>
+      <div class="hist marker" aria-hidden="true">${myBin >= 0 ? `<div class="you" style="--col:${myBin + 1}">YOU<svg viewBox="0 0 10 6" width="10" height="6"><path d="M0 0h10L5 6z" fill="currentColor"/></svg></div>` : ''}</div>
+      <div class="hist bars" role="img" aria-label="Today's ${t.solvers} solve times, from 0:00 to 2:00 and over in five-second steps${me?.solved ? `; you are the marked bar at ${fmt(me.totalMs)}` : ''}">${bars}</div>
+      <div class="axis" aria-hidden="true"></div><div class="ticks" aria-hidden="true"><span>0:00</span><span>0:30</span><span>1:00</span><span><span>1:30</span><span>2:00+</span></span></div></div>`;
+  } else if (me?.solved) html += `<p>First to solve it today. The board fills in as others finish.</p>`;
+  if (me?.solved && t.median && t.solvers >= 2) {
+    const m = t.median, w = Math.min(100, Math.round((100 * me.totalMs) / Math.max(m.totalMs, me.totalMs)));
+    const lookD = Math.round((m.lookMs - me.lookMs) / 1000), buildD = Math.round((m.buildMs - me.buildMs) / 1000);
+    const parts = [];
+    if (lookD > 0) parts.push(`You stopped looking <b>${lookD} s sooner</b> than most`); else if (lookD < 0) parts.push(`You looked <b>${-lookD} s longer</b> than most`); else parts.push('You looked as long as most');
+    if (buildD > 0) parts.push(`built it <b>${buildD} s faster</b>. The build is where you win.`); else if (buildD < 0) parts.push(`built it ${-buildD} s slower. The build is where the seconds go.`); else parts.push('built it in the same time.');
+    html += `<div class="group" style="padding-top:6px"><h5>Where your ${Math.round(me.totalMs / 1000)} seconds went</h5>
+      <div class="split"><div class="lab"><span>You</span><span class="r">${fmt(me.totalMs)}</span></div><div class="bar" style="width:${w}%"><div class="seg look" style="width:${Math.round((100 * me.lookMs) / me.totalMs)}%">look ${secs(me.lookMs)}</div><div class="seg build">build ${secs(me.buildMs)}</div></div></div>
+      <div class="split"><div class="lab"><span style="color:var(--muted)">Median solver</span><span class="r">${fmt(m.totalMs)}</span></div><div class="bar med" style="width:${Math.min(100, Math.round((100 * m.totalMs) / Math.max(m.totalMs, me.totalMs)))}%"><div class="seg look" style="width:${Math.round((100 * m.lookMs) / m.totalMs)}%">look ${secs(m.lookMs)}</div><div class="seg build">build ${secs(m.buildMs)}</div></div></div>
+      <p>${parts.join(' and ')}</p></div>`;
+  }
+  st.innerHTML = html;
+  // You
+  if (y) {
+    const sy = $('#s-you'); sy.hidden = false;
+    const name = y.nick ? `${esc(y.nick)} · <button class="link-btn" type="button" id="rename">change name</button>` : `<button class="link-btn" type="button" id="rename">add a name</button>`;
+    let yh = `<h4>You <small>${name}</small></h4>`;
+    if (y.played < 2) yh += `<p>Day 1. Your history starts tomorrow.</p>`;
+    else {
+      yh += `<div class="streakrow"><div><b>${y.playedStreak}</b><span>days played in a row</span></div><div><b>${y.winStreak}</b><span>solved in a row</span></div><div><b>${y.bestWinStreak}</b><span>best run</span></div></div>`;
+      // Four weeks of times, one bar a day. The scale is 1:30, or the slowest day if slower.
+      const byDay = Object.fromEntries(y.days.map((d) => [d.day, d]));
+      const cells = Array.from({ length: 28 }, (_, i) => byDay[new Date(T0.utc - (27 - i) * DAY).toISOString().slice(0, 10)] ?? null);
+      const scale = Math.max(90000, ...cells.map((d) => d?.totalMs ?? 0));
+      const solvedCells = cells.filter((d) => d?.solved), played = cells.filter(Boolean).length;
+      const avg = solvedCells.length ? solvedCells.reduce((a, d) => a + d.totalMs, 0) / solvedCells.length : null;
+      const bars = cells.map((d, i) => !d ? '<i class="off"></i>' : `<i class="${i === 27 ? 'today' : d.solved ? '' : 'no'}" style="height:${Math.round((100 * d.totalMs) / scale)}%"></i>`).join('');
+      const gl = (ms) => { const top = 100 - (100 * ms) / scale; return `<div class="grid" style="top:${top}%"></div><div class="gl" style="top:${top}%">${fmt(ms)}</div>`; };
+      const labels = cells.map((d, i) => d && !d.solved && i < 27 ? `<span style="--col:${Math.min(26, Math.max(1, i))}">missed</span>` : '').join('') + `<span class="t" style="--col:26">today</span>`;
+      const weeks = [0, 1, 2, 3].map((w) => { const s = cells.slice(w * 7, w * 7 + 7).filter((d) => d?.solved); return s.length ? s.reduce((a, d) => a + d.totalMs, 0) / s.length : null; }).filter((v) => v != null);
+      let trend = '';
+      if (weeks.length >= 2) {
+        const first = weeks[0], last = weeks[weeks.length - 1], prev = weeks[weeks.length - 2];
+        trend = last > prev ? `Week by week, solved days: <b>${weeks.map(fmt).join(' → ')}</b>. Slower this week: hard days do that. Your best weeks were the ones you played every day.`
+          : last < first ? `Week by week, solved days: <b>${weeks.map(fmt).join(' → ')}</b>. That's the training working.`
+          : `Week by week, solved days: <b>${weeks.map(fmt).join(' → ')}</b>.`;
+      }
+      yh += `<div class="group"><h5>Last four weeks, your time each day <small>${solvedCells.length} of ${played} solved${avg ? ` · avg ${fmt(avg)}` : ''}</small></h5>
+        <div class="weeks">${gl(60000)}${gl(30000)}<div class="bars" role="img" aria-label="Your time each day over four weeks: ${solvedCells.length} solved of ${played} played${avg ? `, average ${fmt(avg)}` : ''}">${bars}</div></div>
+        <div class="wlabels" aria-hidden="true">${labels}</div>
+        <div class="wfoot" aria-hidden="true"><span>4 weeks ago</span><span><i></i>not played</span></div>${trend ? `<p>${trend}</p>` : ''}</div>`;
+      // Best on each day of the week, today's counted.
+      const best = y.bestPrior.map((ms, i) => (i === G.weekday && G.solved ? Math.min(ms ?? Infinity, G.time) : ms));
+      const tiles = best.map((ms, i) => `<div class="${i === G.weekday ? 'today' : ''}"><span>${i === G.weekday ? 'today' : WEEK[i].slice(0, 3)}</span><b>${ms != null && ms !== Infinity ? fmt(ms) : '–'}</b></div>`).join('');
+      const prior = y.bestPrior[G.weekday], wd = WEEK[G.weekday];
+      const known = best.map((ms, i) => [ms, i]).filter(([ms]) => ms != null && ms !== Infinity);
+      let bl = G.solved ? (prior == null ? `Your first ${wd} solved: <b>${fmt(G.time)}</b>.` : G.time < prior ? `<b>New ${wd} best</b>, down from ${fmt(prior)}.` : `Your ${wd} best is <b>${fmt(prior)}</b>; today ${fmt(G.time)}.`) : prior != null ? `Your ${wd} best is <b>${fmt(prior)}</b>.` : '';
+      if (known.length >= 3) { const [, slow] = known.sort((a, b) => b[0] - a[0])[0]; bl += ` ${WEEK[slow]}, the ${LEVELS[slow].name} day, is your slow one.`; }
+      yh += `<div class="group"><h5>Your best on each day</h5><div class="days" role="img" aria-label="Best time per weekday">${tiles}</div>${bl ? `<p>${bl}</p>` : ''}</div>`;
+    }
+    sy.innerHTML = yh;
+    $('#rename').addEventListener('click', () => { $('#nick-form').hidden = false; $('#nick').focus(); });
+    if (!y.nick) $('#nick-form').hidden = false;
+  }
+  // Boards: the leader in one line, then the rows around you; the top ten a tap away.
+  const sb = $('#s-boards'); sb.hidden = false;
+  const row = (r, rank, tie) => `<li${r.you ? ' class="you" aria-current="true"' : ''}><span class="n${rank <= 3 ? ` disc d${rank}` : ''}">${tie ? '=' : ''}${rank}</span><span class="nick">${esc(r.nick)}${r.you ? ' <small>(you)</small>' : ''}</span><b>${fmt(r.totalMs)}</b></li>`;
+  const around = t.around.length > 1 && t.around[0].rank > 1 ? t.around : t.board.slice(0, 5).map((r, i) => ({ ...r, rank: i + 1 }));
+  const rows = around.map((r, i, a) => row(r, r.rank, a.some((o, j) => j !== i && o.rank === r.rank)));
+  const lead = t.board[0] && around[0]?.rank > 1 ? `<div class="leader"><span class="n">1</span><span>${esc(t.board[0].nick)} leads today at <b>${fmt(t.board[0].totalMs)}</b></span></div>` : '';
+  sb.innerHTML = `<h4>Boards</h4><div class="tabs" role="tablist"><button class="tab on" type="button" role="tab" aria-selected="true" data-tab="today">Fastest today</button><button class="tab" type="button" role="tab" aria-selected="false" data-tab="streaks">Solve streaks</button></div>
+    <div id="panel-today" role="tabpanel">${lead}<ol class="board" id="board-today">${rows.join('') || '<li class="empty">Nobody has solved it yet today.</li>'}</ol>${t.board.length > 5 && around !== t.board ? '<button class="btn soft" id="whole" type="button" style="height:44px;font-size:15px">See the top 10</button>' : ''}</div>
+    <div id="panel-streaks" role="tabpanel" hidden><ol class="board">${s.streaks.map((r, i) => `<li${r.you ? ' class="you"' : ''}><span class="n${i < 3 ? ` disc d${i + 1}` : ''}">${i + 1}</span><span class="nick">${esc(r.nick)}${r.you ? ' <small>(you)</small>' : ''}</span><b>${r.winStreak} ${r.winStreak === 1 ? 'day' : 'days'}</b></li>`).join('') || '<li class="empty">No streak running yet.</li>'}</ol></div>`;
+  $('#whole')?.addEventListener('click', () => { $('#board-today').innerHTML = t.board.map((r, i) => row(r, i + 1, false)).join(''); $('#whole').remove(); });
+  for (const tab of sb.querySelectorAll('.tab')) tab.addEventListener('click', () => {
+    sb.querySelectorAll('.tab').forEach((b) => { b.classList.toggle('on', b === tab); b.setAttribute('aria-selected', b === tab); });
+    $('#panel-today').hidden = tab.dataset.tab !== 'today'; $('#panel-streaks').hidden = tab.dataset.tab !== 'streaks';
+  });
+  // The closing beat
+  const tm = (G.weekday + 1) % 7, tb = y?.bestPrior?.[tm];
+  $('#closing').hidden = false;
+  $('#closing').innerHTML = `<div><b>Tomorrow: ${tb != null ? `beat your ${WEEK[tm]} best, ${fmt(tb)}` : `${WEEK[tm]}'s cube is ${LEVELS[tm].name}`}</b><span id="next"></span></div><svg aria-hidden="true"><use href="#jelly"/></svg>`;
+  nextCube();
+}
+function nextCube() {
+  const now = new Date(), mid = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const m = Math.max(0, Math.round((mid - now) / 60000));
+  const n = $('#next'); if (n) n.textContent = `${WEEK[(G.weekday + 1) % 7]}'s cube, in ${Math.floor(m / 60)} h ${m % 60} min`;
+}
 
 async function api(method, body, query = '') {
   if (!API) throw new Error('no api');
@@ -688,93 +920,52 @@ function loadStats() {
   if (STATS || !API) return;
   statsReq ??= api('GET', null, `?player=${PLAYER}&day=${T0.key}`).then((s) => { STATS = s; renderStats(); }, (e) => { console.error(e); renderStats(e); });
 }
-function fact(list, html) { const li = el('li'); li.innerHTML = html; list.append(li); }
-function renderStats(err) {
-  const s = STATS, note = $('#stats-note');
-  for (const id of ['p-today', 'p-you', 'p-board', 'nick-form']) $('#' + id).hidden = true;
-  note.hidden = true;
-  if (!s) {
-    // No API, or it failed: this browser's own streaks, and a word on where the rest lives.
-    const { playedStreak, winStreak } = localStreaks();
-    $('#p-you').hidden = false; $('#you-nick').textContent = 'this browser';
-    $('#st-played').textContent = playedStreak; $('#st-win').textContent = winStreak; $('#st-best').textContent = '·';
-    $('#strip').textContent = ''; $('#facts-you').textContent = '';
-    note.hidden = false;
-    note.textContent = API ? 'The boards and the other players\' numbers didn\'t load. They\'ll be here next time.' : `The boards, the percentiles and your history live on the site: ${SITE.replace('https://', '')}`;
-    return;
-  }
-  const t = s.today, me = t.you;
-  // Today, against everyone
-  const ft = $('#facts-today'); ft.textContent = '';
-  $('#today-n').textContent = `${t.players} ${t.players === 1 ? 'player' : 'players'}`;
-  if (me) {
-    $('#p-today').hidden = false;
-    if (me.solved) {
-      $('#st-rank').textContent = `#${me.rank}`;
-      fact(ft, me.fasterThan == null ? '<b>First to solve it today.</b> The board is yours, for now.' : me.fasterThan ? `<b>#${me.rank} of ${t.solvers}</b> solvers today, faster than <b>${me.fasterThan}%</b> of them.` : `<b>#${me.rank} of ${t.solvers}</b> solvers today.`);
-      if (me.buildFasterThan) fact(ft, `You rebuilt it in <b>${sec(me.buildMs)}</b>, quicker than <b>${me.buildFasterThan}%</b> of solvers.`);
-    } else {
-      $('#st-rank').textContent = '✗';
-      fact(ft, me.rightBetterThan ? `<b>${me.right} of 9</b> right, more than <b>${me.rightBetterThan}%</b> of today's players.` : `<b>${me.right} of 9</b> right.`);
-    }
-    fact(ft, me.lookLessThan == null ? `You looked for <b>${sec(me.lookMs)}</b>. First player today.` : me.lookLessThan ? `You looked for <b>${sec(me.lookMs)}</b>, less than <b>${me.lookLessThan}%</b> of players.` : `You looked for <b>${sec(me.lookMs)}</b>.`);
-    fact(ft, t.players ? `<b>${Math.round((100 * t.solvers) / t.players)}%</b> of today's players solved it.` : '');
-  }
-  // You
-  const y = s.you;
-  if (y) {
-    $('#p-you').hidden = false;
-    $('#you-nick').innerHTML = ''; $('#you-nick').append(y.nick || 'Anonymous', ' · ', Object.assign(el('button', 'link-btn', 'change name'), { type: 'button', onclick: () => { $('#nick-form').hidden = false; $('#nick').focus(); } }));
-    $('#st-played').textContent = y.playedStreak; $('#st-win').textContent = y.winStreak; $('#st-best').textContent = y.bestWinStreak;
-    const strip = $('#strip'); strip.textContent = '';
-    const byDay = Object.fromEntries(y.days.map((d) => [d.day, d]));
-    for (let i = 27; i >= 0; i--) {
-      const key = new Date(T0.utc - i * DAY).toISOString().slice(0, 10), d = byDay[key];
-      const sq = el('i', d ? (d.solved ? 'ok' : 'no') : '');
-      if (i === 0) sq.classList.add('today');
-      sq.title = d ? `${key}: ${d.solved ? fmt(d.totalMs) : 'not solved'}` : key;
-      strip.append(sq);
-    }
-    const fy = $('#facts-you'); fy.textContent = '';
-    const wd = WEEK[G.weekday], prior = y.bestPrior[G.weekday];
-    if (G.solved) fact(fy, prior == null ? `Your first ${wd} solved: <b>${fmt(G.time)}</b>.` : G.time < prior ? `<b>New ${wd} best!</b> ${fmt(G.time)}, down from ${fmt(prior)}.` : `Your best ${wd} is <b>${fmt(prior)}</b>. Today: ${fmt(G.time)}.`);
-    else if (prior != null) fact(fy, `Your best ${wd} is <b>${fmt(prior)}</b>.`);
-    if (y.avgMs != null) fact(fy, `<b>${y.solved} of ${y.played}</b> solved (${Math.round((100 * y.solved) / y.played)}%), <b>${fmt(y.avgMs)}</b> on average.`);
-    const bests = y.bestPrior.map((ms, i) => [i === G.weekday && G.solved ? Math.min(ms ?? Infinity, G.time) : ms, i]).filter(([ms]) => ms != null && ms !== Infinity);
-    if (bests.length > 1) { const [ms, i] = bests.sort((a, b) => a[0] - b[0])[0]; fact(fy, `Your fastest day: <b>${WEEK[i]}</b> (${fmt(ms)}).`); }
-    $('#nick-form').hidden = !!y.nick;
-  }
-  // Boards
-  $('#p-board').hidden = false;
-  const fill = (ol, rows, val, empty) => {
-    ol.textContent = '';
-    if (!rows.length) { ol.append(el('li', 'empty', empty)); return; }
-    rows.forEach((r, i) => { const li = el('li', r.you ? 'you' : ''); li.append(el('span', 'n', i + 1), el('span', 'nick', r.you ? `${r.nick} (you)` : r.nick), el('b', '', val(r))); ol.append(li); });
-  };
-  fill($('#board-today'), t.board, (r) => fmt(r.totalMs), 'Nobody has solved it yet today.');
-  fill($('#board-streaks'), s.streaks, (r) => `${r.winStreak} ${r.winStreak === 1 ? 'day' : 'days'}`, 'No streak running yet.');
-}
 function openResult() {
-  const right = G.result ? G.result.filter(Boolean).length : 0;
-  $('#res-title').textContent = G.solved ? (G.time < 30000 ? 'Lightning memory!' : 'You solved it!') : right >= 7 ? 'So close!' : 'Not today.';
-  $('#res-sub').textContent = `Cubble No. ${G.no} · ${LEVELS[G.weekday].name}`;
-  $('#st-time').textContent = fmt(G.time);
-  $('#st-rank').textContent = '·';
-  const box = $('#attempts'); box.textContent = '';
-  if (G.result) {
-    const row = document.createElement('div'); row.className = 'attempt';
-    for (const v of G.result) { const i = document.createElement('i'); if (v) i.className = 'ok'; row.append(i); }
-    box.append(row);
-  }
+  showAnswer = false;
   renderStats(); loadStats();
   $('#share-text').hidden = true;
-  const next = () => {
-    const now = new Date(), mid = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const m = Math.max(0, Math.round((mid - now) / 60000));
-    $('#next').textContent = `Next cube in ${Math.floor(m / 60)} h ${m % 60} min`;
-  };
-  next(); clearInterval(nextTimer); nextTimer = setInterval(next, 30000);
+  clearInterval(nextTimer); nextTimer = setInterval(nextCube, 30000);
   openOverlay('ov-result');
+  $('#ov-result .sheet').scrollTop = 0;
+}
+
+// ---- Share: the card as an image where the phone can take one, the text with the squares otherwise ------------------
+function shareCard() {
+  const tier = tierOf(STATS?.today?.you, STATS?.today);
+  const title = `Cubble ${G.no} · ${G.solved ? fmt(G.time) : 'missed'}${tier ? ` · ${tier.name}` : ''}`;
+  const dark = matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light';
+  const ink = '#2a2230', bg = '#f7f1f5';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900" width="720" height="900">
+    <style>.face{stroke-width:3;stroke-linejoin:round}.tile{fill:#f7f0f4;stroke:#e7dbe3}.side-front{fill:#ebe0e7}.side-right{fill:#dfd2db}
+      .blk .top{fill:#ffdcc6;stroke:#ec7a4e}.blk .front{fill:#ffb48e;stroke:#ec7a4e}.blk .right{fill:#ff956a;stroke:#ec7a4e}
+      .blk.l2 .top{fill:#ffd8cf;stroke:#e46f64}.blk.l2 .front{fill:#ffaa9c;stroke:#e46f64}.blk.l2 .right{fill:#f98b7f;stroke:#e46f64}
+      .blk.l3 .top{fill:#fbd5e0;stroke:#d46b8e}.blk.l3 .front{fill:#f5a6be;stroke:#d46b8e}.blk.l3 .right{fill:#e987a6;stroke:#d46b8e}
+      .gloss{fill:url(#gloss)}.shade{fill:url(#shade)}.shine{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;opacity:.9}
+      .blk.ghost{opacity:.42}.miss{fill:none;stroke:${ink};stroke-width:3;stroke-dasharray:7 6;stroke-linejoin:round}.badge circle{fill:${ink}}.badge path{fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round}
+      text{font-family:Fredoka,"SF Pro Rounded",system-ui,sans-serif;fill:${ink}}</style>
+    <rect width="720" height="900" rx="48" fill="${bg}"/>
+    <g transform="translate(360 350) scale(1.1)">${DEFS}${scene(G.build, { vs: G.solved ? null : G.target })}</g>
+    <text x="60" y="770" font-size="40" font-weight="600">${esc(title)}</text>
+    <text x="60" y="815" font-size="26" fill="#5e5366">${esc(dateLong())}</text>
+    <text x="60" y="862" font-size="24" fill="#5e5366">lennygarnier.com/cubble</text>
+  </svg>`;
+}
+async function shareCube() {
+  const text = shareText();
+  if (!API || !navigator.share) return copy(text, 'Copied! Paste it anywhere.');
+  try {
+    const blob = await new Promise((res, rej) => {
+      const img = new Image(), url = URL.createObjectURL(new Blob([shareCard()], { type: 'image/svg+xml' }));
+      img.onload = () => { const c = document.createElement('canvas'); c.width = 1440; c.height = 1800; c.getContext('2d').drawImage(img, 0, 0, 1440, 1800); URL.revokeObjectURL(url); c.toBlob((b) => (b ? res(b) : rej(new Error('no png'))), 'image/png'); };
+      img.onerror = () => rej(new Error('svg')); img.src = url;
+    });
+    const files = [new File([blob], `cubble-${G.no}.png`, { type: 'image/png' })];
+    if (navigator.canShare?.({ files })) await navigator.share({ files, text });
+    else await navigator.share({ text });
+  } catch (e) {
+    if (e.name === 'AbortError') return;
+    try { await navigator.share({ text }); } catch (e2) { if (e2.name !== 'AbortError') copy(text, 'Copied! Paste it anywhere.'); }
+  }
 }
 
 // ---- Overlays, toast, confetti --------------------------------------------------------------------------------------
@@ -847,12 +1038,6 @@ function copy(text, done) {
   const fallback = () => { const ta = $('#share-text'); ta.value = text; ta.hidden = false; ta.focus(); ta.select(); };
   try { navigator.clipboard.writeText(text).then(() => toast(done), fallback); } catch { fallback(); }
 }
-$('#share').addEventListener('click', () => {
-  const text = shareText();
-  if (navigator.share && API) navigator.share({ text }).catch((e) => { if (e.name !== 'AbortError') copy(text, 'Copied! Paste it anywhere.'); });
-  else copy(text, 'Copied! Paste it anywhere.');
-});
-$('#copy-link').addEventListener('click', () => copy(SITE, 'Link copied.'));
 $('#nick-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const nick = $('#nick').value.trim().slice(0, 16);
@@ -861,10 +1046,6 @@ $('#nick-form').addEventListener('submit', (e) => {
     NICK = r.nick; store.set('cubble.nick', NICK); toast(`You're ${NICK} on the boards.`);
     STATS = null; statsReq = null; loadStats();
   }, () => toast('Couldn\'t save the name. Try again later.'));
-});
-for (const tab of document.querySelectorAll('.tab')) tab.addEventListener('click', () => {
-  document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('on', b === tab));
-  $('#board-today').hidden = tab.dataset.tab !== 'today'; $('#board-streaks').hidden = tab.dataset.tab !== 'streaks';
 });
 
 newGame();

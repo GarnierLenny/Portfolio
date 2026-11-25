@@ -54,6 +54,18 @@ async function stats(player: string, day: string) {
     from cubble_results where day = ${day}`) as unknown as Record<string, number>[];
   const board = await db`select coalesce(p.nick, 'Anonymous') as nick, r.total_ms as "totalMs", r.player = ${player} as you
     from cubble_results r left join cubble_players p using (player) where r.day = ${day} and r.solved order by r.total_ms, r.at limit ${BOARD}`;
+  // Today's solve times in 5-second bins (the last one open), the median solver's split, and the rows around me.
+  const bins = await db`select least(total_ms / 5000, 23)::int as bin, count(*)::int as n from cubble_results where day = ${day} and solved group by 1`;
+  const hist: number[] = Array(24).fill(0);
+  for (const b of bins) hist[b.bin] = b.n;
+  const [median] = t.solvers ? await db`select percentile_cont(0.5) within group (order by total_ms)::int as "totalMs",
+      percentile_cont(0.5) within group (order by look_ms)::int as "lookMs", percentile_cont(0.5) within group (order by build_ms)::int as "buildMs"
+    from cubble_results where day = ${day} and solved` : [null];
+  const rank = me.solved ? t.faster + 1 : 0;
+  const around = me.solved ? await db`select nick, "totalMs", you, rank::int from (
+      select coalesce(p.nick, 'Anonymous') as nick, r.total_ms as "totalMs", r.player = ${player} as you, rank() over (order by r.total_ms, r.at) as rank
+      from cubble_results r left join cubble_players p using (player) where r.day = ${day} and r.solved) t
+    where rank between ${rank - 2} and ${rank + 2} order by rank` : [];
   const streaks = await db`select coalesce(nick, 'Anonymous') as nick, win_streak as "winStreak", player = ${player} as you
     from cubble_players where win_streak > 0 and last_day >= ${shift(day, -1)} order by win_streak desc, updated limit ${BOARD}`;
   const [p] = await db`select nick, played, solved, played_streak as "playedStreak", win_streak as "winStreak",
@@ -79,7 +91,7 @@ async function stats(player: string, day: string) {
     buildFasterThan: me.solved ? pct(t.built_slower, t.solvers - 1) : null,
     rightBetterThan: me.solved ? null : pct(t.fewer_right, t.players - 1),
   } : null;
-  return { day, today: { players: t.players, solvers: t.solvers, you: youToday, board }, you, streaks };
+  return { day, today: { players: t.players, solvers: t.solvers, you: youToday, board, hist, median: median ?? null, around }, you, streaks };
 }
 
 export async function GET(req: Request) {
