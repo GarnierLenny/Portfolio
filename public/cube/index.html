@@ -1,0 +1,872 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily Cube</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap">
+<style>
+  /* Daily Cube: a plain page like a daily word game. A splash to start, then a thin top bar, the board and one button.
+     The personality is in the blocks: pastel jelly candies with a shine, that wobble when you stack them. */
+  :root {
+    --bg: #ffffff;
+    --sheet: #ffffff;
+    --ink: #2a2230;
+    --muted: #756a7c;
+    --line: #eee6eb;
+    --soft: #f7f1f5;
+    --btn: #2a2230;
+    --btn-ink: #ffffff;
+    --accent: #ff956a;
+    --scrim: rgb(42 34 48 / .3);
+    --shadow: 0 2px 6px rgb(42 34 48 / .06), 0 20px 50px rgb(42 34 48 / .16);
+    /* Jelly blocks, a warmer candy per layer: peach, then salmon, then rose. Mint when right, strawberry when wrong. */
+    --b-top: #ffdcc6; --b-front: #ffb48e; --b-right: #ff956a; --b-line: #ec7a4e;
+    --l2-top: #ffd8cf; --l2-front: #ffaa9c; --l2-right: #f98b7f; --l2-line: #e46f64;
+    --l3-top: #fbd5e0; --l3-front: #f5a6be; --l3-right: #e987a6; --l3-line: #d46b8e;
+    --g-top: #cdf6e1; --g-front: #86e2b5; --g-right: #5ccb98; --g-line: #3caf7e;
+    --r-top: #ffd3de; --r-front: #ff93ae; --r-right: #f46f91; --r-line: #da557a;
+    --tile: #f7f0f4; --tile-line: #e7dbe3; --tile-hover: #efe3ea;
+    --side-front: #ebe0e7; --side-right: #dfd2db;
+    --font: Fredoka, ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+    --ease-out: cubic-bezier(.23, 1, .32, 1);
+    --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+    --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+    --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17131b; --sheet: #211b26; --ink: #f7f1f5; --muted: #ab9fb2; --line: #2d2633; --soft: #251f2a;
+      --btn: #f7f1f5; --btn-ink: #17131b; --scrim: rgb(0 0 0 / .55);
+      --shadow: 0 2px 6px rgb(0 0 0 / .3), 0 20px 50px rgb(0 0 0 / .5);
+      --tile: #262029; --tile-line: #382f3e; --tile-hover: #2f2834; --side-front: #201a24; --side-right: #1c1720;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17131b; --sheet: #211b26; --ink: #f7f1f5; --muted: #ab9fb2; --line: #2d2633; --soft: #251f2a;
+    --btn: #f7f1f5; --btn-ink: #17131b; --scrim: rgb(0 0 0 / .55);
+    --shadow: 0 2px 6px rgb(0 0 0 / .3), 0 20px 50px rgb(0 0 0 / .5);
+    --tile: #262029; --tile-line: #382f3e; --tile-hover: #2f2834; --side-front: #201a24; --side-right: #1c1720;
+    color-scheme: dark;
+  }
+
+  [hidden] { display: none !important; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font: 500 16px/1.45 var(--font); -webkit-tap-highlight-color: transparent; }
+  ::selection { background: var(--b-top); color: #2a2230; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 12px; }
+  .ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Splash */
+  .intro { min-height: calc(100svh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; padding-block: 32px;
+    padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+  .intro h1 { font: 700 46px/1 var(--font); letter-spacing: -.02em; margin: 18px 0 10px; }
+  .intro .lede { font-size: 21px; line-height: 1.3; max-width: 23ch; margin: 0 0 28px; text-wrap: balance; }
+  .intro .btn { min-width: 190px; }
+  .how { margin-top: 6px; border: 0; background: none; color: var(--muted); font-weight: 500; padding: 10px;
+    text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+  .when { margin: 26px 0 0; display: flex; flex-direction: column; gap: 2px; color: var(--muted); font-size: 15px; }
+  .when b { color: var(--ink); font-weight: 600; font-size: 16px; }
+  .intro > * { animation: rise 420ms var(--ease-out) both; }
+  .intro > :nth-child(2) { animation-delay: 60ms; } .intro > :nth-child(3) { animation-delay: 110ms; }
+  .intro > :nth-child(4) { animation-delay: 160ms; } .intro > :nth-child(5) { animation-delay: 200ms; } .intro > :nth-child(6) { animation-delay: 240ms; }
+  .logo { width: 92px; height: 92px; transform-origin: 50% 90%; }
+  .intro > .logo { animation: wobble 900ms ease-out 200ms both; }
+
+  /* Top bar */
+  .top { border-bottom: 1px solid var(--line); }
+  .top-in { height: 68px; display: flex; align-items: center; gap: 6px; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }
+  .top .mark { width: 30px; height: 30px; flex: none; }
+  .top h2 { flex: 1; margin: 0 0 0 8px; font: 600 22px/1 var(--font); letter-spacing: -.01em; }
+  .icon-btn { width: 44px; height: 44px; flex: none; border: 0; background: none; border-radius: 12px; display: grid; place-items: center;
+    transition: transform 160ms var(--ease-out), background-color 160ms ease; }
+  .icon-btn:active { transform: scale(.92); }
+  @media (hover: hover) and (pointer: fine) { .icon-btn:hover { background: var(--soft); } }
+
+  /* Game */
+  .app { max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding-block: 40px 64px;
+    padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+  .meta { display: flex; align-items: center; justify-content: space-between; height: 28px; padding: 0 4px; }
+  #board { width: 100%; max-width: 390px; margin: 20px auto 0; }
+  .level { color: var(--muted); font-size: 16px; }
+  .clock { font: 600 20px/1 var(--font); font-variant-numeric: tabular-nums; color: var(--ink); }
+  .fuse { height: 6px; border-radius: 99px; background: var(--tile); overflow: hidden; visibility: hidden; }
+  .fuse.on { visibility: visible; }
+  .fuse i { display: block; height: 100%; border-radius: inherit; background: var(--accent); transform-origin: left; }
+  #board.shake { animation: shake 340ms var(--ease-out); }
+  @keyframes shake { 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(2px); } }
+  svg.scene { display: block; width: 100%; height: auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  .status { margin: 24px 0 28px; text-align: center; font: 500 20px/1.3 var(--font); min-height: 26px; text-wrap: balance; }
+  .status.swap { animation: swap 260ms var(--ease-out); }
+  @keyframes swap { from { opacity: 0; transform: translateY(6px); filter: blur(2px); } }
+
+  /* Buttons */
+  .actions { display: flex; gap: 12px; justify-content: center; }
+  .actions .btn { flex: 1; max-width: 300px; animation: rise 260ms var(--ease-out) both; }
+  .actions .btn + .btn { animation-delay: 40ms; }
+  .actions .btn.round { flex: none; width: 54px; padding: 0; display: grid; place-items: center; }
+  .btn { height: 54px; border-radius: 999px; border: 0; background: var(--btn); color: var(--btn-ink); font: 600 19px/1 var(--font);
+    padding: 0 26px; transition: transform 160ms var(--ease-out), background-color 160ms ease; }
+  .btn:active { transform: scale(.97); }
+  .btn.soft { background: none; color: var(--ink); box-shadow: inset 0 0 0 2px var(--line); }
+  @media (hover: hover) and (pointer: fine) { .btn.soft:hover { background: var(--soft); } }
+  .btn .ico { width: 22px; height: 22px; stroke-width: 2.4; }
+  .btn.with-ico { display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+  /* Results and rules, over the page */
+  .overlay { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px;
+    padding-left: var(--gutter-l); padding-right: var(--gutter-r);
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)); padding-top: max(16px, env(safe-area-inset-top, 0px));
+    background: transparent; transition: background-color 240ms ease; }
+  .overlay.open { background: var(--scrim); }
+  .sheet { position: relative; width: 100%; max-width: 400px; max-height: 100%; overflow: auto; padding: 30px 22px 22px; border-radius: 24px;
+    background: var(--sheet); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center;
+    opacity: 0; transform: translateY(18px) scale(.97); transition: opacity 220ms var(--ease-out), transform 320ms var(--ease-out); }
+  .overlay.open .sheet { opacity: 1; transform: none; }
+  .sheet .close { position: absolute; top: 8px; right: 8px; }
+  .sheet h3 { font: 600 28px/1.1 var(--font); margin: 0; text-wrap: balance; }
+  .sheet .sub { margin: -10px 0 0; color: var(--muted); }
+  .sheet .logo { width: 64px; height: 64px; }
+  .overlay.open .sheet .logo { animation: wobble 900ms ease-out 160ms both; }
+  .stats { display: flex; justify-content: center; gap: 44px; }
+  .stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .stat b { font: 600 32px/1 var(--font); font-variant-numeric: tabular-nums; }
+  .stat span { color: var(--muted); font-size: 14px; }
+  .overlay.open .stat { animation: rise 320ms var(--ease-out) both; }
+  .overlay.open .stat:nth-child(2) { animation-delay: 50ms; } .overlay.open .stat:nth-child(3) { animation-delay: 100ms; }
+  .attempts { display: flex; flex-direction: column; gap: 5px; align-items: center; }
+  .attempt { display: grid; grid-template-columns: repeat(9, 18px); gap: 4px; }
+  .attempt i { width: 18px; height: 18px; border-radius: 6px; background: var(--r-front); }
+  .attempt i.ok { background: var(--g-front); }
+  .sheet .btn { width: 100%; }
+  .next { margin: -4px 0 0; color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .share-row { display: flex; gap: 10px; width: 100%; }
+  .share-row .btn { flex: 1; }
+  .share-row .round { flex: none; width: 54px; padding: 0; display: grid; place-items: center; }
+  /* The stats: today against everyone, you, the boards. */
+  .panel { width: 100%; padding-top: 18px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; text-align: left; }
+  .panel h4 { margin: 0; font: 600 17px/1.2 var(--font); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .panel h4 small { color: var(--muted); font-size: 14px; font-weight: 500; }
+  .facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 16px; }
+  .facts li { position: relative; padding-left: 20px; }
+  .facts li::before { content: ""; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .facts b { font-weight: 600; }
+  .streaks { display: flex; justify-content: space-around; }
+  .strip { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; }
+  .strip i { aspect-ratio: 1; border-radius: 4px; background: var(--tile); }
+  .strip i.ok { background: var(--g-front); }
+  .strip i.no { background: var(--r-front); }
+  .strip i.today { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .tabs { display: flex; gap: 4px; background: var(--soft); border-radius: 999px; padding: 4px; }
+  .tab { flex: 1; border: 0; background: none; border-radius: 999px; padding: 8px; font-weight: 600; color: var(--muted); transition: background-color 160ms ease, color 160ms ease; }
+  .tab.on { background: var(--sheet); color: var(--ink); box-shadow: 0 1px 3px rgb(42 34 48 / .12); }
+  .board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .board li { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 10px; }
+  .board li.you { background: var(--soft); }
+  .board .n { width: 24px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .board .nick { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .board b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .board .empty { color: var(--muted); padding: 7px 10px; }
+  .nick { width: 100%; display: flex; flex-direction: column; gap: 6px; text-align: left; }
+  .nick label { font-size: 15px; color: var(--muted); }
+  .nick .row { display: flex; gap: 8px; }
+  .nick input { flex: 1; min-width: 0; height: 46px; border-radius: 12px; border: 2px solid var(--line); background: var(--sheet); color: var(--ink); padding: 0 12px; font: inherit; }
+  .nick input:focus { outline: none; border-color: var(--accent); }
+  .sheet .btn.small { width: auto; flex: none; height: 46px; padding: 0 20px; font-size: 16px; }
+  .note { margin: 0; color: var(--muted); font-size: 14px; }
+  .link-btn { border: 0; background: none; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; padding: 0; font: inherit; font-size: 14px; }
+  .rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; text-align: left; font-size: 17px; }
+  .rules li::marker { color: var(--accent); }
+  .sheet.help { align-items: stretch; text-align: left; }
+  .sheet.help h3 { padding-right: 36px; }
+  textarea { width: 100%; min-height: 110px; font: 15px/1.4 ui-monospace, monospace; background: var(--soft); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 10px; }
+  .toast { position: fixed; z-index: 30; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); translate: -50% 0;
+    background: var(--ink); color: var(--bg); padding: 11px 18px; border-radius: 999px; font-weight: 600; animation: rise 220ms var(--ease-out); }
+  .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 25; overflow: hidden; }
+  .confetti i { position: absolute; width: 10px; height: 10px; border-radius: 3px; }
+
+  /* The drawing */
+  .face { stroke-width: 3; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .blk .top { fill: var(--b-top); stroke: var(--b-line); }
+  .blk .front { fill: var(--b-front); stroke: var(--b-line); }
+  .blk .right { fill: var(--b-right); stroke: var(--b-line); }
+  .blk.l2 { --b-top: var(--l2-top); --b-front: var(--l2-front); --b-right: var(--l2-right); --b-line: var(--l2-line); }
+  .blk.l3 { --b-top: var(--l3-top); --b-front: var(--l3-front); --b-right: var(--l3-right); --b-line: var(--l3-line); }
+  /* Candy finish: a soft white gloss over the top face, a shadow toward the bottom of the sides, and a shine. */
+  .gloss { fill: url(#gloss); pointer-events: none; }
+  .shade { fill: url(#shade); pointer-events: none; }
+  .shine { fill: none; stroke: #fff; stroke-width: 5; stroke-linecap: round; opacity: .9; vector-effect: non-scaling-stroke; pointer-events: none; }
+  .blk.good { --b-top: var(--g-top); --b-front: var(--g-front); --b-right: var(--g-right); --b-line: var(--g-line); }
+  .blk.bad { --b-top: var(--r-top); --b-front: var(--r-front); --b-right: var(--r-right); --b-line: var(--r-line); }
+  .tile { fill: var(--tile); stroke: var(--tile-line); transition: fill 160ms ease; }
+  .tile.good { fill: var(--g-top); stroke: var(--g-line); }
+  .tile.bad { fill: var(--r-top); stroke: var(--r-line); }
+  .side-front { fill: var(--side-front); stroke: var(--side-front); }
+  .side-right { fill: var(--side-right); stroke: var(--side-right); }
+  .play [data-c] { cursor: pointer; }
+  @media (hover: hover) and (pointer: fine) {
+    .play .tile.hov { fill: var(--tile-hover); }
+    .play .col.hov { filter: brightness(1.04); }
+  }
+  /* A new block drops in and lands with a small bounce; its column then wobbles like jelly. A removed one lifts away. */
+  .pop { animation: drop 480ms both; }
+  @keyframes drop {
+    0% { transform: translateY(-300px); opacity: 0; animation-timing-function: cubic-bezier(.45, 0, 1, .55); }
+    10% { opacity: 1; }
+    56% { transform: none; animation-timing-function: cubic-bezier(.2, .8, .4, 1); }
+    76% { transform: translateY(-8px); animation-timing-function: cubic-bezier(.5, 0, .9, .5); }
+  }
+  .col.jiggle { animation: wobble 620ms ease-out 270ms; transform-box: fill-box; transform-origin: 50% 100%; }
+  @keyframes wobble {
+    0%, 100% { transform: none; }
+    22% { transform: scale(1.1, .86); }
+    42% { transform: scale(.93, 1.08); }
+    62% { transform: scale(1.04, .97); }
+    80% { transform: scale(.99, 1.01); }
+  }
+  .out { animation: out 170ms var(--ease-out) both; pointer-events: none; }
+  @keyframes out { to { transform: translateY(-14px); opacity: 0; } }
+  .leave { animation: leave 260ms var(--ease-out) both; }
+  @keyframes leave { to { transform: translateY(-22px); opacity: 0; } }
+  .press { animation: press 200ms var(--ease-out); transform-box: fill-box; transform-origin: center; }
+  @keyframes press { 40% { transform: scale(.9); } }
+  /* Check: each spot turns its colour in turn, with a hop. */
+  .reveal { animation: reveal 420ms var(--ease-out) both; }
+  @keyframes reveal { 0% { filter: grayscale(1) brightness(1.08); transform: none; } 45% { filter: grayscale(1) brightness(1.08); transform: translateY(-9px); } 100% { filter: none; transform: none; } }
+  .hop { animation: hop 520ms var(--ease-spring) both; }
+  @keyframes hop { 40% { transform: translateY(-16px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pop, .out, .leave, .press, .reveal, .hop, .col.jiggle, #board.shake, .intro > *, .intro > .logo, .actions .btn, .overlay.open .sheet .logo, .overlay.open .stat, .status.swap { animation: none !important; }
+    .sheet { transform: none; }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".14"/></linearGradient>
+  </defs>
+  <symbol id="jelly" viewBox="-50 -50 100 100">
+    <g stroke="#ec7a4e" stroke-width="3.5" stroke-linejoin="round">
+      <polygon points="0,-44 40,-22 0,0 -40,-22" fill="#ffdcc6"/>
+      <polygon points="-40,-22 0,0 0,44 -40,22" fill="#ffb48e"/>
+      <polygon points="40,-22 0,0 0,44 40,22" fill="#ff956a"/>
+    </g>
+    <polygon points="-40,-22 0,0 0,44 -40,22" fill="url(#shade)"/><polygon points="40,-22 0,0 0,44 40,22" fill="url(#shade)"/>
+    <polygon points="0,-44 40,-22 0,0 -40,-22" fill="url(#gloss)"/>
+    <path d="M-23,-25 L-12,-31.5 M-5,-35.5 L-5,-35.5" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+  </symbol>
+</svg>
+
+<section class="intro" id="s-intro" hidden>
+  <svg class="logo" aria-hidden="true"><use href="#jelly"/></svg>
+  <h1>Daily Cube</h1>
+  <p class="lede">Memorize the cube. Then rebuild it from memory.</p>
+  <button class="btn" id="start" type="button">Play</button>
+  <button class="how" id="how" type="button">How to play</button>
+  <p class="when"><b id="intro-date"></b><span id="intro-no"></span><span id="intro-streak" hidden></span></p>
+</section>
+
+<header class="top" id="top" hidden>
+  <div class="top-in">
+    <svg class="mark" aria-hidden="true"><use href="#jelly"/></svg>
+    <h2>Daily Cube</h2>
+    <button class="icon-btn" id="help" type="button" aria-label="How to play"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+    <button class="icon-btn" id="stats" type="button" aria-label="Your result" hidden><svg class="ico" viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></button>
+  </div>
+</header>
+
+<main class="app" id="s-game" hidden>
+  <div class="meta">
+    <span class="level" id="level"></span>
+    <span class="clock" id="clock" aria-live="off">0:00</span>
+  </div>
+  <div class="fuse" id="fuse" aria-hidden="true"><i></i></div>
+  <div id="board">
+    <svg class="scene" id="scene" viewBox="-232 -306 464 544" role="img" aria-label="The cube"></svg>
+  </div>
+  <p class="status" id="status" aria-live="polite"></p>
+  <div class="actions" id="actions"></div>
+</main>
+
+<div class="overlay" id="ov-result" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="res-title">
+    <button class="icon-btn close" type="button" aria-label="Close" data-close><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    <svg class="logo" aria-hidden="true"><use href="#jelly"/></svg>
+    <h3 id="res-title"></h3>
+    <p class="sub" id="res-sub"></p>
+    <div class="stats">
+      <div class="stat"><b id="st-time"></b><span>Time</span></div>
+      <div class="stat"><b id="st-rank">·</b><span>Today</span></div>
+    </div>
+    <div class="attempts" id="attempts"></div>
+    <div class="share-row">
+      <button class="btn with-ico" id="share" type="button">Share <svg class="ico" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></button>
+      <button class="btn soft round" id="copy-link" type="button" aria-label="Copy the link to Daily Cube"><svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+    </div>
+    <textarea id="share-text" readonly hidden aria-label="Your result, to copy"></textarea>
+    <p class="next" id="next"></p>
+    <section class="panel" id="p-today" hidden>
+      <h4>Today, against everyone <small id="today-n"></small></h4>
+      <ul class="facts" id="facts-today"></ul>
+    </section>
+    <section class="panel" id="p-you" hidden>
+      <h4>You <small id="you-nick"></small></h4>
+      <div class="streaks">
+        <div class="stat"><b id="st-played"></b><span>Days in a row</span></div>
+        <div class="stat"><b id="st-win"></b><span>Win streak</span></div>
+        <div class="stat"><b id="st-best"></b><span>Best streak</span></div>
+      </div>
+      <div class="strip" id="strip" role="img" aria-label="Your last four weeks"></div>
+      <ul class="facts" id="facts-you"></ul>
+    </section>
+    <form class="nick" id="nick-form" hidden>
+      <label for="nick">Your name on the boards</label>
+      <div class="row"><input id="nick" maxlength="16" placeholder="Anonymous" autocomplete="nickname"><button class="btn small" type="submit">Save</button></div>
+    </form>
+    <section class="panel" id="p-board" hidden>
+      <div class="tabs" role="tablist"><button class="tab on" type="button" data-tab="today">Fastest today</button><button class="tab" type="button" data-tab="streaks">Win streaks</button></div>
+      <ol class="board" id="board-today"></ol>
+      <ol class="board" id="board-streaks" hidden></ol>
+    </section>
+    <p class="note" id="stats-note" hidden></p>
+  </div>
+</div>
+
+<div class="overlay" id="ov-help" hidden>
+  <div class="sheet help" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <button class="icon-btn close" type="button" aria-label="Close" data-close><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    <h3 id="help-title">How to play</h3>
+    <p class="sub">One look, one chance. The clock is your score.</p>
+    <ul class="rules">
+      <li>A cube of blocks shows for a few seconds. Memorize it. The clock starts the moment it appears.</li>
+      <li>Then it's gone. Tap a spot to stack blocks: 1, 2, 3, then empty again.</li>
+      <li>Tap Check. All green and the clock stops. One pink spot and it's over for today.</li>
+      <li>Sure of it early? Tap I'm ready to save seconds. A new cube every day: easy on Monday, very hard by Sunday.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// ---- The puzzle ---------------------------------------------------------------------------------------------------
+// A 3×3 base of columns, each 0 to 3 blocks tall (no floating blocks). h[z * 3 + x], z = 0 is the back row.
+const N = 3, MAX = 3, DAY = 86400000;
+const LAUNCH = Date.UTC(2026, 10, 25); // puzzle #1, Wednesday 25 Nov 2026
+// Monday to Sunday. Easy days are a recognisable shape (one thing to remember), hard days are random columns.
+const LEVELS = [
+  { name: 'Easy', look: 10, mode: 'shape', changes: 0 },
+  { name: 'Easy', look: 9, mode: 'shape', changes: 1 },
+  { name: 'Medium', look: 8, mode: 'shape', changes: 2 },
+  { name: 'Medium', look: 8, mode: 'shape', changes: 3 },
+  { name: 'Hard', look: 7, mode: 'random', fill: 0.6 },
+  { name: 'Hard', look: 6, mode: 'random', fill: 0.75 },
+  { name: 'Very hard', look: 5, mode: 'random', fill: 0.85 },
+];
+const SHAPES = [
+  [3, 3, 3, 2, 2, 2, 1, 1, 1], // stairs
+  [1, 1, 1, 1, 3, 1, 1, 1, 1], // tower in the middle
+  [1, 2, 1, 2, 3, 2, 1, 2, 1], // pyramid
+  [3, 2, 1, 2, 1, 0, 1, 0, 0], // corner stairs
+  [3, 3, 3, 0, 0, 0, 0, 0, 0], // wall
+  [3, 0, 0, 3, 0, 0, 3, 3, 3], // L
+  [0, 2, 0, 2, 3, 2, 0, 2, 0], // cross
+  [2, 2, 2, 2, 0, 2, 2, 2, 2], // ring
+  [3, 0, 0, 0, 2, 0, 0, 0, 1], // diagonal
+  [3, 3, 3, 3, 3, 3, 3, 3, 0], // full, one corner out
+  [2, 2, 2, 2, 2, 2, 0, 0, 0], // slab
+  [3, 0, 3, 0, 0, 0, 3, 0, 3], // four corners
+];
+const at = (x, z) => z * N + x;
+
+function mulberry32(a) {
+  return () => {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const turn = (h) => { const r = []; for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) r[at(N - 1 - z, x)] = h[at(x, z)]; return r; };
+const mirror = (h) => { const r = []; for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) r[at(N - 1 - x, z)] = h[at(x, z)]; return r; };
+
+// The view: a flat drawing (orthographic) from the front-right corner, 42° above the ground.
+const PHI = (42 * Math.PI) / 180, S = 100, T = 0.2; // T: the board's thickness
+const KX = Math.SQRT1_2, KY = Math.SQRT1_2 * Math.sin(PHI), KH = Math.cos(PHI);
+const VIEW = [Math.SQRT1_2 * Math.cos(PHI), Math.sin(PHI), Math.SQRT1_2 * Math.cos(PHI)]; // toward the viewer
+const proj = (x, y, z) => [((x - z) * KX) * S, ((x + z - 3) * KY - y * KH) * S + 70];
+
+// Fair from one view: the top of every column (or the floor of an empty one) must be mostly visible, so the cube can
+// be rebuilt from the one picture. A ray from points on that top toward the viewer must not pass through a block.
+function blocked(p, blocks) {
+  for (const b of blocks) {
+    let t0 = 1e-6, t1 = Infinity;
+    for (let i = 0; i < 3; i++) {
+      const a = (b[i] - p[i]) / VIEW[i], c = (b[i] + 1 - p[i]) / VIEW[i];
+      t0 = Math.max(t0, Math.min(a, c)); t1 = Math.min(t1, Math.max(a, c));
+    }
+    if (t0 < t1) return true;
+  }
+  return false;
+}
+const OFFS = [[0, 0], [0.3, 0.3], [-0.3, 0.3], [0.3, -0.3], [-0.3, -0.3]];
+function visible(h) {
+  const blocks = [];
+  for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) for (let y = 0; y < h[at(x, z)]; y++) blocks.push([x, y, z]);
+  for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
+    let seen = 0;
+    for (const [dx, dz] of OFFS) if (!blocked([x + 0.5 + dx, h[at(x, z)] + 0.001, z + 0.5 + dz], blocks)) seen++;
+    if (seen < 4) return false;
+  }
+  return true;
+}
+
+function generate(L, rng) {
+  const int = (n) => Math.floor(rng() * n);
+  for (let i = 0; i < 500; i++) {
+    let h;
+    if (L.mode === 'shape') {
+      h = SHAPES[int(SHAPES.length)].slice();
+      for (let t = int(4); t > 0; t--) h = turn(h);
+      if (rng() < 0.5) h = mirror(h);
+      for (let c = 0; c < L.changes; c++) { const k = int(9); let v; do v = int(MAX + 1); while (v === h[k]); h[k] = v; }
+    } else {
+      h = Array.from({ length: 9 }, () => (rng() < L.fill ? 1 + int(MAX) : 0));
+    }
+    if (h.filter(Boolean).length < 3) continue;
+    if (visible(h)) return h;
+  }
+  return [3, 3, 3, 2, 2, 2, 1, 1, 1];
+}
+
+function todayInfo() {
+  const n = new Date();
+  const utc = Date.UTC(n.getFullYear(), n.getMonth(), n.getDate());
+  return { key: new Date(utc).toISOString().slice(0, 10), utc, weekday: (n.getDay() + 6) % 7, no: Math.round((utc - LAUNCH) / DAY) + 1, seed: utc / DAY };
+}
+
+// ---- Saved results (this browser) ----------------------------------------------------------------------------------
+const STORE = 'dailycube.v4';
+const SITE = 'https://lennygarnier.com/cube';
+// Stats and boards come from the site's API. On claude.ai (the artifact copy) there is none: the card shows this
+// browser's streaks and says where the rest lives.
+const API = location.hostname.endsWith('claude.ai') ? null : '/api/cube';
+const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* private window */ } } };
+const loadAll = () => { try { return JSON.parse(store.get(STORE)) ?? {}; } catch { return {}; } };
+const saveRec = (key, rec) => { const all = loadAll(); all[key] = rec; store.set(STORE, JSON.stringify(all)); };
+const PLAYER = store.get('dailycube.player') || (() => { const id = crypto.randomUUID(); store.set('dailycube.player', id); return id; })();
+let NICK = store.get('dailycube.nick') || '';
+// This browser's streaks, for when the API is out of reach: days played in a row and days solved in a row, ending
+// today (or yesterday, while today isn't played yet).
+function localStreaks() {
+  const all = loadAll(), key = (t) => new Date(t).toISOString().slice(0, 10);
+  let d = all[key(T0.utc)]?.done ? T0.utc : T0.utc - DAY, played = 0, win = 0, winOn = true;
+  while (all[key(d)]?.done) { played++; if (winOn && all[key(d)].solved) win++; else winOn = false; d -= DAY; }
+  return { playedStreak: played, winStreak: win };
+}
+
+// ---- Drawing --------------------------------------------------------------------------------------------------------
+const $ = (s) => document.querySelector(s);
+const svg = $('#scene');
+const pt = (x, y, z) => proj(x, y, z).map((v) => v.toFixed(1)).join(',');
+const pts = (corners) => corners.map((c) => pt(...c)).join(' ');
+const poly = (corners, cls) => `<polygon class="face ${cls}" points="${pts(corners)}"/>`;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let drawId = 0;
+
+// h: heights to draw. Options: marks per column ('good' | 'bad'), prev heights (new blocks drop in, staggered), gone
+// heights (blocks above h but below gone lift away), anim: 'reveal' (Check, spot by spot), 'hop' (win wave),
+// 'leave' (the cube flies off), press: the spot just tapped, jiggle: the column that wobbles.
+function draw(h, { marks = null, prev = null, stagger = 0, gone = null, anim = null, press = -1, jiggle = -1 } = {}) {
+  drawId++;
+  const order = [6, 7, 8, 3, 4, 5, 0, 1, 2]; // reveal from the front row back, like reading the board
+  const rank = (c) => order.indexOf(c);
+  const out = [
+    poly([[0, 0, 3], [3, 0, 3], [3, -T, 3], [0, -T, 3]], 'side-front'),
+    poly([[3, 0, 0], [3, 0, 3], [3, -T, 3], [3, -T, 0]], 'side-right'),
+  ];
+  for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
+    const c = at(x, z);
+    const cls = ['tile', marks?.[c] ?? '', anim === 'reveal' ? 'reveal' : '', press === c ? 'press' : ''].join(' ');
+    const style = anim === 'reveal' ? ` style="animation-delay:${rank(c) * 85}ms"` : '';
+    out.push(`<polygon class="face ${cls}" data-c="${c}"${style} points="${pts([[x, 0, z], [x + 1, 0, z], [x + 1, 0, z + 1], [x, 0, z + 1]])}"/>`);
+  }
+  // Whole columns, back to front (columns on a grid never overlap out of this order), each bottom to top.
+  const top = gone ?? h;
+  const cols = [];
+  for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) cols.push([x, z]);
+  cols.sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
+  let n = 0, i = 0;
+  for (const [x, z] of cols) {
+    const c = at(x, z), H = Math.max(h[c], top[c]);
+    if (!H) continue;
+    let g = '';
+    for (let y = 0; y < H; y++, i++) {
+      const leaving = y >= h[c], fresh = !leaving && prev && y >= prev[c];
+      const a = leaving ? 'out' : anim === 'leave' ? 'leave' : anim === 'reveal' ? 'reveal' : anim === 'hop' ? 'hop' : fresh ? 'pop' : '';
+      const d = a === 'out' ? 0
+        : anim === 'reveal' ? rank(c) * 85
+        : anim === 'hop' ? (x + z) * 70 + y * 35
+        : anim === 'leave' ? i * 14
+        : fresh && stagger ? n++ * stagger : 0;
+      const TOP = [[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]];
+      const FRONT = [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]];
+      const RIGHT = [[x + 1, y, z], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x + 1, y + 1, z]];
+      g += `<g class="blk l${y + 1} ${marks?.[c] ?? ''} ${a}"${d ? ` style="animation-delay:${d}ms"` : ''}>`
+        + poly(TOP, 'top') + poly(FRONT, 'front') + poly(RIGHT, 'right')
+        + `<polygon class="shade" points="${pts(FRONT)}"/><polygon class="shade" points="${pts(RIGHT)}"/><polygon class="gloss" points="${pts(TOP)}"/>`
+        // The candy shine: a short stroke and a dot near the top face's back-left edge.
+        + `<path class="shine" d="M${pt(x + 0.22, y + 1, z + 0.76)}L${pt(x + 0.22, y + 1, z + 0.48)}M${pt(x + 0.22, y + 1, z + 0.3)}L${pt(x + 0.22, y + 1, z + 0.3)}"/>`
+        + '</g>';
+    }
+    out.push(`<g class="col${jiggle === c ? ' jiggle' : ''}" data-c="${c}">${g}</g>`);
+  }
+  svg.innerHTML = out.join('');
+  return drawId;
+}
+const later = (ms, fn) => { const id = drawId; setTimeout(() => { if (id === drawId) fn(); }, reduce ? 0 : ms); };
+
+// ---- Game -----------------------------------------------------------------------------------------------------------
+const T0 = todayInfo();
+let G = null, lookTimer = 0, clockTimer = 0, nextTimer = 0;
+const fmt = (ms) => { const s = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+const ICONS = { reset: '<svg class="ico" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>' };
+
+function status(text) {
+  const el = $('#status');
+  if (el.textContent === text) return;
+  el.textContent = text; el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap');
+}
+// Buttons under the board: [label, onClick, kind] where kind is '' (main), 'soft', or an icon name (a round button,
+// the label is its accessible name).
+function actions(list) {
+  const box = $('#actions'); box.textContent = '';
+  for (const [label, fn, kind = ''] of list) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.addEventListener('click', fn);
+    if (ICONS[kind]) { b.className = 'btn soft round'; b.innerHTML = ICONS[kind]; b.setAttribute('aria-label', label); }
+    else { b.className = `btn ${kind}`; b.textContent = label; }
+    box.append(b);
+  }
+}
+function screen(name) {
+  $('#s-intro').hidden = name !== 'intro';
+  $('#top').hidden = $('#s-game').hidden = name !== 'game';
+}
+function setPhase(p) { G.phase = p; svg.classList.toggle('play', p === 'build'); $('#stats').hidden = !G.done; }
+function save() {
+  saveRec(T0.key, { result: G.result, done: G.done, solved: G.solved, started: G.started, lookMs: G.lookMs, time: G.time });
+}
+// The one clock: total time, from the moment the cube appears to the Check.
+function clock(on) {
+  clearInterval(clockTimer);
+  const paint = () => { $('#clock').textContent = fmt(G.time ?? (G.started ? Date.now() - G.started : 0)); };
+  paint();
+  if (on) clockTimer = setInterval(paint, 250);
+}
+
+function newGame() {
+  const L = LEVELS[T0.weekday];
+  const rng = mulberry32((T0.seed * 2654435761) >>> 0);
+  G = { no: T0.no, weekday: T0.weekday, target: generate(L, rng), build: Array(9).fill(0), result: null, done: false, solved: false, started: null, lookMs: null, time: null };
+  $('#intro-date').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  $('#intro-no').textContent = $('#level').textContent = `No. ${G.no} · ${L.name}`;
+  const st = localStreaks().playedStreak;
+  $('#intro-streak').hidden = !st; $('#intro-streak').textContent = `${st} ${st === 1 ? 'day' : 'days'} in a row`;
+  const rec = loadAll()[T0.key];
+  if (rec?.done) {
+    Object.assign(G, { result: rec.result ?? null, done: true, solved: !!rec.solved, started: rec.started ?? null, lookMs: rec.lookMs ?? null, time: rec.time ?? null });
+    screen('game'); clock(false); draw(G.target, { marks: G.solved ? Array(9).fill('good') : null, prev: Array(9).fill(0), stagger: 16 }); endScreen(); return;
+  }
+  // Left mid-game (a reload): no second look. Back to the empty board, the clock still running from the first look.
+  if (rec?.started) { G.started = rec.started; G.lookMs = rec.lookMs ?? L.look * 1000; screen('game'); build(); return; }
+  screen('intro');
+}
+
+function look() {
+  const L = LEVELS[G.weekday];
+  screen('game'); setPhase('look');
+  G.started = Date.now(); save();
+  clock(true);
+  draw(G.target, { prev: Array(9).fill(0), stagger: 40 });
+  status('Memorize it!');
+  actions([["I'm ready", endLook, 'soft']]);
+  // The fuse under the clock burns down: the cube goes when it's out.
+  const fuse = $('#fuse'), fill = fuse.firstElementChild;
+  fuse.classList.add('on');
+  fill.style.transition = 'none'; fill.style.transform = 'scaleX(1)'; void fill.getBoundingClientRect();
+  fill.style.transition = `transform ${L.look}s linear`; fill.style.transform = 'scaleX(0)';
+  lookTimer = setTimeout(endLook, L.look * 1000);
+}
+function endLook() {
+  if (G.phase !== 'look') return;
+  clearTimeout(lookTimer); $('#fuse').classList.remove('on');
+  G.lookMs = Date.now() - G.started; save();
+  draw(G.target, { anim: 'leave' });
+  later(reduce ? 0 : 420, build);
+}
+function build() {
+  setPhase('build'); clock(true);
+  status('Rebuild it. Tap a spot to stack.');
+  actions([['Clear the board', () => { const prev = G.build.slice(); G.build.fill(0); draw(G.build, { gone: prev }); later(180, () => draw(G.build)); }, 'reset'], ['Check', submit]]);
+  draw(G.build, { prev: Array(9).fill(0), stagger: 14 });
+}
+
+function cycle(c) {
+  const prev = G.build.slice();
+  G.build[c] = (G.build[c] + 1) % (MAX + 1);
+  try { navigator.vibrate?.(8); } catch { /* not allowed here */ }
+  if (G.build[c] === 0) { draw(G.build, { gone: prev, press: c }); later(180, () => draw(G.build)); }
+  else draw(G.build, { prev, jiggle: c });
+}
+
+function submit() {
+  if (G.phase !== 'build') return;
+  G.time = Date.now() - G.started;
+  G.result = G.build.map((v, k) => v === G.target[k]);
+  G.solved = G.result.every(Boolean);
+  G.done = true;
+  save();
+  sendResult();
+  checked();
+}
+// After the Check: the spots turn green or pink one by one. All green: the win. Any pink: the real cube, then the end.
+function checked() {
+  setPhase('checked'); clock(false);
+  draw(G.build, { marks: G.result.map((v) => (v ? 'good' : 'bad')), anim: 'reveal' });
+  actions([]);
+  const settle = reduce ? 0 : 9 * 85 + 420;
+  if (G.solved) {
+    status('Perfect!');
+    later(settle, () => { draw(G.build, { marks: Array(9).fill('good'), anim: 'hop' }); confetti(); later(900, endScreen); });
+    return;
+  }
+  const right = G.result.filter(Boolean).length;
+  later(settle, () => {
+    const b = $('#board'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+    status(right >= 7 ? `So close: ${right} of 9. Here's the cube.` : `${right} of 9 right. Here's the cube.`);
+    later(1100, () => { draw(G.target, { prev: Array(9).fill(0), stagger: 18 }); later(800, endScreen); });
+  });
+}
+
+function endScreen() {
+  setPhase('done'); clock(false);
+  status(G.solved ? `Solved in ${fmt(G.time)}` : 'Not today.');
+  actions([['See results', openResult]]);
+  openResult();
+}
+
+function shareText() {
+  const row = G.result ? G.result.map((v) => (v ? '🟩' : '🟥')).join('') : '';
+  return [`Daily Cube #${G.no} 🧊 ${G.solved ? fmt(G.time) : '✗'}`, row, SITE].join('\n');
+}
+
+// ---- Stats --------------------------------------------------------------------------------------------------------
+let STATS = null, statsReq = null;
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const sec = (ms) => `${(ms / 1000).toFixed(1)} s`;
+const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+async function api(method, body, query = '') {
+  if (!API) throw new Error('no api');
+  const r = await fetch(API + query, { method, headers: { 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+  if (!r.ok) throw new Error(`api ${r.status}`);
+  return r.json();
+}
+// Today's result goes up at Check. The answer carries every stat the card shows.
+function sendResult() {
+  if (!API) return;
+  const right = G.result.filter(Boolean).length;
+  statsReq = api('POST', { player: PLAYER, nick: NICK || undefined, day: T0.key, solved: G.solved, right, lookMs: G.lookMs, buildMs: G.time - G.lookMs })
+    .then((s) => { STATS = s; renderStats(); }, (e) => { console.error(e); renderStats(e); });
+}
+function loadStats() {
+  if (STATS || !API) return;
+  statsReq ??= api('GET', null, `?player=${PLAYER}&day=${T0.key}`).then((s) => { STATS = s; renderStats(); }, (e) => { console.error(e); renderStats(e); });
+}
+function fact(list, html) { const li = el('li'); li.innerHTML = html; list.append(li); }
+function renderStats(err) {
+  const s = STATS, note = $('#stats-note');
+  for (const id of ['p-today', 'p-you', 'p-board', 'nick-form']) $('#' + id).hidden = true;
+  note.hidden = true;
+  if (!s) {
+    // No API, or it failed: this browser's own streaks, and a word on where the rest lives.
+    const { playedStreak, winStreak } = localStreaks();
+    $('#p-you').hidden = false; $('#you-nick').textContent = 'this browser';
+    $('#st-played').textContent = playedStreak; $('#st-win').textContent = winStreak; $('#st-best').textContent = '·';
+    $('#strip').textContent = ''; $('#facts-you').textContent = '';
+    note.hidden = false;
+    note.textContent = API ? 'The boards and the other players\' numbers didn\'t load. They\'ll be here next time.' : `The boards, the percentiles and your history live on the site: ${SITE.replace('https://', '')}`;
+    return;
+  }
+  const t = s.today, me = t.you;
+  // Today, against everyone
+  const ft = $('#facts-today'); ft.textContent = '';
+  $('#today-n').textContent = `${t.players} ${t.players === 1 ? 'player' : 'players'}`;
+  if (me) {
+    $('#p-today').hidden = false;
+    if (me.solved) {
+      $('#st-rank').textContent = `#${me.rank}`;
+      fact(ft, me.fasterThan == null ? '<b>First to solve it today.</b> The board is yours, for now.' : me.fasterThan ? `<b>#${me.rank} of ${t.solvers}</b> solvers today, faster than <b>${me.fasterThan}%</b> of them.` : `<b>#${me.rank} of ${t.solvers}</b> solvers today.`);
+      if (me.buildFasterThan) fact(ft, `You rebuilt it in <b>${sec(me.buildMs)}</b>, quicker than <b>${me.buildFasterThan}%</b> of solvers.`);
+    } else {
+      $('#st-rank').textContent = '✗';
+      fact(ft, me.rightBetterThan ? `<b>${me.right} of 9</b> right, more than <b>${me.rightBetterThan}%</b> of today's players.` : `<b>${me.right} of 9</b> right.`);
+    }
+    fact(ft, me.lookLessThan == null ? `You looked for <b>${sec(me.lookMs)}</b>. First player today.` : me.lookLessThan ? `You looked for <b>${sec(me.lookMs)}</b>, less than <b>${me.lookLessThan}%</b> of players.` : `You looked for <b>${sec(me.lookMs)}</b>.`);
+    fact(ft, t.players ? `<b>${Math.round((100 * t.solvers) / t.players)}%</b> of today's players solved it.` : '');
+  }
+  // You
+  const y = s.you;
+  if (y) {
+    $('#p-you').hidden = false;
+    $('#you-nick').innerHTML = ''; $('#you-nick').append(y.nick || 'Anonymous', ' · ', Object.assign(el('button', 'link-btn', 'change name'), { type: 'button', onclick: () => { $('#nick-form').hidden = false; $('#nick').focus(); } }));
+    $('#st-played').textContent = y.playedStreak; $('#st-win').textContent = y.winStreak; $('#st-best').textContent = y.bestWinStreak;
+    const strip = $('#strip'); strip.textContent = '';
+    const byDay = Object.fromEntries(y.days.map((d) => [d.day, d]));
+    for (let i = 27; i >= 0; i--) {
+      const key = new Date(T0.utc - i * DAY).toISOString().slice(0, 10), d = byDay[key];
+      const sq = el('i', d ? (d.solved ? 'ok' : 'no') : '');
+      if (i === 0) sq.classList.add('today');
+      sq.title = d ? `${key}: ${d.solved ? fmt(d.totalMs) : 'not solved'}` : key;
+      strip.append(sq);
+    }
+    const fy = $('#facts-you'); fy.textContent = '';
+    const wd = WEEK[G.weekday], prior = y.bestPrior[G.weekday];
+    if (G.solved) fact(fy, prior == null ? `Your first ${wd} solved: <b>${fmt(G.time)}</b>.` : G.time < prior ? `<b>New ${wd} best!</b> ${fmt(G.time)}, down from ${fmt(prior)}.` : `Your best ${wd} is <b>${fmt(prior)}</b>. Today: ${fmt(G.time)}.`);
+    else if (prior != null) fact(fy, `Your best ${wd} is <b>${fmt(prior)}</b>.`);
+    if (y.avgMs != null) fact(fy, `<b>${y.solved} of ${y.played}</b> solved (${Math.round((100 * y.solved) / y.played)}%), <b>${fmt(y.avgMs)}</b> on average.`);
+    const bests = y.bestPrior.map((ms, i) => [i === G.weekday && G.solved ? Math.min(ms ?? Infinity, G.time) : ms, i]).filter(([ms]) => ms != null && ms !== Infinity);
+    if (bests.length > 1) { const [ms, i] = bests.sort((a, b) => a[0] - b[0])[0]; fact(fy, `Your fastest day: <b>${WEEK[i]}</b> (${fmt(ms)}).`); }
+    $('#nick-form').hidden = !!y.nick;
+  }
+  // Boards
+  $('#p-board').hidden = false;
+  const fill = (ol, rows, val, empty) => {
+    ol.textContent = '';
+    if (!rows.length) { ol.append(el('li', 'empty', empty)); return; }
+    rows.forEach((r, i) => { const li = el('li', r.you ? 'you' : ''); li.append(el('span', 'n', i + 1), el('span', 'nick', r.you ? `${r.nick} (you)` : r.nick), el('b', '', val(r))); ol.append(li); });
+  };
+  fill($('#board-today'), t.board, (r) => fmt(r.totalMs), 'Nobody has solved it yet today.');
+  fill($('#board-streaks'), s.streaks, (r) => `${r.winStreak} ${r.winStreak === 1 ? 'day' : 'days'}`, 'No streak running yet.');
+}
+function openResult() {
+  const right = G.result ? G.result.filter(Boolean).length : 0;
+  $('#res-title').textContent = G.solved ? (G.time < 30000 ? 'Lightning memory!' : 'You solved it!') : right >= 7 ? 'So close!' : 'Not today.';
+  $('#res-sub').textContent = `Daily Cube No. ${G.no} · ${LEVELS[G.weekday].name}`;
+  $('#st-time').textContent = fmt(G.time);
+  $('#st-rank').textContent = '·';
+  const box = $('#attempts'); box.textContent = '';
+  if (G.result) {
+    const row = document.createElement('div'); row.className = 'attempt';
+    for (const v of G.result) { const i = document.createElement('i'); if (v) i.className = 'ok'; row.append(i); }
+    box.append(row);
+  }
+  renderStats(); loadStats();
+  $('#share-text').hidden = true;
+  const next = () => {
+    const now = new Date(), mid = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const m = Math.max(0, Math.round((mid - now) / 60000));
+    $('#next').textContent = `Next cube in ${Math.floor(m / 60)} h ${m % 60} min`;
+  };
+  next(); clearInterval(nextTimer); nextTimer = setInterval(next, 30000);
+  openOverlay('ov-result');
+}
+
+// ---- Overlays, toast, confetti --------------------------------------------------------------------------------------
+function openOverlay(id) {
+  const o = document.getElementById(id);
+  o.hidden = false; void o.offsetWidth; o.classList.add('open');
+  o.querySelector('.btn, [data-close]')?.focus({ preventScroll: true });
+}
+function closeOverlay(id) {
+  const o = document.getElementById(id);
+  if (o.hidden) return;
+  o.classList.remove('open');
+  if (reduce) o.hidden = true; else setTimeout(() => { if (!o.classList.contains('open')) o.hidden = true; }, 240);
+}
+for (const id of ['ov-result', 'ov-help']) {
+  const o = document.getElementById(id);
+  o.addEventListener('click', (e) => { if (e.target === o || e.target.closest('[data-close]')) closeOverlay(id); });
+}
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeOverlay('ov-result'); closeOverlay('ov-help'); } });
+
+let toastTimer = 0;
+function toast(msg) {
+  document.querySelector('.toast')?.remove();
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg;
+  document.body.append(t); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.remove(), 1800);
+}
+
+function confetti() {
+  if (reduce) return;
+  const box = document.createElement('div'); box.className = 'confetti'; document.body.append(box);
+  const r = $('#board').getBoundingClientRect();
+  const x0 = r.left + r.width / 2, y0 = r.top + r.height * 0.45;
+  const colors = ['#ffb48e', '#86e2b5', '#ff93ae', '#ffd86b', '#c4a7ff', '#8fd3ff'];
+  for (let i = 0; i < 70; i++) {
+    const p = document.createElement('i');
+    p.style.left = `${x0}px`; p.style.top = `${y0}px`; p.style.background = colors[i % colors.length];
+    if (i % 3 === 0) p.style.borderRadius = '50%';
+    box.append(p);
+    const ang = Math.random() * Math.PI * 2, speed = 120 + Math.random() * 200;
+    const dx = Math.cos(ang) * speed, dy = Math.sin(ang) * speed - 160, rot = (Math.random() - 0.5) * 720;
+    p.animate([
+      { transform: 'translate(-50%, -50%) rotate(0deg) scale(.6)', opacity: 1 },
+      { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${rot / 2}deg) scale(1)`, opacity: 1, offset: 0.35, easing: 'cubic-bezier(.2,.8,.3,1)' },
+      { transform: `translate(calc(-50% + ${dx * 1.3}px), calc(-50% + ${dy + 420}px)) rotate(${rot}deg) scale(.9)`, opacity: 0 },
+    ], { duration: 1300 + Math.random() * 500, easing: 'cubic-bezier(.33,0,.67,1)', fill: 'forwards' });
+  }
+  setTimeout(() => box.remove(), 2000);
+}
+
+// ---- Input ----------------------------------------------------------------------------------------------------------
+svg.addEventListener('click', (e) => {
+  if (G.phase !== 'build') return;
+  const el = e.target.closest('[data-c]');
+  if (el) cycle(+el.dataset.c);
+});
+let hov = -1;
+svg.addEventListener('pointermove', (e) => {
+  const c = G.phase === 'build' && e.pointerType === 'mouse' ? +(e.target.closest('[data-c]')?.dataset.c ?? -1) : -1;
+  if (c === hov) return;
+  hov = c;
+  svg.querySelectorAll('.hov').forEach((el) => el.classList.remove('hov'));
+  if (c >= 0) svg.querySelectorAll(`[data-c="${c}"]`).forEach((el) => el.classList.add('hov'));
+});
+$('#start').addEventListener('click', look);
+$('#help').addEventListener('click', () => openOverlay('ov-help'));
+$('#how').addEventListener('click', () => openOverlay('ov-help'));
+$('#stats').addEventListener('click', openResult);
+// Share: the phone's share sheet where there is one (not inside the artifact), the clipboard otherwise.
+function copy(text, done) {
+  const fallback = () => { const ta = $('#share-text'); ta.value = text; ta.hidden = false; ta.focus(); ta.select(); };
+  try { navigator.clipboard.writeText(text).then(() => toast(done), fallback); } catch { fallback(); }
+}
+$('#share').addEventListener('click', () => {
+  const text = shareText();
+  if (navigator.share && API) navigator.share({ text }).catch((e) => { if (e.name !== 'AbortError') copy(text, 'Copied! Paste it anywhere.'); });
+  else copy(text, 'Copied! Paste it anywhere.');
+});
+$('#copy-link').addEventListener('click', () => copy(SITE, 'Link copied.'));
+$('#nick-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const nick = $('#nick').value.trim().slice(0, 16);
+  if (!nick) return;
+  api('PUT', { player: PLAYER, nick }).then((r) => {
+    NICK = r.nick; store.set('dailycube.nick', NICK); toast(`You're ${NICK} on the boards.`);
+    STATS = null; statsReq = null; loadStats();
+  }, () => toast('Couldn\'t save the name. Try again later.'));
+});
+for (const tab of document.querySelectorAll('.tab')) tab.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('on', b === tab));
+  $('#board-today').hidden = tab.dataset.tab !== 'today'; $('#board-streaks').hidden = tab.dataset.tab !== 'streaks';
+});
+
+newGame();
+window.__cube = { generate, visible, LEVELS, mulberry32, draw, get state() { return G; } }; // for testing in the console
+</script>
