@@ -18,6 +18,14 @@ export default function Home() {
           </Link>
           : cross two worlds and get app ideas AI wouldn&apos;t give you.
         </p>
+        <p className="text-lg text-fog">
+          Or today&apos;s{" "}
+          {/* A plain link: /cubble is a static page behind a rewrite, not a Next route Link could prefetch. */}
+          <a href="/cubble" className="text-lagoon underline underline-offset-4 hover:opacity-80">
+            Cubble
+          </a>
+          : memorize a cube, rebuild it from memory. One look, one chance.
+        </p>
       </div>
     </main>
   );
