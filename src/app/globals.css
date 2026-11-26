@@ -50,3 +50,43 @@ body {
     transition: none;
   }
 }
+
+/* The landing's cord and tags. The cord draws itself across the screen on arrival; each tag fades onto it, settling
+   down a few pixels, as the line reaches its peg. A press answers with a small give. */
+.line .cord { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1100ms cubic-bezier(0.65, 0, 0.35, 1); }
+.line[data-drawn] .cord, .line[data-on] .cord { stroke-dashoffset: 0; }
+.hang > * { opacity: 0; transition: opacity 600ms cubic-bezier(0.23, 1, 0.32, 1); }
+.hang[data-on] > *, .line[data-on] .hang > * { opacity: 1; }
+.tag {
+  /* Three shadows in every state, so hover fades the glow in and out instead of swapping lists. */
+  box-shadow: 0 1px 2px rgb(22 27 26 / 0.06), 0 12px 24px -10px rgb(22 27 26 / 0.2), 0 0 0 0 rgb(var(--glow, 0 0 0) / 0);
+  transform: translate(-50%, -6px);
+  transform-origin: 50% 0; /* grows from its peg */
+  transition: opacity 600ms cubic-bezier(0.23, 1, 0.32, 1), transform 700ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 400ms ease;
+}
+.hang[data-on] .tag, .line[data-on] .tag { transform: translate(-50%, 0); }
+/* Hover, on a real mouse: the link tag grows a touch and glows in its own colour (--glow, set per tag). */
+@media (hover: hover) and (pointer: fine) {
+  .hang:has(a.tag:hover) { z-index: 1; }
+  .hang[data-on] a.tag:hover {
+    transform: translate(-50%, 0) scale(1.03);
+    box-shadow: 0 1px 2px rgb(22 27 26 / 0.06), 0 14px 30px -10px rgb(var(--glow) / 0.45), 0 0 28px -2px rgb(var(--glow) / 0.35);
+    transition-duration: 600ms, 250ms, 400ms;
+  }
+}
+.hang[data-on] a.tag:active { transform: translate(-50%, 0) scale(1.01); transition-duration: 600ms, 120ms, 250ms; }
+.tag.soon { box-shadow: inset 0 0 0 1.5px #d3d8d5; }
+.tag:focus-visible { outline: 2px solid rgb(var(--ink)); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .line .cord, .hang > *, .tag { transition: none; } }
+
+
+/* The landing's backdrop: warm light from above, a hint of lavender and sage in the low corners, so the page has
+   depth without being a picture. */
+.cozy {
+  background:
+    radial-gradient(120% 75% at 50% -10%, #fff0dc 0%, rgb(255 240 220 / 0) 62%),
+    radial-gradient(75% 65% at 6% 105%, #ebe0f0 0%, rgb(235 224 240 / 0) 62%),
+    radial-gradient(75% 65% at 96% 102%, #e0ece3 0%, rgb(224 236 227 / 0) 60%),
+    linear-gradient(180deg, #faf6f0 0%, #f3eee8 100%);
+}
