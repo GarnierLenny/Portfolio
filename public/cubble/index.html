@@ -211,8 +211,8 @@
   .cap { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px; }
   .cap .t { font-size: 17px; font-weight: 600; }
   .cap .d { font-size: 13px; color: var(--muted); }
-  .map { display: grid; grid-template-columns: repeat(3, 13px); gap: 3px; transform: rotate(45deg); margin: 0 12px 0 8px; flex: none; }
-  .map i { width: 13px; height: 13px; border-radius: 4px; background: var(--chart-mint); display: grid; place-items: center; }
+  .map { display: grid; grid-template-columns: repeat(4, 11px); gap: 3px; transform: rotate(45deg); margin: 0 12px 0 8px; flex: none; }
+  .map i { width: 11px; height: 11px; border-radius: 4px; background: var(--chart-mint); display: grid; place-items: center; }
   .map i.short, .map i.extra { background: var(--sheet); box-shadow: inset 0 0 0 2px var(--ink); }
   .map i.short::before { content: ""; width: 5px; height: 5px; border: 1.5px dashed var(--ink); border-radius: 1px; }
   .map i.extra::before { content: "×"; color: var(--ink); font: 700 11px/1 var(--font); transform: rotate(-45deg); }
@@ -515,8 +515,9 @@
 
 <script>
 // ---- The puzzle ---------------------------------------------------------------------------------------------------
-// A 3×3 base of columns, each 0 to 3 blocks tall (no floating blocks). h[z * 3 + x], z = 0 is the back row.
-const N = 3, MAX = 3, DAY = 86400000;
+// A 4×4 base of columns, each 0 to 3 blocks tall (no floating blocks). h[z * N + x], z = 0 is the back row.
+// (3×3 until 27 Nov: too easy.)
+const N = 4, MAX = 3, C = N * N, DAY = 86400000;
 const LAUNCH = Date.UTC(2026, 10, 25); // puzzle #1, Wednesday 25 Nov 2026
 // Monday to Sunday. Easy days are a recognisable shape (one thing to remember), hard days are random columns.
 const LEVELS = [
@@ -529,18 +530,18 @@ const LEVELS = [
   { name: 'Very hard', look: 5, mode: 'random', fill: 0.85 },
 ];
 const SHAPES = [
-  [3, 3, 3, 2, 2, 2, 1, 1, 1], // stairs
-  [1, 1, 1, 1, 3, 1, 1, 1, 1], // tower in the middle
-  [1, 2, 1, 2, 3, 2, 1, 2, 1], // pyramid
-  [3, 2, 1, 2, 1, 0, 1, 0, 0], // corner stairs
-  [3, 3, 3, 0, 0, 0, 0, 0, 0], // wall
-  [3, 0, 0, 3, 0, 0, 3, 3, 3], // L
-  [0, 2, 0, 2, 3, 2, 0, 2, 0], // cross
-  [2, 2, 2, 2, 0, 2, 2, 2, 2], // ring
-  [3, 0, 0, 0, 2, 0, 0, 0, 1], // diagonal
-  [3, 3, 3, 3, 3, 3, 3, 3, 0], // full, one corner out
-  [2, 2, 2, 2, 2, 2, 0, 0, 0], // slab
-  [3, 0, 3, 0, 0, 0, 3, 0, 3], // four corners
+  [3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0], // stairs
+  [3, 3, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // tower in a corner
+  [3, 3, 3, 3, 3, 2, 2, 2, 3, 2, 1, 1, 3, 2, 1, 0], // half pyramid
+  [3, 2, 1, 0, 2, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], // corner stairs
+  [3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // wall
+  [3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 3, 3], // L
+  [3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1], // terraces
+  [3, 2, 1, 0, 2, 2, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0], // wedge
+  [3, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1], // diagonal
+  [3, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // two towers
+  [2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0], // slab
+  [3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 1], // four corners, stepping down
 ];
 const at = (x, z) => z * N + x;
 
@@ -556,10 +557,10 @@ const turn = (h) => { const r = []; for (let z = 0; z < N; z++) for (let x = 0; 
 const mirror = (h) => { const r = []; for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) r[at(N - 1 - x, z)] = h[at(x, z)]; return r; };
 
 // The view: a flat drawing (orthographic) from the front-right corner, 42° above the ground.
-const PHI = (42 * Math.PI) / 180, S = 100, T = 0.2; // T: the board's thickness
+const PHI = (42 * Math.PI) / 180, S = 300 / N, T = 0.2; // T: the board's thickness
 const KX = Math.SQRT1_2, KY = Math.SQRT1_2 * Math.sin(PHI), KH = Math.cos(PHI);
 const VIEW = [Math.SQRT1_2 * Math.cos(PHI), Math.sin(PHI), Math.SQRT1_2 * Math.cos(PHI)]; // toward the viewer
-const proj = (x, y, z) => [((x - z) * KX) * S, ((x + z - 3) * KY - y * KH) * S + 70];
+const proj = (x, y, z) => [((x - z) * KX) * S, ((x + z - N) * KY - y * KH) * S + 70];
 
 // Fair from one view: the top of every column (or the floor of an empty one) must be mostly visible, so the cube can
 // be rebuilt from the one picture. A ray from points on that top toward the viewer must not pass through a block.
@@ -581,7 +582,7 @@ function visible(h) {
   for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
     let seen = 0;
     for (const [dx, dz] of OFFS) if (!blocked([x + 0.5 + dx, h[at(x, z)] + 0.001, z + 0.5 + dz], blocks)) seen++;
-    if (seen < 4) return false;
+    if (seen < 3) return false; // 3 of 5 points: on a 4×4 board, 4 of 5 rejected most hard days
   }
   return true;
 }
@@ -594,14 +595,14 @@ function generate(L, rng) {
       h = SHAPES[int(SHAPES.length)].slice();
       for (let t = int(4); t > 0; t--) h = turn(h);
       if (rng() < 0.5) h = mirror(h);
-      for (let c = 0; c < L.changes; c++) { const k = int(9); let v; do v = int(MAX + 1); while (v === h[k]); h[k] = v; }
+      for (let c = 0; c < L.changes; c++) { const k = int(C); let v; do v = int(MAX + 1); while (v === h[k]); h[k] = v; }
     } else {
-      h = Array.from({ length: 9 }, () => (rng() < L.fill ? 1 + int(MAX) : 0));
+      h = Array.from({ length: C }, () => (rng() < L.fill ? 1 + int(MAX) : 0));
     }
-    if (h.filter(Boolean).length < 3) continue;
+    if (h.filter(Boolean).length < 4) continue;
     if (visible(h)) return h;
   }
-  return [3, 3, 3, 2, 2, 2, 1, 1, 1];
+  return SHAPES[0].slice();
 }
 
 function todayInfo() {
@@ -644,11 +645,10 @@ let drawId = 0;
 // 'leave' (the cube flies off), press: the spot just tapped, jiggle: the column that wobbles, vs: the answer to show
 // the misses against (a missing block as a dashed outline, an extra one ghosted with a ×).
 function scene(h, { marks = null, prev = null, stagger = 0, gone = null, anim = null, press = -1, jiggle = -1, vs = null } = {}) {
-  const order = [6, 7, 8, 3, 4, 5, 0, 1, 2]; // reveal from the front row back, like reading the board
-  const rank = (c) => order.indexOf(c);
+  const rank = (c) => (N - 1 - Math.floor(c / N)) * N + (c % N); // reveal from the front row back, like reading the board
   const out = [
-    poly([[0, 0, 3], [3, 0, 3], [3, -T, 3], [0, -T, 3]], 'side-front'),
-    poly([[3, 0, 0], [3, 0, 3], [3, -T, 3], [3, -T, 0]], 'side-right'),
+    poly([[0, 0, N], [N, 0, N], [N, -T, N], [0, -T, N]], 'side-front'),
+    poly([[N, 0, 0], [N, 0, N], [N, -T, N], [N, -T, 0]], 'side-right'),
   ];
   for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
     const c = at(x, z);
@@ -750,17 +750,18 @@ function clock(on) {
 function newGame() {
   const L = LEVELS[T0.weekday];
   const rng = mulberry32((T0.seed * 2654435761) >>> 0);
-  G = { no: T0.no, weekday: T0.weekday, target: generate(L, rng), build: Array(9).fill(0), result: null, done: false, solved: false, started: null, lookMs: null, time: null };
+  G = { no: T0.no, weekday: T0.weekday, target: generate(L, rng), build: Array(C).fill(0), result: null, done: false, solved: false, started: null, lookMs: null, time: null };
   $('#intro-date').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   $('#intro-no').textContent = $('#level').textContent = `No. ${G.no} · ${L.name}`;
   const st = localStreaks().winStreak; // only solved days count: showing up isn't the point
   $('#intro-streak').hidden = !st; $('#intro-streak').textContent = `${st} solved in a row`;
-  const rec = loadAll()[T0.key];
+  let rec = loadAll()[T0.key];
+  if (rec && (rec.result ?? rec.build)?.length !== undefined && (rec.result ?? rec.build).length !== C) rec = null; // a 3×3 game from before 27 Nov
   if (rec?.done) {
     Object.assign(G, { result: rec.result ?? null, done: true, solved: !!rec.solved, started: rec.started ?? null, lookMs: rec.lookMs ?? null, time: rec.time ?? null });
     // The card draws what you built. Results saved before the build was kept: a solve is the answer, a miss stays empty.
     G.build = rec.build ?? (rec.solved ? G.target.slice() : G.build);
-    screen('game'); clock(false); draw(G.target, { marks: G.solved ? Array(9).fill('good') : null, prev: Array(9).fill(0), stagger: 16 }); endScreen(); return;
+    screen('game'); clock(false); draw(G.target, { marks: G.solved ? Array(C).fill('good') : null, prev: Array(C).fill(0), stagger: 16 }); endScreen(); return;
   }
   // Left mid-game (a reload): no second look. Back to the empty board, the clock still running from the first look.
   if (rec?.started) { G.started = rec.started; G.lookMs = rec.lookMs ?? L.look * 1000; screen('game'); build(); return; }
@@ -772,7 +773,7 @@ function look() {
   screen('game'); setPhase('look');
   G.started = Date.now(); save();
   clock(true);
-  draw(G.target, { prev: Array(9).fill(0), stagger: 40 });
+  draw(G.target, { prev: Array(C).fill(0), stagger: 40 });
   status('Memorize it!');
   actions([["I'm ready", endLook, 'soft']]);
   // The fuse under the clock burns down: the cube goes when it's out.
@@ -793,7 +794,7 @@ function build() {
   setPhase('build'); clock(true);
   status('Rebuild it. Tap a spot to stack.');
   actions([['Clear the board', () => { const prev = G.build.slice(); G.build.fill(0); draw(G.build, { gone: prev }); later(180, () => draw(G.build)); }, 'reset'], ['Check', submit]]);
-  draw(G.build, { prev: Array(9).fill(0), stagger: 14 });
+  draw(G.build, { prev: Array(C).fill(0), stagger: 14 });
 }
 
 function cycle(c) {
@@ -819,17 +820,17 @@ function checked() {
   setPhase('checked'); clock(false);
   draw(G.build, { marks: G.result.map((v) => (v ? 'good' : 'bad')), anim: 'reveal' });
   actions([]);
-  const settle = reduce ? 0 : 9 * 85 + 420;
+  const settle = reduce ? 0 : C * 85 + 420;
   if (G.solved) {
     status('Perfect!');
-    later(settle, () => { draw(G.build, { marks: Array(9).fill('good'), anim: 'hop' }); confetti(); later(900, endScreen); });
+    later(settle, () => { draw(G.build, { marks: Array(C).fill('good'), anim: 'hop' }); confetti(); later(900, endScreen); });
     return;
   }
   const right = G.result.filter(Boolean).length;
   later(settle, () => {
     const b = $('#board'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
-    status(right >= 7 ? `So close: ${right} of 9. Here's the cube.` : `${right} of 9 right. Here's the cube.`);
-    later(1100, () => { draw(G.target, { prev: Array(9).fill(0), stagger: 18 }); later(800, endScreen); });
+    status(right >= C - 2 ? `So close: ${right} of ${C}. Here's the cube.` : `${right} of ${C} right. Here's the cube.`);
+    later(1100, () => { draw(G.target, { prev: Array(C).fill(0), stagger: 18 }); later(800, endScreen); });
   });
 }
 
@@ -856,7 +857,11 @@ function tierOf(me, t) {
   return { k: 'solid', name: 'Solid', def: 'solved' };
 }
 // Where a column sits in the picture (the cube is seen from its front-right corner, so the back corner is at the top).
-const PLACE = ['at the top', 'top right', 'on the right', 'top left', 'in the middle', 'bottom right', 'on the left', 'bottom left', 'at the front'];
+const PLACE = Array.from({ length: C }, (_, c) => {
+  const x = c % N, z = Math.floor(c / N), v = x + z, h = x - z, e = N - 2; // v: up the picture to down, h: left to right
+  const row = v < e ? 'top' : v > N + e - 2 ? 'bottom' : '', side = h <= -e ? 'left' : h >= e ? 'right' : '';
+  return row && side ? `${row} ${side}` : row === 'top' ? 'at the top' : row ? 'at the front' : side ? `on the ${side}` : 'in the middle';
+});
 const wrongCols = () => G.result ? G.result.map((v, c) => (v ? -1 : c)).filter((c) => c >= 0) : [];
 function missLegend() {
   return wrongCols().map((c) => {
@@ -868,12 +873,12 @@ function mapHtml() {
   let m = '';
   for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) { const c = at(x, z); const d = G.build[c] - G.target[c]; m += `<i class="${d < 0 ? 'short' : d > 0 ? 'extra' : ''}"></i>`; }
   const n = wrongCols().length;
-  return `<div class="map" role="img" aria-label="${n ? `Nine columns, ${9 - n} right` : 'Nine columns, all right'}">${m}</div>`;
+  return `<div class="map" role="img" aria-label="${n ? `${C} columns, ${C - n} right` : `${C} columns, all right`}">${m}</div>`;
 }
 function shareText() {
   const me = STATS?.today?.you, tier = tierOf(me, STATS?.today);
   const rows = [];
-  for (let z = 0; z < N; z++) rows.push([0, 1, 2].map((x) => (G.result?.[at(x, z)] ? '🟩' : '🟥')).join(''));
+  for (let z = 0; z < N; z++) rows.push([...Array(N).keys()].map((x) => (G.result?.[at(x, z)] ? '🟩' : '🟥')).join(''));
   return [`Cubble ${G.no} · ${G.solved ? fmt(G.time) + (tier ? ` · ${tier.name}` : '') : 'missed'}`, ...rows, SITE].join('\n');
 }
 // The first screen and the card come from what this browser knows; the stats fill in when the API answers.
@@ -896,7 +901,7 @@ function renderResults() {
     const others = t ? t.players - t.solvers - 1 : 0;
     v.innerHTML = `<h3 class="lost" id="res-title" tabindex="-1">Not today</h3><p class="line"><b>${n} column${n > 1 ? 's' : ''} off.</b>${others > 0 ? ` ${others} other${others > 1 ? 's' : ''} missed it today too.` : ''}</p>`;
   }
-  const label = G.solved ? 'The cube you built, all nine columns right' : showAnswer ? 'The answer' : `The cube you built, ${n} column${n > 1 ? 's' : ''} wrong: a dashed outline marks a missing block, a crossed block one too many`;
+  const label = G.solved ? `The cube you built, all ${C} columns right` : showAnswer ? 'The answer' : `The cube you built, ${n} column${n > 1 ? 's' : ''} wrong: a dashed outline marks a missing block, a crossed block one too many`;
   const cube = showAnswer ? cubeSvg(G.target, null, label) : cubeSvg(G.build, G.solved ? null : G.target, label);
   $('#card').innerHTML = cube
     + `<div class="cap"><div><div class="t">${showAnswer ? 'The answer' : `Cubble ${G.no} · ${G.solved ? fmt(G.time) : 'missed'}${tier ? ` · ${tier.name}` : ''}`}</div><div class="d">${dateLong()}</div></div>${mapHtml()}</div>`
@@ -1155,7 +1160,7 @@ function confetti(from = $('#board')) {
 // ---- How to play -------------------------------------------------------------------------------------------------
 // Three steps, each a short loop on the real board: the cube shows and goes, a column is stacked 1, 2, 3, the build
 // turns green. The cube is always the same one, so step 2 rebuilds step 1 and step 3 checks step 2.
-const DEMO = [3, 2, 1, 2, 1, 0, 1, 0, 0];
+const DEMO = SHAPES[3];
 const STEPS = [
   { title: 'Memorize the cube', text: "It shows for a few seconds, then it's gone. Your clock is already running.", ms: 6500 },
   { title: 'Rebuild it from memory', text: 'Tap a spot to stack: one, two, three, then empty again. Match every column.', ms: 7000 },
@@ -1165,7 +1170,7 @@ let TOUR = null; // { step, play: started from Play, timers }
 const tsvg = $('#tour-scene'), finger = $('#tour-finger');
 const paint = (h, opts) => { tsvg.innerHTML = scene(h, opts); };
 // Where a column's top is on the board, in % of the board's box: the finger and the count go there.
-const spot = (c, y, lift = 0) => { const [vx, vy] = proj((c % 3) + 0.5, y, Math.floor(c / 3) + 0.5); return [(vx + 232) / 4.64, (vy - lift + 306) / 5.44]; };
+const spot = (c, y, lift = 0) => { const [vx, vy] = proj((c % N) + 0.5, y, Math.floor(c / N) + 0.5); return [(vx + 232) / 4.64, (vy - lift + 306) / 5.44]; };
 function tq(ms, fn) { TOUR.timers.push(setTimeout(fn, ms)); }
 function tclock(t) { $('#tour-clock').textContent = t; }
 function tour(play) {
@@ -1203,7 +1208,7 @@ function playStep() {
   tq(STEPS[i].ms, playStep);
 }
 function step1() {
-  const none = Array(9).fill(0);
+  const none = Array(C).fill(0);
   tclock('0:00'); paint(DEMO, { prev: none, stagger: 40 });
   tq(1000, () => tclock('0:01'));
   tq(2000, () => tclock('0:02'));
@@ -1232,11 +1237,11 @@ function step2() {
   tq(3400, () => { finger.style.left = '108%'; finger.style.top = '104%'; finger.classList.remove('on'); });
 }
 function step3() {
-  const good = Array(9).fill('good');
+  const good = Array(C).fill('good');
   tclock('0:11'); paint(DEMO);
   // What Check does in the game: each spot turns its colour in turn, then the green build hops.
   tq(500, () => paint(DEMO, { marks: good, anim: 'reveal' }));
-  tq(500 + 9 * 85 + 420, () => {
+  tq(500 + C * 85 + 420, () => {
     paint(DEMO, { marks: good, anim: 'hop' });
     const c = $('#tour-clock'); c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');
     $('#tour-cap').classList.add('on');

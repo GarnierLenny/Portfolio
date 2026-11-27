@@ -6,6 +6,7 @@ import { sql, ensureTables } from "@/lib/cubble-db";
 // win-streak board. GET: the same stats without a result, for reopening the card. PUT: the nickname.
 // The player is a random id the browser keeps; nothing about the person is stored but the nickname they typed.
 
+const COLS = 16; // a 4×4 base since 27 Nov (3×3 before): must match the page
 const LOOK = [10, 9, 8, 8, 7, 6, 5]; // seconds the cube shows, Monday first: must match LEVELS in the page
 const BOARD = 10;
 const ID = /^[0-9a-f-]{20,40}$/i;
@@ -109,8 +110,8 @@ export async function POST(req: Request) {
   const b = await req.json().catch(() => ({}));
   const { player, day } = b;
   const right = Number(b.right), lookMs = Math.round(Number(b.lookMs)), buildMs = Math.round(Number(b.buildMs));
-  const solved = right === 9;
-  const ok = ID.test(player) && validDay(day) && Number.isInteger(right) && right >= 0 && right <= 9 && b.solved === solved
+  const solved = right === COLS;
+  const ok = ID.test(player) && validDay(day) && Number.isInteger(right) && right >= 0 && right <= COLS && b.solved === solved
     && lookMs >= 300 && lookMs <= LOOK[weekday(day)] * 1000 + 3000 && buildMs >= 300 && buildMs <= 3600_000;
   if (!ok) return Response.json({ code: "bad_request" }, { status: 400 });
   if (limited(req, 60)) return Response.json({ code: "daily_limit" }, { status: 429 });
