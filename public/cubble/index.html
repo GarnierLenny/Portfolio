@@ -370,7 +370,8 @@
   .side-right { fill: var(--side-right); stroke: var(--side-right); }
   /* On a loss, the cube shows the misses in ink: a missing block as a dashed outline, an extra one ghosted with a ×. */
   .blk.ghost { opacity: .42; }
-  .miss { fill: none; stroke: var(--ink); stroke-width: 3; stroke-dasharray: 7 6; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  /* A missing block: a solid pale ghost with a dashed edge, so the ones behind it stay hidden (wireframes tangled on 4×4). */
+  .miss { fill: color-mix(in srgb, var(--ink) 9%, var(--sheet)); stroke: color-mix(in srgb, var(--ink) 70%, transparent); stroke-width: 2; stroke-dasharray: 5 4; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
   .badge circle { fill: var(--ink); }
   .badge path { fill: none; stroke: var(--bg); stroke-width: 3.5; stroke-linecap: round; }
   .play [data-c] { cursor: pointer; }
@@ -864,7 +865,14 @@ const PLACE = Array.from({ length: C }, (_, c) => {
 });
 const wrongCols = () => G.result ? G.result.map((v, c) => (v ? -1 : c)).filter((c) => c >= 0) : [];
 function missLegend() {
-  return wrongCols().map((c) => {
+  const w = wrongCols();
+  if (w.length > 2) {
+    const short = w.filter((c) => G.build[c] < G.target[c]), extra = w.filter((c) => G.build[c] > G.target[c]);
+    const sum = (cs) => cs.reduce((a, c) => a + Math.abs(G.build[c] - G.target[c]), 0);
+    const part = (cs, what) => `<b>${sum(cs)} block${sum(cs) > 1 ? 's' : ''} ${what}</b> in ${cs.length} column${cs.length > 1 ? 's' : ''}`;
+    return [short.length && `Dashed: ${part(short, 'short')}`, extra.length && `Crossed: ${part(extra, 'too many')}`].filter(Boolean).join('. ') + '.';
+  }
+  return w.map((c) => {
     const d = G.build[c] - G.target[c];
     return `${d < 0 ? 'Dashed' : 'Crossed'}, ${PLACE[c]}: <b>${Math.abs(d)} block${Math.abs(d) > 1 ? 's' : ''} ${d < 0 ? 'short' : 'too many'}</b>.`;
   }).join(' ');
@@ -1083,7 +1091,7 @@ function shareCard() {
       .blk.l2 .top{fill:#ffd8cf;stroke:#e46f64}.blk.l2 .front{fill:#ffaa9c;stroke:#e46f64}.blk.l2 .right{fill:#f98b7f;stroke:#e46f64}
       .blk.l3 .top{fill:#fbd5e0;stroke:#d46b8e}.blk.l3 .front{fill:#f5a6be;stroke:#d46b8e}.blk.l3 .right{fill:#e987a6;stroke:#d46b8e}
       .gloss{fill:url(#gloss)}.shade{fill:url(#shade)}.shine{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;opacity:.9}
-      .blk.ghost{opacity:.42}.miss{fill:none;stroke:${ink};stroke-width:3;stroke-dasharray:7 6;stroke-linejoin:round}.badge circle{fill:${ink}}.badge path{fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round}
+      .blk.ghost{opacity:.42}.miss{fill:#ece5ee;stroke:${ink};stroke-opacity:.7;stroke-width:2;stroke-dasharray:5 4;stroke-linejoin:round}.badge circle{fill:${ink}}.badge path{fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round}
       text{font-family:Fredoka,"SF Pro Rounded",system-ui,sans-serif;fill:${ink}}</style>
     <rect width="720" height="900" rx="48" fill="${bg}"/>
     <g transform="translate(360 350) scale(1.1)">${DEFS}${scene(G.build, { vs: G.solved ? null : G.target })}</g>
