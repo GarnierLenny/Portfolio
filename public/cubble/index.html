@@ -916,7 +916,7 @@ function renderResults() {
     : `<div class="pair"><figure>${cubeSvg(G.build, G.target, `Yours, ${n} column${n > 1 ? 's' : ''} wrong, shown in pink`)}<figcaption>Yours</figcaption></figure>`
       + `<figure>${cubeSvg(G.target, null, 'The answer')}<figcaption>The answer</figcaption></figure></div>`;
   $('#card').innerHTML = cube
-    + `<div class="cap"><div><div class="t">Cubble ${G.no} · ${G.solved ? fmt(G.time) : 'missed'}${tier ? ` · ${tier.name}` : ''}</div><div class="d">${dateLong()}</div></div>${mapHtml()}</div>`
+    + `<div class="cap"><div><div class="t">Cubble ${G.no} · ${G.solved ? fmt(G.time) : 'missed'}${tier ? ` · ${tier.name}` : ''}</div><div class="d">${dateLong()}</div></div>${G.solved ? mapHtml() : ''}</div>`
     + (G.solved ? '' : `<p class="legend">${missLegend()}</p>`);
   const share = `<svg class="ico" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>`;
   const link = `<svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
