@@ -247,7 +247,7 @@
   .axis { height: 2px; background: var(--line); border-radius: 1px; }
   .ticks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .ticks span:last-child { display: flex; justify-content: space-between; }
-  .streakrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .streakrow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .streakrow div { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
   .streakrow b { font: 600 26px/1 var(--font); font-variant-numeric: tabular-nums; }
   .streakrow span { font-size: 13px; color: var(--muted); }
@@ -753,8 +753,8 @@ function newGame() {
   G = { no: T0.no, weekday: T0.weekday, target: generate(L, rng), build: Array(9).fill(0), result: null, done: false, solved: false, started: null, lookMs: null, time: null };
   $('#intro-date').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   $('#intro-no').textContent = $('#level').textContent = `No. ${G.no} · ${L.name}`;
-  const st = localStreaks().playedStreak;
-  $('#intro-streak').hidden = !st; $('#intro-streak').textContent = `${st} ${st === 1 ? 'day' : 'days'} in a row`;
+  const st = localStreaks().winStreak; // only solved days count: showing up isn't the point
+  $('#intro-streak').hidden = !st; $('#intro-streak').textContent = `${st} solved in a row`;
   const rec = loadAll()[T0.key];
   if (rec?.done) {
     Object.assign(G, { result: rec.result ?? null, done: true, solved: !!rec.solved, started: rec.started ?? null, lookMs: rec.lookMs ?? null, time: rec.time ?? null });
@@ -916,8 +916,6 @@ function renderStats() {
   note.hidden = true;
   renderResults();
   if (!s) {
-    const { playedStreak } = localStreaks();
-    if (!G.solved && playedStreak) { $('#salvage').hidden = false; $('#salvage').innerHTML = `<div><b>${playedStreak}</b><span>days in a row, still yours</span></div>`; }
     if (API && !statsErr) { // still loading: hold the sheet's shape
       $('#s-today').hidden = $('#s-boards').hidden = false;
       $('#s-today').innerHTML = `<h4>Today</h4><div class="skel" aria-busy="true"><i style="width:100%"></i><i style="width:72%"></i><i style="width:88%"></i><span>Loading today's times…</span></div>`;
@@ -934,7 +932,7 @@ function renderStats() {
     $('#salvage').hidden = false;
     if (y && y.played >= 2) {
       const last = y.days, solvedN = last.filter((d) => d.solved).length;
-      $('#salvage').innerHTML = `<div><b>${y.playedStreak}</b><span>days in a row, still yours</span></div><div><b>${solvedN} of ${last.length}</b><span>solved, last four weeks</span></div>`;
+      $('#salvage').innerHTML = `<div><b>${solvedN} of ${last.length}</b><span>solved, last four weeks</span></div>`;
     } else $('#salvage').innerHTML = `<div><b>Day 1</b><span>Tomorrow is ${LEVELS[(G.weekday + 1) % 7].name}. Most people get their first one on day 2.</span></div>`;
   }
   // Today: every solver's time with yours marked, and the one sentence about where your seconds went.
@@ -989,7 +987,7 @@ function renderStats() {
     let body = '';
     if (y.played < 2) body = `<p>Day 1. Your history starts tomorrow.</p>`;
     else {
-      body += `<div class="streakrow"><div><b>${y.playedStreak}</b><span>days played in a row</span></div><div><b>${y.winStreak}</b><span>solved in a row</span></div><div><b>${y.bestWinStreak}</b><span>best run</span></div></div>`;
+      body += `<div class="streakrow"><div><b>${y.winStreak}</b><span>solved in a row</span></div><div><b>${y.bestWinStreak}</b><span>best run</span></div></div>`;
       // Four weeks of times, one bar a day. The scale is 1:30, or the slowest day if slower.
       const byDay = Object.fromEntries(y.days.map((d) => [d.day, d]));
       const cells = Array.from({ length: 28 }, (_, i) => byDay[new Date(T0.utc - (27 - i) * DAY).toISOString().slice(0, 10)] ?? null);
@@ -1023,7 +1021,7 @@ function renderStats() {
       if (known.length >= 3) { const [, slow] = known.sort((a, b) => b[0] - a[0])[0]; bl += ` ${WEEK[slow]}, the ${LEVELS[slow].name} day, is your slow one.`; }
       body += `<div class="group"><h5>Your best on each day</h5><div class="days" role="img" aria-label="Your best time each weekday: ${WEEK.map((w, i) => `${w} ${show(best[i])}`).join(', ')}">${tiles}</div>${bl ? `<p>${bl}</p>` : ''}</div>`;
     }
-    const sum = y.played < 2 ? 'starts tomorrow' : `${y.playedStreak} ${y.playedStreak === 1 ? 'day' : 'days'} in a row · ${y.solved} of ${y.played} solved`;
+    const sum = y.played < 2 ? 'starts tomorrow' : `${y.winStreak} solved in a row · ${y.solved} of ${y.played} solved`;
     sy.innerHTML = `<summary><h4>Your history <small>${sum}</small></h4>${chevron}</summary><div class="body">${body}</div>`;
   }
   // The closing beat
