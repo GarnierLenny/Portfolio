@@ -208,6 +208,11 @@
   .line b, .sect b, .card b { font-weight: 600; }
   .card { margin: 0 20px 20px; border-radius: 22px; background: var(--soft); padding: 12px 16px 14px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
   .card svg.cube { width: 250px; height: 293px; display: block; }
+  /* A miss: yours and the answer side by side, to compare at a glance (a toggle made you hold one in memory). */
+  .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; width: 100%; }
+  .pair figure { margin: 0; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+  .res-hero .card .pair svg.cube, .card .pair svg.cube { width: 100%; height: auto; aspect-ratio: 464 / 544; }
+  .pair figcaption { font-size: 13px; font-weight: 600; color: var(--muted); }
   .cap { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px; }
   .cap .t { font-size: 17px; font-weight: 600; }
   .cap .d { font-size: 13px; color: var(--muted); }
@@ -844,7 +849,7 @@ function endScreen() {
 }
 
 // ---- Results --------------------------------------------------------------------------------------------------------
-let STATS = null, statsReq = null, statsErr = null, showAnswer = false, showTiers = false;
+let STATS = null, statsReq = null, statsErr = null, showTiers = false;
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -907,19 +912,19 @@ function renderResults() {
     const others = t ? t.players - t.solvers - 1 : 0;
     v.innerHTML = `<h3 class="lost" id="res-title" tabindex="-1">Not today</h3><p class="line"><b>${n} column${n > 1 ? 's' : ''} off.</b>${others > 0 ? ` ${others} other${others > 1 ? 's' : ''} missed it today too.` : ''}</p>`;
   }
-  const label = G.solved ? `The cube you built, all ${C} columns right` : showAnswer ? 'The answer' : `The cube you built, ${n} column${n > 1 ? 's' : ''} wrong, shown in pink`;
-  const cube = showAnswer ? cubeSvg(G.target, null, label) : cubeSvg(G.build, G.solved ? null : G.target, label);
+  const cube = G.solved ? cubeSvg(G.build, null, `The cube you built, all ${C} columns right`)
+    : `<div class="pair"><figure>${cubeSvg(G.build, G.target, `Yours, ${n} column${n > 1 ? 's' : ''} wrong, shown in pink`)}<figcaption>Yours</figcaption></figure>`
+      + `<figure>${cubeSvg(G.target, null, 'The answer')}<figcaption>The answer</figcaption></figure></div>`;
   $('#card').innerHTML = cube
-    + `<div class="cap"><div><div class="t">${showAnswer ? 'The answer' : `Cubble ${G.no} · ${G.solved ? fmt(G.time) : 'missed'}${tier ? ` · ${tier.name}` : ''}`}</div><div class="d">${dateLong()}</div></div>${mapHtml()}</div>`
-    + (G.solved || showAnswer ? '' : `<p class="legend">${missLegend()}</p>`);
+    + `<div class="cap"><div><div class="t">Cubble ${G.no} · ${G.solved ? fmt(G.time) : 'missed'}${tier ? ` · ${tier.name}` : ''}</div><div class="d">${dateLong()}</div></div>${mapHtml()}</div>`
+    + (G.solved ? '' : `<p class="legend">${missLegend()}</p>`);
   const share = `<svg class="ico" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>`;
   const link = `<svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
   $('#pinned').innerHTML = G.solved
     ? `<button class="btn with-ico" id="share" type="button">Share your cube ${share}</button><button class="btn soft round" id="copy-link" type="button" aria-label="Copy the link to Cubble">${link}</button>`
-    : `<button class="btn" id="answer" type="button">${showAnswer ? 'Back to yours' : 'See the answer'}</button><button class="btn soft round" id="share" type="button" aria-label="Share your cube">${share}</button>`;
+    : `<button class="btn with-ico" id="share" type="button">Share your cube ${share}</button><button class="btn soft round" id="copy-link" type="button" aria-label="Copy the link to Cubble">${link}</button>`;
   $('#share')?.addEventListener('click', shareCube);
   $('#copy-link')?.addEventListener('click', () => copy(SITE, 'Link copied.'));
-  $('#answer')?.addEventListener('click', () => { showAnswer = !showAnswer; renderResults(); });
 }
 function renderStats() {
   const s = STATS, note = $('#stats-note');
@@ -1067,7 +1072,7 @@ function loadStats() {
 }
 // history: open straight on Your history (the top bar's stats button).
 function openResult(history = false) {
-  showAnswer = false; showTiers = false;
+  showTiers = false;
   renderStats(); loadStats();
   $('#share-text').hidden = true;
   clearInterval(nextTimer); nextTimer = setInterval(nextCube, 30000);
