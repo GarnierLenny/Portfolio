@@ -525,9 +525,9 @@ const LEVELS = [
   { name: 'Easy', look: 9, mode: 'shape', changes: 1 },
   { name: 'Medium', look: 8, mode: 'shape', changes: 2 },
   { name: 'Medium', look: 8, mode: 'shape', changes: 3 },
-  { name: 'Hard', look: 7, mode: 'random', fill: 0.6 },
-  { name: 'Hard', look: 6, mode: 'random', fill: 0.75 },
-  { name: 'Very hard', look: 5, mode: 'random', fill: 0.85 },
+  { name: 'Hard', look: 7, mode: 'random', fill: 0.5 },
+  { name: 'Hard', look: 6, mode: 'random', fill: 0.6 },
+  { name: 'Very hard', look: 5, mode: 'random', fill: 0.7 },
 ];
 const SHAPES = [
   [3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0], // stairs
@@ -538,10 +538,10 @@ const SHAPES = [
   [3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 3, 3], // L
   [3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1], // terraces
   [3, 2, 1, 0, 2, 2, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0], // wedge
-  [3, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1], // diagonal
-  [3, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // two towers
+  [3, 3, 3, 2, 3, 3, 2, 1, 3, 2, 1, 0, 2, 1, 0, 0], // big corner
+  [3, 2, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // battlement
   [2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0], // slab
-  [3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 1], // four corners, stepping down
+  [2, 2, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], // bench
 ];
 const at = (x, z) => z * N + x;
 
@@ -582,14 +582,14 @@ function visible(h) {
   for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
     let seen = 0;
     for (const [dx, dz] of OFFS) if (!blocked([x + 0.5 + dx, h[at(x, z)] + 0.001, z + 0.5 + dz], blocks)) seen++;
-    if (seen < 3) return false; // 3 of 5 points: on a 4×4 board, 4 of 5 rejected most hard days
+    if (seen < 4) return false;
   }
   return true;
 }
 
 function generate(L, rng) {
   const int = (n) => Math.floor(rng() * n);
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < 20000; i++) { // a fair 4×4 hard cube is rare: up to ~100 ms on a slow phone, once a day
     let h;
     if (L.mode === 'shape') {
       h = SHAPES[int(SHAPES.length)].slice();
