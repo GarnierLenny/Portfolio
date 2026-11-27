@@ -213,9 +213,9 @@
   .cap .d { font-size: 13px; color: var(--muted); }
   .map { display: grid; grid-template-columns: repeat(4, 11px); gap: 3px; transform: rotate(45deg); margin: 0 12px 0 8px; flex: none; }
   .map i { width: 11px; height: 11px; border-radius: 4px; background: var(--chart-mint); display: grid; place-items: center; }
-  .map i.short, .map i.extra { background: var(--sheet); box-shadow: inset 0 0 0 2px var(--ink); }
+  .map i.short, .map i.extra { background: var(--r-top); box-shadow: inset 0 0 0 2px var(--r-line); } /* pink, like the cube */
   .map i.short::before { content: ""; width: 5px; height: 5px; border: 1.5px dashed var(--ink); border-radius: 1px; }
-  .map i.extra::before { content: "×"; color: var(--ink); font: 700 11px/1 var(--font); transform: rotate(-45deg); }
+  .map i.extra::before { content: ""; width: 7px; height: 7px; background: linear-gradient(var(--ink), var(--ink)) center / 100% 2px no-repeat, linear-gradient(var(--ink), var(--ink)) center / 2px 100% no-repeat; }
   .card .legend { width: 100%; margin: 0; font-size: 14px; line-height: 1.35; }
   .salvage { display: flex; gap: 10px; margin: 0 20px 20px; }
   .salvage div { flex: 1; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--line); padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
@@ -702,7 +702,8 @@ function draw(h, opts) {
 }
 const DEFS = '<defs><linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".14"/></linearGradient></defs>';
 // A still of a cube for the results card (and the share image): your build, with the misses against the answer.
-const cubeSvg = (h, vs, label) => `<svg class="cube" viewBox="-232 -306 464 544" role="img" aria-label="${label}">${DEFS}${scene(h, { vs })}</svg>`;
+const judged = (h, vs) => (vs ? { marks: h.map((v, k) => (v === vs[k] ? 'good' : 'bad')) } : {}); // mint right, pink wrong, like the Check
+const cubeSvg = (h, vs, label) => `<svg class="cube" viewBox="-232 -306 464 544" role="img" aria-label="${label}">${DEFS}${scene(h, judged(h, vs))}</svg>`;
 const later = (ms, fn) => { const id = drawId; setTimeout(() => { if (id === drawId) fn(); }, reduce ? 0 : ms); };
 
 // ---- Game -----------------------------------------------------------------------------------------------------------
@@ -865,17 +866,14 @@ const PLACE = Array.from({ length: C }, (_, c) => {
 });
 const wrongCols = () => G.result ? G.result.map((v, c) => (v ? -1 : c)).filter((c) => c >= 0) : [];
 function missLegend() {
-  const w = wrongCols();
+  const w = wrongCols(), n = (c) => Math.abs(G.build[c] - G.target[c]), blocks = (k) => `${k} block${k > 1 ? 's' : ''}`;
   if (w.length > 2) {
     const short = w.filter((c) => G.build[c] < G.target[c]), extra = w.filter((c) => G.build[c] > G.target[c]);
-    const sum = (cs) => cs.reduce((a, c) => a + Math.abs(G.build[c] - G.target[c]), 0);
-    const part = (cs, what) => `<b>${sum(cs)} block${sum(cs) > 1 ? 's' : ''} ${what}</b> in ${cs.length} column${cs.length > 1 ? 's' : ''}`;
-    return [short.length && `Dashed: ${part(short, 'short')}`, extra.length && `Crossed: ${part(extra, 'too many')}`].filter(Boolean).join('. ') + '.';
+    const sum = (cs) => cs.reduce((a, c) => a + n(c), 0);
+    const parts = [short.length && `<b>${blocks(sum(short))} short</b> in ${short.length}`, extra.length && `<b>${blocks(sum(extra))} too many</b> in ${extra.length}`];
+    return `Pink columns are wrong: ${parts.filter(Boolean).join(', ')}.`;
   }
-  return w.map((c) => {
-    const d = G.build[c] - G.target[c];
-    return `${d < 0 ? 'Dashed' : 'Crossed'}, ${PLACE[c]}: <b>${Math.abs(d)} block${Math.abs(d) > 1 ? 's' : ''} ${d < 0 ? 'short' : 'too many'}</b>.`;
-  }).join(' ');
+  return w.map((c) => `Pink, ${PLACE[c]}: <b>${blocks(n(c))} ${G.build[c] < G.target[c] ? 'short' : 'too many'}</b>.`).join(' ');
 }
 function mapHtml() {
   let m = '';
@@ -909,7 +907,7 @@ function renderResults() {
     const others = t ? t.players - t.solvers - 1 : 0;
     v.innerHTML = `<h3 class="lost" id="res-title" tabindex="-1">Not today</h3><p class="line"><b>${n} column${n > 1 ? 's' : ''} off.</b>${others > 0 ? ` ${others} other${others > 1 ? 's' : ''} missed it today too.` : ''}</p>`;
   }
-  const label = G.solved ? `The cube you built, all ${C} columns right` : showAnswer ? 'The answer' : `The cube you built, ${n} column${n > 1 ? 's' : ''} wrong: a dashed outline marks a missing block, a crossed block one too many`;
+  const label = G.solved ? `The cube you built, all ${C} columns right` : showAnswer ? 'The answer' : `The cube you built, ${n} column${n > 1 ? 's' : ''} wrong, shown in pink`;
   const cube = showAnswer ? cubeSvg(G.target, null, label) : cubeSvg(G.build, G.solved ? null : G.target, label);
   $('#card').innerHTML = cube
     + `<div class="cap"><div><div class="t">${showAnswer ? 'The answer' : `Cubble ${G.no} · ${G.solved ? fmt(G.time) : 'missed'}${tier ? ` · ${tier.name}` : ''}`}</div><div class="d">${dateLong()}</div></div>${mapHtml()}</div>`
@@ -1091,10 +1089,12 @@ function shareCard() {
       .blk.l2 .top{fill:#ffd8cf;stroke:#e46f64}.blk.l2 .front{fill:#ffaa9c;stroke:#e46f64}.blk.l2 .right{fill:#f98b7f;stroke:#e46f64}
       .blk.l3 .top{fill:#fbd5e0;stroke:#d46b8e}.blk.l3 .front{fill:#f5a6be;stroke:#d46b8e}.blk.l3 .right{fill:#e987a6;stroke:#d46b8e}
       .gloss{fill:url(#gloss)}.shade{fill:url(#shade)}.shine{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;opacity:.9}
+      .blk.good .top{fill:#cdf6e1;stroke:#3caf7e}.blk.good .front{fill:#86e2b5;stroke:#3caf7e}.blk.good .right{fill:#5ccb98;stroke:#3caf7e}.tile.good{fill:#cdf6e1;stroke:#3caf7e}
+      .blk.bad .top{fill:#ffd3de;stroke:#da557a}.blk.bad .front{fill:#ff93ae;stroke:#da557a}.blk.bad .right{fill:#f46f91;stroke:#da557a}.tile.bad{fill:#ffd3de;stroke:#da557a}
       .blk.ghost{opacity:.42}.miss{fill:#ece5ee;stroke:${ink};stroke-opacity:.7;stroke-width:2;stroke-dasharray:5 4;stroke-linejoin:round}.badge circle{fill:${ink}}.badge path{fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round}
       text{font-family:Fredoka,"SF Pro Rounded",system-ui,sans-serif;fill:${ink}}</style>
     <rect width="720" height="900" rx="48" fill="${bg}"/>
-    <g transform="translate(360 350) scale(1.1)">${DEFS}${scene(G.build, { vs: G.solved ? null : G.target })}</g>
+    <g transform="translate(360 350) scale(1.1)">${DEFS}${scene(G.build, judged(G.build, G.solved ? null : G.target))}</g>
     <text x="60" y="770" font-size="40" font-weight="600">${esc(title)}</text>
     <text x="60" y="815" font-size="26" fill="#5e5366">${esc(dateLong())}</text>
     <text x="60" y="862" font-size="24" fill="#5e5366">lennygarnier.com/cubble</text>
